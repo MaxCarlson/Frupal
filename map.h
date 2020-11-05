@@ -8,23 +8,30 @@ enum Obstacle
     BOULDER,
 };
 
+enum Terrain
+{
+    MEADOW,
+    SWAMP,
+    WATER,
+    WALL
+};
+
 
 struct MapSquare
 {
-    char symbol;
-    uint8_t color;
+    Terrain terrain;
     Obstacle obstacle;
 
     MapSquare() = default;
-    MapSquare(char symbol, uint8_t color, Obstacle obstacle) 
-        : symbol{symbol}, color{color}, obstacle{obstacle}
+    MapSquare(Terrain terrain, Obstacle obstacle) 
+        : terrain{terrain}, obstacle{obstacle}
     {}
 };
 
 class Map
 {
 
-    MapSquare map[maxMapHeight][maxMapWidth];
+    MapSquare map[mapHeight][mapWidth];
 
 public:
 
