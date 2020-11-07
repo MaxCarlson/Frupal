@@ -9,6 +9,7 @@
           "-g", 
           "-std=c++17",
           "${workspaceRoot}/main.cpp",
+          "${workspaceRoot}/map.cpp",
           "${workspaceRoot}/camera.cpp",
           "${workspaceRoot}/input.cpp",
           "${workspaceRoot}/item.cpp",

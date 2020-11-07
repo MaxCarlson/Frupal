@@ -1,7 +1,7 @@
 #pragma once
 #include "camera.h"
 
-
+class Item;
 
 // Must use like: Terrain::Meadow, this is to keep them getting mixed up with the color enums in display
 enum class Terrain
@@ -13,21 +13,14 @@ enum class Terrain
     WALL
 };
 
-enum class Obstacle
-{
-    NONE,
-    TREE,
-    BOULDER,
-};
-
 struct MapSquare
 {
     Terrain terrain;
-    Obstacle obstacle;
+    Item* item;
 
     MapSquare() = default;
-    MapSquare(Terrain terrain, Obstacle obstacle) 
-        : terrain{terrain}, obstacle{obstacle}
+    MapSquare(Terrain terrain, Item* item) 
+        : terrain{terrain}, item{item}
     {}
 };
 
@@ -37,22 +30,8 @@ class Map
     MapSquare** map;
 
 public:
-    Map(int width, int height) :
-        width{width}, height{height}
-    {
-        map = new MapSquare*[height];
-
-        // Default map squares to undiscovered
-        for(int i = 0; i < height; ++i)
-            map[i] = new MapSquare[width]();
-    }
-
-    ~Map()
-    {
-        for(int i = 0; i < height; ++i)
-            delete[] map[i];
-        delete[] map;
-    }
+    Map(int width, int height);
+    ~Map();
 
     int getWidth() const { return width; }
     int getHeight() const { return height; }
