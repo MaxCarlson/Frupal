@@ -1,21 +1,24 @@
 #pragma once
 #include "camera.h"
 
-enum Obstacle
-{
-    NONE = 0,
-    TREE,
-    BOULDER,
-};
 
-enum Terrain
+
+// Must use like: Terrain::Meadow, this is to keep them getting mixed up with the color enums in display
+enum class Terrain
 {
+    UNDSICOVERED,
     MEADOW,
     SWAMP,
     WATER,
     WALL
 };
 
+enum class Obstacle
+{
+    NONE,
+    TREE,
+    BOULDER,
+};
 
 struct MapSquare
 {
@@ -39,8 +42,9 @@ public:
     {
         map = new MapSquare*[height];
 
+        // Default map squares to undiscovered
         for(int i = 0; i < height; ++i)
-            map[i] = new MapSquare[width];
+            map[i] = new MapSquare[width]();
     }
 
     ~Map()
@@ -52,5 +56,14 @@ public:
 
     int getWidth() const { return width; }
     int getHeight() const { return height; }
+
+    template<class Func>
+    void loopMap(const Func& func)
+    {
+        // Width and height are inverted in order here because array access is faster like this
+        for(int i = 0; i < height; ++i)
+            for(int j = 0; j < width; ++j)
+                func(j, i, map[i][j]);
+    }
 
 };

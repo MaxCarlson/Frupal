@@ -47,7 +47,7 @@ int main()
         if(!input.input(player, map))
             break;
 
-        display.printMap(camera);
+        display.printMap(camera, map);
         display.printCharacter(camera, player);
 
     }
