@@ -30,10 +30,27 @@ struct MapSquare
 
 class Map
 {
-
-    MapSquare map[mapHeight][mapWidth];
+    int width, height;
+    MapSquare** map;
 
 public:
+    Map(int width, int height) :
+        width{width}, height{height}
+    {
+        map = new MapSquare*[height];
 
+        for(int i = 0; i < height; ++i)
+            map[i] = new MapSquare[width];
+    }
+
+    ~Map()
+    {
+        for(int i = 0; i < height; ++i)
+            delete[] map[i];
+        delete[] map;
+    }
+
+    int getWidth() const { return width; }
+    int getHeight() const { return height; }
 
 };

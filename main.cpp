@@ -1,8 +1,7 @@
 #include <ncurses.h>
 #include <iostream>
 #include <thread>
-//#include "map.h"
-//#include "camera.h"
+#include "map.h"
 #include "input.h"
 #include "display.h"
 #include "player.h"
@@ -35,6 +34,7 @@ int main()
     // Run any other systems
     // Refresh
 
+    Map     map{mapWidth, mapHeight};
     Input   input;
     Player  player;
     Camera  camera;
@@ -44,7 +44,7 @@ int main()
     {
         std::this_thread::sleep_for(std::chrono::milliseconds{SleepTime});
 
-        if(!input.input())
+        if(!input.input(player, map))
             break;
 
         display.printMap(camera);

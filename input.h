@@ -1,5 +1,7 @@
 #pragma once
 
+class Player;
+class Map;
 
 class Input
 {
@@ -16,5 +18,5 @@ public:
         mode{NORMAL}
     {}
 
-    bool input();
+    bool input(Player& player, Map& map);
 };

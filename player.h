@@ -17,5 +17,7 @@ public:
 
     int getX() const { return x; }
     int getY() const { return y; }
+    void setX(int v) { x = v; }
+    void setY(int v) { y = v; }
 
 };

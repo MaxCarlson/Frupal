@@ -1,9 +1,10 @@
 #include "input.h"
 #include <ncurses.h>
-
+#include "player.h"
+#include "map.h"
 
 // Returns false if exit key is pressed. Handles all input
-bool Input::input()
+bool Input::input(Player& player, Map& map)
 {
     int ch = getch();
 
@@ -18,19 +19,23 @@ bool Input::input()
                 break;
 
             case KEY_LEFT:
-
+                if(player.getX() > 0)
+                    player.setX(player.getX() - 1);
                 break;
 
             case KEY_RIGHT:
-
+                if(player.getX() < map.getWidth() - 1)
+                    player.setX(player.getX() + 1);
                 break;
 
             case KEY_UP:
-
+                if(player.getY() > 0)
+                    player.setY(player.getY() - 1);
                 break;
 
             case KEY_DOWN:
-
+                if(player.getY() < map.getHeight() - 1)
+                    player.setY(player.getY() + 1);
                 break;
 
             case 't':
