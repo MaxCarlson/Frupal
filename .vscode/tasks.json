@@ -14,6 +14,7 @@
           "${workspaceRoot}/item.cpp",
           "${workspaceRoot}/player.cpp",
           "${workspaceRoot}/ui.cpp",
+          "${workspaceRoot}/display.cpp",
           "-lncurses",
           "-Wall",
           "-Werror",

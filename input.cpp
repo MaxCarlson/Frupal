@@ -18,7 +18,7 @@ bool Input::input()
                 break;
 
             case KEY_LEFT:
-                
+
                 break;
 
             case KEY_RIGHT:
@@ -31,6 +31,10 @@ bool Input::input()
 
             case KEY_DOWN:
 
+                break;
+
+            case 't':
+                // Change active tool
                 break;
         }
     else

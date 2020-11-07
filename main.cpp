@@ -4,6 +4,9 @@
 //#include "map.h"
 //#include "camera.h"
 #include "input.h"
+#include "display.h"
+#include "player.h"
+#include "camera.h"
 
 constexpr int FPS = 20;
 constexpr int SleepTime = 1000 / FPS;
@@ -13,6 +16,7 @@ int main()
 
     initscr();
     refresh();
+    timeout(0);
     keypad(stdscr, true);
     cbreak();
     noecho();
@@ -31,7 +35,10 @@ int main()
     // Run any other systems
     // Refresh
 
-    Input input;
+    Input   input;
+    Player  player;
+    Camera  camera;
+    Display display;
 
     for(;;)
     {
@@ -39,6 +46,9 @@ int main()
 
         if(!input.input())
             break;
+
+        display.printMap(camera);
+        display.printCharacter(camera, player);
 
     }
 
