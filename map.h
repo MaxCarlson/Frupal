@@ -36,6 +36,7 @@ public:
     int getWidth() const { return width; }
     int getHeight() const { return height; }
 
+    // Func is a lambda
     template<class Func>
     void loopMap(const Func& func)
     {

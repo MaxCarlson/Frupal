@@ -19,6 +19,7 @@ int main()
     keypad(stdscr, true);
     cbreak();
     noecho();
+    curs_set(0);
 
     // Start screen
     // Load map

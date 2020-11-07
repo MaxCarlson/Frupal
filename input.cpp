@@ -8,6 +8,9 @@ bool Input::input(Player& player, Map& map)
 {
     int ch = getch();
 
+    // Remove excess input, make character easier to control
+    flushinp();
+
     if(mode == NORMAL)
         switch(ch)
         {
