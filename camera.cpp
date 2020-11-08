@@ -11,17 +11,17 @@ void Camera::setOffsets(const Player& player)
 
     // Left edge case
     if(x > halfCamX)
-        offsetX = x - halfCamX;
+        offsetX = x - halfCamX - 1;
 
     // Right edge case
-    if(x > cols - halfCamX)
-        offsetX = cols - halfCamX;
+    if(x > map->getWidth() - halfCamX)
+        offsetX = map->getWidth() - cols;
 
     // Top case
     if(y > halfCamY)
-        offsetY = y - halfCamY;
+        offsetY = y - halfCamY - 1;
 
     // Bottom case
-    if(y > lines - halfCamY)
-        offsetY = lines - halfCamY;
+    if(y > map->getHeight() - halfCamY)
+        offsetY = map->getHeight() - lines;
 }
