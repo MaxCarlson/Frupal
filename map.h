@@ -35,6 +35,7 @@ public:
 
     int getWidth() const { return width; }
     int getHeight() const { return height; }
+    std::pair<int, int> getXY() const { return {width, height}; }
 
     // Func is a lambda
     template<class Func>

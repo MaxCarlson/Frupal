@@ -9,15 +9,14 @@ class Player;
 
 class Camera
 {
-    Map* map;
     int cols, lines;
     int offsetX, offsetY;
 public:
-    Camera(Map* map, int cols, int lines) :
-        map{map}, cols{cols}, lines{lines}, offsetX{0}, offsetY{0}
+    Camera(int cols, int lines) :
+        cols{cols}, lines{lines}, offsetX{0}, offsetY{0}
     {}
 
-    void setOffsets(const Player& player);
+    void setOffsets(const Player& player, const Map& map);
     std::pair<int, int> getOffsets() const { return {offsetX, offsetY}; }
     std::pair<int, int> getDims() const { return {cols, lines}; }
 };

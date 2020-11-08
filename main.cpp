@@ -37,7 +37,7 @@ int main()
     Map     map{mapWidth, mapHeight};
     Input   input;
     Player  player;
-    Camera  camera{&map, COLS, LINES};
+    Camera  camera{COLS, LINES};
     Display display;
 
     for(;;)
@@ -47,13 +47,12 @@ int main()
         if(!input.input(player, map))
             break;
 
-        camera.setOffsets(player);
+        camera.setOffsets(player, map);
         display.printMap(camera, map);
         display.printCharacter(camera, player);
 
     }
 
     endwin();
- 
     return 0;
 }
