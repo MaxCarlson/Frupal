@@ -15,23 +15,26 @@ void Camera::setOffsets(const Player& player, const Map& map, const UI& ui)
     int halfCamX = cols  / 2;
     int halfCamY = lines / 2;
 
-    // Left edge case
-    if(x > halfCamX)
-        offsetX = x - halfCamX - 1;
+    if(cols < width)
+    {
+        // Left edge case
+        if(x > halfCamX)
+            offsetX = x - halfCamX - 1;
 
-    // Right edge case
-    if(x > width - halfCamX)
-        offsetX = width - cols;
-
-
+        // Right edge case
+        if(x > width - halfCamX)
+            offsetX = width - cols;
+    }
 
     // Y axis seems off-center with camera
+    if(lines < height)
+    {
+        // Top case
+        if(y > halfCamY)
+            offsetY = y - halfCamY - 1;
 
-    // Top case
-    if(y > halfCamY)
-        offsetY = y - halfCamY - 1;
-
-    // Bottom case
-    if(y > height - halfCamY)
-        offsetY = height - lines;
+        // Bottom case
+        if(y > height - halfCamY)
+            offsetY = height - lines;
+    }
 }
