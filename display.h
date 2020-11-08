@@ -13,6 +13,6 @@ public:
 
     void printMap(const Camera& camera, const Map& map);
     void printCharacter(const Camera& camera, const Player& player);
-    void printUI(const Camera& camera, const UI& ui);
+    void printUI(const Camera& camera, UI& ui, const Player& player);
     void printCeneteredText(int x1, int x2, int y, std::string text);
 };

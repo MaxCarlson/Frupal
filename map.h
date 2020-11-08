@@ -36,6 +36,7 @@ public:
     int getWidth() const { return width; }
     int getHeight() const { return height; }
     std::pair<int, int> getXY() const { return {width, height}; }
+    const MapSquare& sq(int x, int y) const { return map[y][x]; }
 
     // Func is a lambda
     template<class Func>

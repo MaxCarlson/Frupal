@@ -99,14 +99,14 @@ void Display::printCharacter(const Camera& camera, const Player& player)
     attroff(COLOR_PAIR(Colors::PLAYER));
 }
 
-void Display::printUI(const Camera& camera, const UI& ui)
+void Display::printUI(const Camera& camera, UI& ui, const Player& player)
 {
-
+    ui.print(*this, player, camera);
     refresh();
 }
 
 void Display::printCeneteredText(int x1, int x2, int y, std::string text)
 {
     assert(static_cast<int>(text.length()) <= x2 - x1);
-    mvaddstr(y, ((x2 - x1) / 2 - text.length() / 2), text.c_str());
+    mvaddstr(y, (x2 - x1) / 2 - text.length() / 2, text.c_str());
 }
