@@ -20,7 +20,7 @@
           "-Wall",
           "-Werror",
           "-o", 
-          "${workspaceRoot}/main"
+          "${workspaceRoot}/frupal"
         ],
         "options": {
           "cwd": "/usr/bin"
