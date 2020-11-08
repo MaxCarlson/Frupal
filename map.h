@@ -38,7 +38,7 @@ public:
 
     // Func is a lambda
     template<class Func>
-    void loopMap(const Func& func)
+    void loopMap(const Func& func) const
     {
         // Width and height are inverted in order here because array access is faster like this
         for(int i = 0; i < height; ++i)

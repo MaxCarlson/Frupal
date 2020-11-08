@@ -29,55 +29,71 @@ Display::Display()
     init_pair(Colors::SWAMP, COLOR_MAGENTA, COLOR_MAGENTA);
     init_pair(Colors::WATER, COLOR_BLUE, COLOR_BLUE);
     init_pair(Colors::WALL, COLOR_WHITE, COLOR_WHITE);
-    clear();
+    //clear();
 }
 
-void Display::printMap(Camera& camera, Map& map)
+void Display::printMap(const Camera& camera, const Map& map)
 {
+    auto [dimX, dimY]       = camera.getDims();
+    auto [offsetX, offsetY] = camera.getOffsets();
 
     // Loop through each square of map. 
     // TODO: add camera checks as well as discovered/view checks later
-    map.loopMap([&](int x, int y, MapSquare& sq)
+    map.loopMap([&](int x, int y, const MapSquare& sq)
     {
         char ch = sq.item ? sq.item->getCh() : ' ';
+
+        // Don't print squares not covered by camera
+        if(x < offsetX || x > offsetX + dimX)
+            return;
+        if(y < offsetY || y > offsetY + dimY)
+            return;
+
+        int printX = x - offsetX;
+        int printY = y - offsetY;
 
         switch(sq.terrain)
         {
             case Terrain::MEADOW:
                 attron(COLOR_PAIR(Terrain::MEADOW));
-                mvaddch(x, y, ch);
+                mvaddch(printY, printX, ch);
                 attroff(COLOR_PAIR(Terrain::MEADOW));
                 break;
             case Terrain::SWAMP:
                 attron(COLOR_PAIR(Terrain::SWAMP));
-                mvaddch(x, y, ch);
+                mvaddch(printY, printX, ch);
                 attroff(COLOR_PAIR(Terrain::SWAMP));
                 break;
             case Terrain::WATER:
                 attron(COLOR_PAIR(Terrain::WATER));
-                mvaddch(x, y, ch);
+                mvaddch(printY, printX, ch);
                 attroff(COLOR_PAIR(Terrain::WATER));
                 break;
             case Terrain::WALL:
                 attron(COLOR_PAIR(Terrain::WALL));
-                mvaddch(x, y, ch);
+                mvaddch(printY, printX, ch);
                 attroff(COLOR_PAIR(Terrain::WALL));
                 break;
             case Terrain::UNDSICOVERED:
                 attron(COLOR_PAIR(Terrain::UNDSICOVERED));
-                mvaddch(x, y, ch);
+                mvaddch(printY, printX, ch);
                 attroff(COLOR_PAIR(Terrain::UNDSICOVERED));
                 break;
         }
     });
 }
 
-void Display::printCharacter(Camera& camara, Player& player)
+void Display::printCharacter(const Camera& camera, const Player& player)
 {
     // TODO: Orient camera centered on player when map position allows it 
+    //auto [dimX, dimY]       = camera.getDims();
+    auto [offsetX, offsetY] = camera.getOffsets();
+
+    int printX = player.getX() - offsetX;
+    int printY = player.getY() - offsetY;
 
     attron(COLOR_PAIR(Colors::PLAYER));
-    mvaddch(player.getY(), player.getX(), '@');
+    mvaddch(printY, printX, '@');
     attroff(COLOR_PAIR(Colors::PLAYER));
 
     refresh();

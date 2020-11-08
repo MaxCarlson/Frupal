@@ -9,7 +9,7 @@ class Display
 public:
     Display();
 
-    void printMap(Camera& camera, Map& map);
-    void printCharacter(Camera& camera, Player& player);
+    void printMap(const Camera& camera, const Map& map);
+    void printCharacter(const Camera& camera, const Player& player);
 
 };

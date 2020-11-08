@@ -14,7 +14,6 @@ int main()
 {
 
     initscr();
-    refresh();
     timeout(0);
     keypad(stdscr, true);
     cbreak();
@@ -38,7 +37,7 @@ int main()
     Map     map{mapWidth, mapHeight};
     Input   input;
     Player  player;
-    Camera  camera;
+    Camera  camera{&map, COLS, LINES};
     Display display;
 
     for(;;)
@@ -48,6 +47,7 @@ int main()
         if(!input.input(player, map))
             break;
 
+        camera.setOffsets(player);
         display.printMap(camera, map);
         display.printCharacter(camera, player);
 

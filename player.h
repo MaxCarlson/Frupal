@@ -19,5 +19,6 @@ public:
     int getY() const { return y; }
     void setX(int v) { x = v; }
     void setY(int v) { y = v; }
+    std::pair<int, int> getXY() const { return {x, y}; }
 
 };
