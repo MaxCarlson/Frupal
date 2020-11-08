@@ -5,18 +5,9 @@ class Map;
 
 class Input
 {
-    enum Mode
-    {
-        NORMAL,
-        UI
-    };
-
-    Mode mode;
 
 public:
-    Input() :
-        mode{NORMAL}
-    {}
+    Input() = default;
 
     bool input(Player& player, Map& map);
 };

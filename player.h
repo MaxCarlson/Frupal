@@ -30,6 +30,7 @@ public:
 
     int getMoney()  const { return money; }
     int getEnergy() const { return energy; }
+    void setDir(Direction dr) { dir = dr; }
 
     std::pair<int, int> getXY() const { return {x, y}; }
 
