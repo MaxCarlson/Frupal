@@ -6,6 +6,7 @@ static constexpr int mapHeight  = 128;
 
 class Map;
 class Player;
+class UI;
 
 class Camera
 {
@@ -16,7 +17,7 @@ public:
         cols{cols}, lines{lines}, offsetX{0}, offsetY{0}
     {}
 
-    void setOffsets(const Player& player, const Map& map);
+    void setOffsets(const Player& player, const Map& map, const UI& ui);
     std::pair<int, int> getOffsets() const { return {offsetX, offsetY}; }
     std::pair<int, int> getDims() const { return {cols, lines}; }
 };

@@ -3,6 +3,7 @@
 class Map;
 class Camera;
 class Player;
+class UI;
 
 class Display
 {
@@ -11,5 +12,5 @@ public:
 
     void printMap(const Camera& camera, const Map& map);
     void printCharacter(const Camera& camera, const Player& player);
-
+    void printUI(const Camera& camera, const UI& ui);
 };

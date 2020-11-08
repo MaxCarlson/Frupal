@@ -6,6 +6,7 @@
 #include "display.h"
 #include "player.h"
 #include "camera.h"
+#include "ui.h"
 
 constexpr int FPS = 20;
 constexpr int SleepTime = 1000 / FPS;
@@ -34,6 +35,7 @@ int main()
     // Run any other systems
     // Refresh
 
+    UI      ui;
     Map     map{mapWidth, mapHeight};
     Input   input;
     Player  player;
@@ -47,9 +49,10 @@ int main()
         if(!input.input(player, map))
             break;
 
-        camera.setOffsets(player, map);
+        camera.setOffsets(player, map, ui);
         display.printMap(camera, map);
         display.printCharacter(camera, player);
+        display.printUI(camera, ui);
 
     }
 

@@ -1,9 +1,14 @@
 #include "camera.h"
 #include "map.h"
 #include "player.h"
+#include "ui.h"
+#include <math.h>
 
-void Camera::setOffsets(const Player& player, const Map& map)
+void Camera::setOffsets(const Player& player, const Map& map, const UI& ui)
 {
+    // TODO: Camera will have to be adjusted once we add UI, it'll be another offset from the UI
+    // TODO: This is bugged when viewport is larger than 128, player/camera skips around mid map
+
     auto [x, y]             = player.getXY();
     auto [width, height]    = map.getXY();
 

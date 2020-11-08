@@ -4,6 +4,7 @@
 #include "player.h"
 #include "map.h"
 #include "item.h"
+#include "ui.h"
 
 enum Colors
 {
@@ -95,6 +96,10 @@ void Display::printCharacter(const Camera& camera, const Player& player)
     attron(COLOR_PAIR(Colors::PLAYER));
     mvaddch(printY, printX, '@');
     attroff(COLOR_PAIR(Colors::PLAYER));
+}
+
+void Display::printUI(const Camera& camera, const UI& ui)
+{
 
     refresh();
 }
