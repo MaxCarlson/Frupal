@@ -52,7 +52,7 @@ int main()
         camera.setOffsets(player, map, ui);
         display.printMap(camera, map);
         display.printCharacter(camera, player);
-        display.printUI(camera, ui, player);
+        display.printUI(camera, ui, player, map);
     }
 
     endwin();

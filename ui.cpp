@@ -2,18 +2,21 @@
 #include "display.h"
 #include "player.h"
 #include "camera.h"
+#include "map.h"
 #include <ncurses.h>
 
-void UI::print(Display& display, const Player& player, const Camera& camera)
+void UI::print(Display& display, const Player& player, const Camera& camera, Map& map)
 {
     printOutline(display, camera);
     auto [cx, cy] = camera.getDims();
 
+
     // Offset for all printed text in UI
     int xOffset = cx - cols + 2;
 
-    std::string food = "> Food: ";
+
     //std::string cost = ""
+
 
 
     mvaddstr(4, xOffset, "Options:");
@@ -27,6 +30,9 @@ void UI::print(Display& display, const Player& player, const Camera& camera)
 
     mvaddstr(cy-3, xOffset, wifs.c_str());
     mvaddstr(cy-2, xOffset, ener.c_str());
+
+
+    printSelectedInfo(player, map, camera, xOffset);
 }
 
 void UI::printOutline(Display& display, const Camera& camera)
@@ -41,4 +47,29 @@ void UI::printOutline(Display& display, const Camera& camera)
     //move(0, COLS-cols);
     move(0, xpos);
     vline('#', 128);
+}
+
+void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera, int xOffset)
+{
+    auto [cx, cy] = camera.getDims();
+    auto [sx, sy] = player.selectedSquare();
+
+    if(sx < 0 || sy < 0 || sx > cx - 1 || sy > cy - 1)
+    {
+        curs_set(0);
+        return;
+    }
+    else
+        curs_set(1);
+
+    // Set the cursor to its given pos
+    move(sy, sx);
+
+    const MapSquare& sq =  map.sq(sx, sy);
+
+    if(!sq.item)
+        return;
+
+    std::string food = "> Food: ";
+    
 }

@@ -99,9 +99,9 @@ void Display::printCharacter(const Camera& camera, const Player& player)
     attroff(COLOR_PAIR(Colors::PLAYER));
 }
 
-void Display::printUI(const Camera& camera, UI& ui, const Player& player)
+void Display::printUI(const Camera& camera, UI& ui, const Player& player, Map& map)
 {
-    ui.print(*this, player, camera);
+    ui.print(*this, player, camera, map);
     refresh();
 }
 
