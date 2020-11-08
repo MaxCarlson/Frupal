@@ -1,4 +1,5 @@
 #include <ncurses.h>
+#include <assert.h>
 #include "display.h"
 #include "camera.h"
 #include "player.h"
@@ -102,4 +103,10 @@ void Display::printUI(const Camera& camera, const UI& ui)
 {
 
     refresh();
+}
+
+void Display::printCeneteredText(int x1, int x2, int y, std::string text)
+{
+    assert(static_cast<int>(text.length()) <= x2 - x1);
+    mvaddstr(y, ((x2 - x1) / 2 - text.length() / 2), text.c_str());
 }

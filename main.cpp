@@ -36,7 +36,7 @@ int main()
     // Refresh
 
     UI      ui;
-    Map     map{mapWidth, mapHeight};
+    Map     map{128, 128};
     Input   input;
     Player  player;
     Camera  camera{COLS, LINES};
@@ -53,7 +53,6 @@ int main()
         display.printMap(camera, map);
         display.printCharacter(camera, player);
         display.printUI(camera, ui);
-
     }
 
     endwin();

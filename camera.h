@@ -1,9 +1,6 @@
 #pragma once
 #include <utility>
 
-static constexpr int mapWidth   = 128;
-static constexpr int mapHeight  = 128;
-
 class Map;
 class Player;
 class UI;
