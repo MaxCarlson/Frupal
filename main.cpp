@@ -35,7 +35,7 @@ int main()
     // Run any other systems
     // Refresh
 
-    UI      ui;
+    UI      ui{COLS};
     Map     map{128, 128};
     Input   input;
     Player  player;
@@ -50,7 +50,7 @@ int main()
             break;
 
         camera.setOffsets(player, map, ui);
-        display.printMap(camera, map);
+        display.printMap(camera, map, ui);
         display.printCharacter(camera, player);
         display.printUI(camera, ui, player, map);
     }

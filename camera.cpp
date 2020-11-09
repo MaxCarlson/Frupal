@@ -12,10 +12,10 @@ void Camera::setOffsets(const Player& player, const Map& map, const UI& ui)
     auto [x, y]             = player.getXY();
     auto [width, height]    = map.getXY();
 
-    int halfCamX = (cols - UI::cols)  / 2;
+    int halfCamX = (cols - ui.getSize())  / 2;
     int halfCamY = lines / 2;
 
-    if(cols < width + UI::cols)
+    if(cols < width + ui.getSize())
     {
         // Left edge case
         if(x > halfCamX)

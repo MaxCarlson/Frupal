@@ -7,11 +7,14 @@ class Display;
 
 class UI
 {
+    int cols;
 public:
 
-    static constexpr int cols = 25;
+    UI(int tcols)
+        : cols{tcols % 2 ? 23 : 22} // This handles the rounding issues that arise from the camera
+    {}
 
-
+    int getSize() const { return cols; }
     void print(Display& display, const Player& player, const Camera& camera, Map& map);
 
 private:

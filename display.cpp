@@ -34,7 +34,7 @@ Display::Display()
     //clear();
 }
 
-void Display::printMap(const Camera& camera, const Map& map)
+void Display::printMap(const Camera& camera, const Map& map, const UI& ui)
 {
     auto [dimX, dimY]       = camera.getDims();
     auto [offsetX, offsetY] = camera.getOffsets();
@@ -46,7 +46,7 @@ void Display::printMap(const Camera& camera, const Map& map)
         char ch = sq.item ? sq.item->getCh() : ' ';
 
         // Don't print squares not covered by camera
-        if(x < offsetX || x > offsetX + dimX)
+        if(x < offsetX || x > offsetX + dimX - ui.getSize())
             return;
         if(y < offsetY || y > offsetY + dimY)
             return;
