@@ -3,6 +3,15 @@
 #include "player.h"
 #include "camera.h"
 #include "map.h"
+#include "item.h"
+#include "items/binoculars.h"
+#include "items/chest.h"
+#include "items/clue.h"
+#include "items/diamond.h"
+#include "items/food.h"
+#include "items/obstacle.h"
+#include "items/ship.h"
+#include "items/tool.h"
 #include <ncurses.h>
 
 void UI::print(Display& display, const Player& player, const Camera& camera, Map& map)
@@ -19,11 +28,11 @@ void UI::print(Display& display, const Player& player, const Camera& camera, Map
 
 
 
-    mvaddstr(4, xOffset, "Options:");
-    mvaddstr(5, xOffset, "1) North");
-    mvaddstr(6, xOffset, "2) East");
-    mvaddstr(7, xOffset, "3) South");
-    mvaddstr(8, xOffset, "4) West");
+    mvaddstr(5, xOffset, "Options:");
+    mvaddstr(6, xOffset, "1) North");
+    mvaddstr(7, xOffset, "2) East");
+    mvaddstr(8, xOffset, "3) South");
+    mvaddstr(9, xOffset, "4) West");
 
     std::string wifs = "Whiffles: " + std::to_string(player.getMoney());
     std::string ener = "Energy:   " + std::to_string(player.getEnergy());
@@ -70,6 +79,16 @@ void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera,
     if(!sq.item)
         return;
 
-    std::string food = "> Food: ";
+
+
+    // TODO: Add all other item types in here
+    if(dynamic_cast<const Food*>(sq.item))
+    {
+        static const std::string food = "> Food: ";
+        static const std::string cost = "> Cost: ";
+        mvaddstr(2, xOffset, (food + sq.item->getName()).c_str());
+        mvaddstr(3, xOffset, (cost + std::to_string(dynamic_cast<const Food*>(sq.item)->getCost())).c_str());
+        mvaddstr(4, xOffset, (cost + std::to_string(dynamic_cast<const Food*>(sq.item)->getEnergy())).c_str());
+    }
     
 }
