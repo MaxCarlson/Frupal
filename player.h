@@ -19,13 +19,14 @@ class Player
     int money;
     int x, y;
     bool hasBinoculars;
+    bool onShip;
     Direction dir; // TODO: Remove this and make it an xy coordinate pair for cursor location
     std::vector<Tool*> tools;
 
     
 public:
     Player() :
-        energy{100}, money{1000}, x{0}, y{0}, hasBinoculars{false}, dir{SOUTH}, tools{}
+        energy{100}, money{1000}, x{0}, y{0}, hasBinoculars{false}, onShip{false}, dir{SOUTH}, tools{}
     {} 
 
     int getX() const { return x; }
