@@ -2,6 +2,8 @@
 #include "items/tool.h"
 #include <vector>
 
+class Map;
+
 enum Direction
 {
     NORTH,
@@ -16,11 +18,12 @@ class Player
     int energy;
     int money;
     int x, y;
-    Direction dir;
+    bool hasBinoculars;
+    Direction dir; // TODO: Remove this and make it an xy coordinate pair for cursor location
     std::vector<Tool*> tools;
 public:
     Player() :
-        energy{100}, money{1000}, x{0}, y{0}, dir{SOUTH}, tools{}
+        energy{100}, money{1000}, x{0}, y{0}, hasBinoculars{false}, dir{SOUTH}, tools{}
     {} 
 
     int getX() const { return x; }
@@ -35,5 +38,6 @@ public:
     std::pair<int, int> selectedSquare() const;
 
     std::pair<int, int> getXY() const { return {x, y}; }
+    void discoverTerrrain(Map& map);
 
 };

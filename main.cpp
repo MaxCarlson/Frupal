@@ -21,19 +21,19 @@ int main()
     noecho();
     curs_set(0);
 
-    // Start screen
+    // TODO: Start screen
     // Load map
-    // Generate hints
+    // Generate clues
     
 
     // Main Loop
     //
     // Check for input
-    // Print map
-    // Print UI
     // Apply user input
-    // Run any other systems
+    // Print map/character
+    // Print UI
     // Refresh
+    // Run any other systems
 
     UI      ui{COLS};
     Map     map{128, 128};
@@ -49,7 +49,10 @@ int main()
         if(!input.input(player, map))
             break;
 
+        // This must come first so everything is printed properly
         camera.setOffsets(player, map, ui);
+
+        player.discoverTerrrain(map);
         display.printMap(camera, map, ui);
         display.printCharacter(camera, player);
         display.printUI(camera, ui, player, map);

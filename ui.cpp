@@ -72,6 +72,7 @@ void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera,
     else
         curs_set(1);
 
+    // TODO: This is non-functional right now for the right half of the map
     // Set the cursor to its given pos
     move(sy - cyo, sx - cxo);
 

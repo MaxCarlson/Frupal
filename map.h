@@ -10,7 +10,7 @@ class Item;
 // Must use like: Terrain::Meadow, this is to keep them getting mixed up with the color enums in display
 enum class Terrain
 {
-    UNDSICOVERED,
+    UNDISCOVERED, // Not really a terrain type, just convenient for coloring in display
     MEADOW,
     SWAMP,
     WATER,
@@ -19,14 +19,15 @@ enum class Terrain
 
 struct MapSquare
 {
+    bool discovered;
     Terrain terrain;
     Item* item;
 
     //MapSquare() = default;
-    MapSquare() : terrain{static_cast<Terrain>(distr(re))}, item{} {} // Just for testing!
+    MapSquare() : discovered{false}, terrain{static_cast<Terrain>(distr(re))}, item{} {} // Just for testing!
 
-    MapSquare(Terrain terrain, Item* item) 
-        : terrain{terrain}, item{item}
+    MapSquare(bool discovered, Terrain terrain, Item* item) 
+        : discovered{discovered}, terrain{terrain}, item{item}
     {}
 };
 
@@ -43,6 +44,7 @@ public:
     int getHeight() const { return height; }
     std::pair<int, int> getXY() const { return {width, height}; }
     const MapSquare& sq(int x, int y) const { return map[y][x]; }
+    MapSquare& sq(int x, int y) { return map[y][x]; }
 
     // Func is a lambda
     template<class Func>

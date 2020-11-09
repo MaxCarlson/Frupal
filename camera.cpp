@@ -6,9 +6,6 @@
 
 void Camera::setOffsets(const Player& player, const Map& map, const UI& ui)
 {
-    // TODO: Camera will have to be adjusted once we add UI, it'll be another offset from the UI
-    // TODO: This is bugged when viewport is larger than 128, player/camera skips around mid map
-
     auto [x, y]             = player.getXY();
     auto [width, height]    = map.getXY();
 
@@ -22,9 +19,6 @@ void Camera::setOffsets(const Player& player, const Map& map, const UI& ui)
             offsetX = x - halfCamX - 1;
 
         // Right edge case
-        //if(x > width - halfCamX)
-        //    offsetX = width - cols;
-
         if(x > width - halfCamX + 1)
             offsetX -= x - (width - halfCamX + 1);
     }

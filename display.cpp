@@ -39,6 +39,9 @@ void Display::printMap(const Camera& camera, const Map& map, const UI& ui)
     auto [dimX, dimY]       = camera.getDims();
     auto [offsetX, offsetY] = camera.getOffsets();
 
+    // Discover adjacent terrain
+
+
     // Loop through each square of map. 
     // TODO: add camera checks as well as discovered/view checks later
     map.loopMap([&](int x, int y, const MapSquare& sq)
@@ -54,34 +57,41 @@ void Display::printMap(const Camera& camera, const Map& map, const UI& ui)
         int printX = x - offsetX;
         int printY = y - offsetY;
 
-        switch(sq.terrain)
+        if(sq.discovered)
+            switch(sq.terrain)
+            {
+                case Terrain::MEADOW:
+                    attron(COLOR_PAIR(Colors::MEADOW));
+                    mvaddch(printY, printX, ch);
+                    attroff(COLOR_PAIR(Colors::MEADOW));
+                    break;
+                case Terrain::SWAMP:
+                    attron(COLOR_PAIR(Colors::SWAMP));
+                    mvaddch(printY, printX, ch);
+                    attroff(COLOR_PAIR(Colors::SWAMP));
+                    break;
+                case Terrain::WATER:
+                    attron(COLOR_PAIR(Colors::WATER));
+                    mvaddch(printY, printX, ch);
+                    attroff(COLOR_PAIR(Colors::WATER));
+                    break;
+                case Terrain::WALL:
+                    attron(COLOR_PAIR(Colors::WALL));
+                    mvaddch(printY, printX, ch);
+                    attroff(COLOR_PAIR(Colors::WALL));
+                    break;
+                case Terrain::UNDISCOVERED: // Get rid of error
+                default:
+                    break;
+            }
+        else
         {
-            case Terrain::MEADOW:
-                attron(COLOR_PAIR(Terrain::MEADOW));
-                mvaddch(printY, printX, ch);
-                attroff(COLOR_PAIR(Terrain::MEADOW));
-                break;
-            case Terrain::SWAMP:
-                attron(COLOR_PAIR(Terrain::SWAMP));
-                mvaddch(printY, printX, ch);
-                attroff(COLOR_PAIR(Terrain::SWAMP));
-                break;
-            case Terrain::WATER:
-                attron(COLOR_PAIR(Terrain::WATER));
-                mvaddch(printY, printX, ch);
-                attroff(COLOR_PAIR(Terrain::WATER));
-                break;
-            case Terrain::WALL:
-                attron(COLOR_PAIR(Terrain::WALL));
-                mvaddch(printY, printX, ch);
-                attroff(COLOR_PAIR(Terrain::WALL));
-                break;
-            case Terrain::UNDSICOVERED:
-                attron(COLOR_PAIR(Terrain::UNDSICOVERED));
-                mvaddch(printY, printX, ch);
-                attroff(COLOR_PAIR(Terrain::UNDSICOVERED));
-                break;
+            attron(COLOR_PAIR(Terrain::UNDISCOVERED));
+            mvaddch(printY, printX, ch);
+            attroff(COLOR_PAIR(Terrain::UNDISCOVERED));
         }
+
+        
     });
 }
 
