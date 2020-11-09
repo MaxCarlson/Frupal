@@ -4,7 +4,8 @@
 
 static std::random_device rd;           // For random maps that change
 static std::default_random_engine re;   // For random maps that don't change
-static std::uniform_int_distribution<int> distr(1, 4);
+//static std::uniform_int_distribution<int> distr(1, 4);
+static std::geometric_distribution<int> distr;
 
 class Item;
 
@@ -25,7 +26,7 @@ struct MapSquare
     Item* item;
 
     //MapSquare() = default;
-    MapSquare() : discovered{false}, terrain{static_cast<Terrain>(distr(rd))}, item{} {} // Just for testing!
+    MapSquare() : discovered{false}, terrain{static_cast<Terrain>(std::max(1, distr(rd) - 1))}, item{} {} // Just for testing!
 
     MapSquare(bool discovered, Terrain terrain, Item* item) 
         : discovered{discovered}, terrain{terrain}, item{item}
