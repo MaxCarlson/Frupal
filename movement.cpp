@@ -23,6 +23,7 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
 
         case Terrain::WATER: // TODO: Handle ship and remove drop-through
         case Terrain::WALL:
+            player.modifyEnergy(-1);
             return;
     }
 
