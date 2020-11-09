@@ -85,11 +85,12 @@ void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera,
     // TODO: Add all other item types in here
     if(dynamic_cast<const Food*>(sq.item))
     {
-        static const std::string food = "> Food: ";
-        static const std::string cost = "> Cost: ";
-        l1 = food + sq.item->getName();
-        l2 = cost + std::to_string(dynamic_cast<const Food*>(sq.item)->getCost());
-        l3 = cost + std::to_string(dynamic_cast<const Food*>(sq.item)->getEnergy());
+        static const std::string food   = "> Food: ";
+        static const std::string cost   = "> Cost: ";
+        static const std::string energy = "> Energy: ";
+        l1 = food   + sq.item->getName();
+        l2 = cost   + std::to_string(dynamic_cast<const Food*>(sq.item)->getCost());
+        l3 = energy + std::to_string(dynamic_cast<const Food*>(sq.item)->getEnergy());
     }
 
 

@@ -8,7 +8,7 @@
 bool Input::input(Player& player, Map& map)
 {
     int ch = getch();
-    std::cout << ch;
+    //std::cout << ch;
 
     // Remove excess input, make character easier to control
     flushinp();
