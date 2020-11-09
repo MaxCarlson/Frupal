@@ -23,11 +23,6 @@ void UI::print(Display& display, const Player& player, const Camera& camera, Map
     // Offset for all printed text in UI
     int xOffset = cx - cols + 2;
 
-
-    //std::string cost = ""
-
-
-
     mvaddstr(4, xOffset, "Options:");
     mvaddstr(5, xOffset, "1) North");
     mvaddstr(6, xOffset, "2) East");
@@ -39,7 +34,6 @@ void UI::print(Display& display, const Player& player, const Camera& camera, Map
 
     mvaddstr(cy-3, xOffset, wifs.c_str());
     mvaddstr(cy-2, xOffset, ener.c_str());
-
 
     printSelectedInfo(player, map, camera, xOffset);
 }
@@ -53,7 +47,6 @@ void UI::printOutline(Display& display, const Camera& camera)
     // the UI rests at the edge of the map instead of the edge of the screen?
     int xpos = cx - cols;
 
-    //move(0, COLS-cols);
     move(0, xpos);
     vline('#', 128);
 }

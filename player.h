@@ -21,6 +21,8 @@ class Player
     bool hasBinoculars;
     Direction dir; // TODO: Remove this and make it an xy coordinate pair for cursor location
     std::vector<Tool*> tools;
+
+    
 public:
     Player() :
         energy{100}, money{1000}, x{0}, y{0}, hasBinoculars{false}, dir{SOUTH}, tools{}
@@ -30,13 +32,16 @@ public:
     int getY() const { return y; }
     void setX(int v) { x = v; }
     void setY(int v) { y = v; }
+    
+    void modifyMoney(int v)     { money     += v; }
+    void modifyEnergy(int v)    { energy    += v; }
 
     int getMoney()  const { return money; }
     int getEnergy() const { return energy; }
     Direction getDir() const { return dir; }
     void setDir(Direction dr) { dir = dr; }
-    std::pair<int, int> selectedSquare() const;
 
+    std::pair<int, int> selectedSquare() const;
     std::pair<int, int> getXY() const { return {x, y}; }
     void discoverTerrrain(Map& map);
 

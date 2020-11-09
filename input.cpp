@@ -1,7 +1,8 @@
 #include "input.h"
-#include <ncurses.h>
 #include "player.h"
 #include "map.h"
+#include "movement.h"
+#include <ncurses.h>
 #include <iostream>
 
 // Returns false if exit key is pressed. Handles all input
@@ -20,28 +21,30 @@ bool Input::input(Player& player, Map& map)
 
         case KEY_LEFT:
             if(player.getX() > 0)
-                player.setX(player.getX() - 1);
+                Movement::movePlayer(player, map, -1, 0);
             break;
 
         case KEY_RIGHT:
             if(player.getX() < map.getWidth() - 1)
-                player.setX(player.getX() + 1);
+                Movement::movePlayer(player, map, 1, 0);
             break;
 
         case KEY_UP:
             if(player.getY() > 0)
-                player.setY(player.getY() - 1);
+                Movement::movePlayer(player, map, 0, -1);
             break;
 
         case KEY_DOWN:
             if(player.getY() < map.getHeight() - 1)
-                player.setY(player.getY() + 1);
+                Movement::movePlayer(player, map, 0, 1);
             break;
 
         case 't':
             // Change active tool
             break;
 
+        // TODO: Apparently these are supposed to be arrow keys, and number keys are used for movement?
+        // TODO: Also, these should move the cursor in that dir, not set the cursor next to the player in that dir
         case 49: // 1
             player.setDir(Direction::NORTH);
             break;

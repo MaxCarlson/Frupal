@@ -22,25 +22,25 @@ void Player::discoverTerrrain(Map& map)
     constexpr std::pair<int, int> dirs[] = 
         {{0,0}, {0, -1}, {1, -1}, {1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}};
 
-    auto [dx, dy] = map.getXY();
+    auto [xMax, yMax] = map.getXY();
 
     for(auto [ox, oy] : dirs)
     {
-        ox += x;
-        oy += y;
-
-        auto discoverSq = [&](int ox, int oy)
+        auto discoverSq = [&](int xf, int yf)
         {
-            if(ox < 0 || oy < 0 || ox > dx || oy > dy)
+            if(xf < 0 || yf < 0 || xf > xMax - 1 || yf > yMax - 1)
                 return;
 
-            MapSquare& sq = map.sq(ox, oy);
+            MapSquare& sq = map.sq(xf, yf);
             sq.discovered = true;
         };
-        
-        discoverSq(ox, oy);
 
+        discoverSq(ox+x, oy+y);
+
+        // TODO: Is this what is meant by 2 squares? Probably not?
         if(hasBinoculars)
-            discoverSq(ox*2, oy*2);
+            discoverSq(x+ox*2, y+oy*2);
     }
+
+    // TODO: Finish out binocular squares here
 }
