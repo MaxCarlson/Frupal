@@ -12,18 +12,21 @@ void Camera::setOffsets(const Player& player, const Map& map, const UI& ui)
     auto [x, y]             = player.getXY();
     auto [width, height]    = map.getXY();
 
-    int halfCamX = cols  / 2;
+    int halfCamX = (cols - UI::cols)  / 2;
     int halfCamY = lines / 2;
 
-    if(cols < width)
+    if(cols < width + UI::cols)
     {
         // Left edge case
         if(x > halfCamX)
             offsetX = x - halfCamX - 1;
 
         // Right edge case
-        if(x > width - halfCamX)
-            offsetX = width - cols;
+        //if(x > width - halfCamX)
+        //    offsetX = width - cols;
+
+        if(x > width - halfCamX + 1)
+            offsetX -= x - (width - halfCamX + 1);
     }
 
     // Y axis seems off-center with camera

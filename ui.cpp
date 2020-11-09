@@ -60,8 +60,9 @@ void UI::printOutline(Display& display, const Camera& camera)
 
 void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera, int xOffset)
 {
-    auto [cx, cy] = camera.getDims();
-    auto [sx, sy] = player.selectedSquare();
+    auto [cx, cy]   = camera.getDims();
+    auto [cxo, cyo] = camera.getOffsets();
+    auto [sx, sy]   = player.selectedSquare();
 
     if(sx < 0 || sy < 0 || sx > cx - 1 || sy > cy - 1)
     {
@@ -72,17 +73,17 @@ void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera,
         curs_set(1);
 
     // Set the cursor to its given pos
-    move(sy, sx);
+    move(sy - cyo, sx - cxo);
 
     const MapSquare& sq =  map.sq(sx, sy);
 
     if(!sq.item)
         return;
 
-    std::string l1, l2, l3;
-
 
     // TODO: Add all other item types in here
+    std::string l1, l2, l3;
+
     if(dynamic_cast<const Food*>(sq.item))
     {
         static const std::string food   = "> Food: ";
@@ -92,6 +93,7 @@ void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera,
         l2 = cost   + std::to_string(dynamic_cast<const Food*>(sq.item)->getCost());
         l3 = energy + std::to_string(dynamic_cast<const Food*>(sq.item)->getEnergy());
     }
+    //else if(dynamic_cast<const Binoculars*>(sq.item)) //...etc
 
 
     mvaddstr(1, xOffset, l1.c_str());

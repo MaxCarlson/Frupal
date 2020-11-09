@@ -1,5 +1,9 @@
 #pragma once
 #include "camera.h"
+#include <random> // Just for testing
+
+static std::default_random_engine re;
+static std::uniform_int_distribution<int> distr(1, 4);
 
 class Item;
 
@@ -18,7 +22,9 @@ struct MapSquare
     Terrain terrain;
     Item* item;
 
-    MapSquare() = default;
+    //MapSquare() = default;
+    MapSquare() : terrain{static_cast<Terrain>(distr(re))}, item{} {} // Just for testing!
+
     MapSquare(Terrain terrain, Item* item) 
         : terrain{terrain}, item{item}
     {}
