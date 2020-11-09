@@ -19,12 +19,8 @@ std::pair<int, int> Player::selectedSquare() const
 
 void Player::discoverTerrrain(Map& map)
 {
-    // Non binocular dirs
     constexpr std::pair<int, int> dirs[] = 
         {{0,0}, {0, -1}, {1, -1}, {1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}};
-
-    // TODO: Binocular check
-    //if(hasBinoculars)
 
     auto [dx, dy] = map.getXY();
 
@@ -33,10 +29,18 @@ void Player::discoverTerrrain(Map& map)
         ox += x;
         oy += y;
 
-        if(ox < 0 || oy < 0 || ox > dx || oy > dy)
-            continue;
+        auto discoverSq = [&](int ox, int oy)
+        {
+            if(ox < 0 || oy < 0 || ox > dx || oy > dy)
+                return;
 
-        MapSquare& sq = map.sq(ox, oy);
-        sq.discovered = true;
+            MapSquare& sq = map.sq(ox, oy);
+            sq.discovered = true;
+        };
+        
+        discoverSq(ox, oy);
+
+        if(hasBinoculars)
+            discoverSq(ox*2, oy*2);
     }
 }
