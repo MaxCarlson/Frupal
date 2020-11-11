@@ -20,7 +20,7 @@
           "${workspaceRoot}/mapgenerator.cpp",
           "-lncurses",
           "-Wall",
-          "-Werror",
+          //"-Werror",
           "-o", 
           "${workspaceRoot}/frupal"
         ],
