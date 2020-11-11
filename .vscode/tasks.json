@@ -17,6 +17,7 @@
           "${workspaceRoot}/player.cpp",
           "${workspaceRoot}/ui.cpp",
           "${workspaceRoot}/display.cpp",
+          "${workspaceRoot}/mapgenerator.cpp",
           "-lncurses",
           "-Wall",
           "-Werror",

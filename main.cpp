@@ -7,6 +7,7 @@
 #include "player.h"
 #include "camera.h"
 #include "ui.h"
+#include "mapgenerator.h"
 
 constexpr int FPS = 20;
 constexpr int SleepTime = 1000 / FPS;
@@ -24,6 +25,9 @@ int main()
     // TODO: Start screen
     // Load map
     // Generate clues
+
+    MapGenerator mgen{128, 1};
+    mgen.voronoi(128, 100, 15);
     
 
     // Main Loop
