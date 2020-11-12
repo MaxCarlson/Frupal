@@ -27,7 +27,7 @@ int main()
     // Generate clues
 
     MapGenerator mgen{128, 2};
-    Map m = mgen.voronoi(128, 200, 75);
+    Map m = mgen.voronoi(128, 400, 100);
     
 
     // Main Loop

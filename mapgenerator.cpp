@@ -1,5 +1,6 @@
 #include "mapgenerator.h"
 #include "map.h"
+#include "items/obstacle.h"
 #include <assert.h>
 #include <algorithm>
 
@@ -213,7 +214,7 @@ Map MapGenerator::buildMap(int dim, std::map<std::pair<int, int>, int>& mapCells
     assert(mapCellCount == dim*dim);
 
 
-    buildWalls(map, 10, voronoiCells, mapCells, terrainMappings);
+    buildWalls(map, 20, voronoiCells, mapCells, terrainMappings);
 
 
     return map;
@@ -232,8 +233,6 @@ void MapGenerator::setTileTypeFromGroup(Map& map, Terrain terrain,
 void MapGenerator::buildWalls(Map& map, int num, std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 
     std::map<std::pair<int, int>, int>& mapCells, std::map<int, Terrain>& terrainMappings)
 {
-    std::uniform_int_distribution<int> distDir{0,3};
-    std::uniform_int_distribution<int> distCell{0, static_cast<int>(voronoiCells.size()) - 1};
 
     auto getDirMods = [](int dir)
     {
@@ -263,7 +262,11 @@ void MapGenerator::buildWalls(Map& map, int num, std::map<int, std::set<std::pai
 
     
     // Build walls
+    std::vector<bool> isWallVerticle;
     std::map<int, std::vector<std::pair<int, int>>> mapWallSquares;
+    std::uniform_int_distribution<int> distDir{0, 3};
+    std::uniform_int_distribution<int> distCell{0, static_cast<int>(voronoiCells.size()) - 1};
+
     for(int wall = 0; wall < num; ++wall)
     {
         TRY_AGAIN:
@@ -275,6 +278,9 @@ void MapGenerator::buildWalls(Map& map, int num, std::map<int, std::set<std::pai
         // Pick wall direction
         int dir = distDir(re);
         auto [xDir, yDir] = getDirMods(dir);
+
+        // Determine and store wall dir
+        isWallVerticle.emplace_back(xDir ? false : true);
 
         // Pick map cell out of the Voronoi cell to start in
         auto vMapCells = voronoiCells.find(cell)->second;
@@ -302,6 +308,45 @@ void MapGenerator::buildWalls(Map& map, int num, std::map<int, std::set<std::pai
             mapWallIt->second.emplace_back(std::pair{x, y});
         }
     }
+
+    placeWallObstacles(map, isWallVerticle, mapWallSquares);
 }
 
+void MapGenerator::placeWallObstacles(Map& map, std::vector<bool>& isWallVerticle,
+    std::map<int, std::vector<std::pair<int, int>>>& mapWallSquares)
+{
+
+    // Loop through each wall
+    for(auto& [wallId, wallSquares] : mapWallSquares)
+    {
+
+        // Find wall squares that don't border impassible terrain
+        std::vector<std::pair<int, int>> validObstacleSqs;
+        for(auto& [x, y] : wallSquares)
+        {
+            auto isValidSq = [&](int x, int y) {
+                if(x < 0 || y < 0 || x > map.getWidth() - 1 || y > map.getHeight() - 1)
+                    return false;
+                return map.sq(x, y).terrain != Terrain::WATER;
+            };
+
+            if((isWallVerticle[wallId] && isValidSq(x+1, y) && isValidSq(x-1, y)))
+                validObstacleSqs.emplace_back(std::pair{x, y});
+            else if(isValidSq(x, y+1) && isValidSq(x, y-1))
+                validObstacleSqs.emplace_back(std::pair{x, y});
+        }
+
+        std::uniform_int_distribution<int> obSqDist{0, validObstacleSqs.size() - 1};
+        int obIdx = obSqDist(re);
+        auto [x, y] = validObstacleSqs[obIdx];
+        // TODO: Pick random obstacle here
+        map.sq(x, y).item = new Obstacle{""};
+        
+        // Refill map terrain where obstacle was placed
+        if(isWallVerticle[wallId])
+            map.sq(x, y).terrain = map.sq(x+1, y).terrain;
+        else
+            map.sq(x, y).terrain = map.sq(x, y-1).terrain;
+    }
+}
 

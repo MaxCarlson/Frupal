@@ -33,4 +33,7 @@ private:
     
     void buildWalls(Map& map, int num, std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 
         std::map<std::pair<int, int>, int>& mapCells, std::map<int, Terrain>& terrainMappings);
+
+    void placeWallObstacles(Map& map, std::vector<bool>& isWallVerticle,
+        std::map<int, std::vector<std::pair<int, int>>>& mapWallSquares);
 };
