@@ -171,21 +171,18 @@ Map MapGenerator::buildMap(int dim, std::map<std::pair<int, int>, int>& mapCells
     Map map{dim, dim};
 
     int numLeaders = lMembers.size();
-    //std::geometric_distribution<int> gDist;
 
     std::vector<std::pair<int, std::vector<int>>> lMemVec;
     for(auto& lm : lMembers)
         lMemVec.emplace_back(lm.first, lm.second);
 
     // Sort the leader groups based on their number of cells (TODO: Maybe sort based on total map tile count)
-    std::sort(std::begin(lMemVec), std::end(lMemVec), [&](auto& p1, auto& p2)
-    {
+    std::sort(std::begin(lMemVec), std::end(lMemVec), [&](auto& p1, auto& p2) {
         return p1.second.size() < p2.second.size();
     });
 
     int numWater    = numLeaders / 3;
-    int numSwap     = numWater*2;
-    //int numMeadow   = numLeaders - numWater - numSwap; 
+    int numSwap     = numWater / 4 + numWater;
 
     std::map<int, Terrain> terrainMappings;
 

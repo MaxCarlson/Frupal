@@ -27,9 +27,9 @@ Display::Display()
     start_color();
     init_pair(Colors::PLAYER, COLOR_YELLOW, COLOR_MAGENTA);
     init_pair(Colors::UNDSICOVERED, COLOR_BLACK, COLOR_BLACK);
-    init_pair(Colors::MEADOW, COLOR_GREEN, COLOR_GREEN);
-    init_pair(Colors::SWAMP, COLOR_MAGENTA, COLOR_MAGENTA);
-    init_pair(Colors::WATER, COLOR_BLUE, COLOR_BLUE);
+    init_pair(Colors::MEADOW, COLOR_BLACK, COLOR_GREEN);
+    init_pair(Colors::SWAMP, COLOR_BLACK, COLOR_MAGENTA);
+    init_pair(Colors::WATER, COLOR_WHITE, COLOR_BLUE);
     init_pair(Colors::WALL, COLOR_WHITE, COLOR_WHITE);
     //clear();
 }
