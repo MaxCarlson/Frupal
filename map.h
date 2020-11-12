@@ -42,6 +42,12 @@ public:
     Map(int width, int height);
     ~Map();
 
+    Map(Map&& other)
+        : width{other.width}, height{other.height}, map{other.map}
+    {
+        other.map = nullptr;
+    }
+
     int getWidth() const { return width; }
     int getHeight() const { return height; }
     std::pair<int, int> getXY() const { return {width, height}; }

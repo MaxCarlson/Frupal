@@ -41,7 +41,7 @@ int main()
 
     UI      ui{COLS};
     //Map     map{128, 128};
-    Map map = m;
+    Map map{std::move(m)};
     Input   input;
     Player  player;
     Camera  camera{COLS, LINES};
