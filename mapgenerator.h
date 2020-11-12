@@ -4,6 +4,9 @@
 #include <map>
 #include <set>
 
+class Map;
+enum class Terrain;
+
 class MapGenerator
 {
     int size;
@@ -16,9 +19,15 @@ public:
         : size{size}, seed{seed}, dist{0, size}, re{seed}
     {}
 
-    void voronoi(int dim, int cells, int numLeaders);
+    Map voronoi(int dim, int cells, int numLeaders);
 private:
     void assignVoronoiCells(int dim, int cells, std::vector<int>& px, std::vector<int>& py,
         std::map<std::pair<int, int>, int>& mapCells,
         std::map<int, std::set<std::pair<int, int>>>& voronoiCells);
+
+    Map buildMap(int dim, std::map<std::pair<int, int>, int>& mapCells,
+        std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 
+        std::map<int, std::vector<int>>& lMembers);
+    void setTileTypeFromGroup(Map& map, Terrain terrain, 
+        std::set<std::pair<int, int>>& cellMembers);
 };

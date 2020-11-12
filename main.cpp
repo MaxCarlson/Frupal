@@ -26,8 +26,8 @@ int main()
     // Load map
     // Generate clues
 
-    MapGenerator mgen{128, 1};
-    mgen.voronoi(128, 100, 15);
+    MapGenerator mgen{128, 2};
+    Map m = mgen.voronoi(128, 200, 75);
     
 
     // Main Loop
@@ -40,7 +40,8 @@ int main()
     // Run any other systems
 
     UI      ui{COLS};
-    Map     map{128, 128};
+    //Map     map{128, 128};
+    Map map = m;
     Input   input;
     Player  player;
     Camera  camera{COLS, LINES};

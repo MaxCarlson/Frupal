@@ -26,7 +26,7 @@ struct MapSquare
     Item* item;
 
     //MapSquare() = default;
-    MapSquare() : discovered{false}, terrain{static_cast<Terrain>(std::max(1, distr(rd) - 1))}, item{} {} // Just for testing!
+    MapSquare() : discovered{true}, terrain{static_cast<Terrain>(std::max(1, distr(rd) - 1))}, item{} {} // Just for testing!
 
     MapSquare(bool discovered, Terrain terrain, Item* item) 
         : discovered{discovered}, terrain{terrain}, item{item}

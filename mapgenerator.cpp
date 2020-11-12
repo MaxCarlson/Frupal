@@ -40,7 +40,7 @@ void MapGenerator::assignVoronoiCells(int dim, int cells, std::vector<int>& px, 
         }
 }
 
-void MapGenerator::voronoi(int dim, int cells, int numLeaders)
+Map MapGenerator::voronoi(int dim, int cells, int numLeaders)
 {
     assert(numLeaders < cells);
 
@@ -131,7 +131,57 @@ void MapGenerator::voronoi(int dim, int cells, int numLeaders)
     }
     //*/
 
-    return;
+    return buildMap(dim, mapCells, voronoiCells, lMembers);
+}
+
+Map MapGenerator::buildMap(int dim, std::map<std::pair<int, int>, int>& mapCells,
+    std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 
+    std::map<int, std::vector<int>>& lMembers)
+{
+    Map map{dim, dim};
+
+    int numLeaders = lMembers.size();
+    //std::geometric_distribution<int> gDist;
+
+    std::vector<std::pair<int, std::vector<int>>> lMemVec;
+    for(auto& lm : lMembers)
+        lMemVec.emplace_back(lm.first, lm.second);
+
+    // Sort the leader groups based on their number of cells (TODO: Maybe sort based on total map tile count)
+    std::sort(std::begin(lMemVec), std::end(lMemVec), [&](auto& p1, auto& p2)
+    {
+        return p1.second.size() < p2.second.size();
+    });
+
+    int numWater    = numLeaders / 3;
+    int numSwap     = numWater*2;
+    //int numMeadow   = numLeaders - numWater - numSwap; 
+
+    int i = 0;
+    for(auto& lm : lMemVec)
+    {
+        for(auto& cell : lm.second)
+        {
+            auto& cellMembers = voronoiCells.find(cell)->second;
+            if(i < numWater)
+                setTileTypeFromGroup(map, Terrain::WATER, cellMembers);
+            else if (i < numSwap)
+                setTileTypeFromGroup(map, Terrain::SWAMP, cellMembers);
+            else
+                setTileTypeFromGroup(map, Terrain::MEADOW, cellMembers);
+        }
+
+        ++i;
+    }
+
+    return map;
+}
+
+void MapGenerator::setTileTypeFromGroup(Map& map, Terrain terrain, 
+    std::set<std::pair<int, int>>& cellMembers)
+{
+    for(auto [x, y] : cellMembers)
+        map.sq(x, y).terrain = terrain;
 }
 
 
