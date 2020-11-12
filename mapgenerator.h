@@ -11,12 +11,11 @@ class MapGenerator
 {
     int size;
     uint_fast32_t seed;
-    std::uniform_int_distribution<int> dist;
     std::default_random_engine re;
 
 public:
     MapGenerator(int size, uint_fast32_t seed) 
-        : size{size}, seed{seed}, dist{0, size}, re{seed}
+        : size{size}, seed{seed}, re{seed}
     {}
 
     Map voronoi(int dim, int cells, int numLeaders);
@@ -31,4 +30,7 @@ private:
         std::map<int, std::vector<int>>& lMembers);
     void setTileTypeFromGroup(Map& map, Terrain terrain, 
         std::set<std::pair<int, int>>& cellMembers, int& mapCellCount);
+    
+    void buildWalls(Map& map, int num, std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 
+        std::map<std::pair<int, int>, int>& mapCells, std::map<int, Terrain>& terrainMappings);
 };
