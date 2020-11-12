@@ -21,6 +21,7 @@ public:
 
     Map voronoi(int dim, int cells, int numLeaders);
 private:
+    void buildVornoiPoints(int cells, std::vector<int>& px, std::vector<int>& py);
     void assignVoronoiCells(int dim, int cells, std::vector<int>& px, std::vector<int>& py,
         std::map<std::pair<int, int>, int>& mapCells,
         std::map<int, std::set<std::pair<int, int>>>& voronoiCells);
@@ -29,5 +30,5 @@ private:
         std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 
         std::map<int, std::vector<int>>& lMembers);
     void setTileTypeFromGroup(Map& map, Terrain terrain, 
-        std::set<std::pair<int, int>>& cellMembers);
+        std::set<std::pair<int, int>>& cellMembers, int& mapCellCount);
 };

@@ -11,10 +11,32 @@ double distance(int x1, int y1, int x2, int y2)
 // TODO: Adjacecy matrix? Or build adjacency info for voronoi cells first?
 bool isAdjacent(int x1, int y1, int x2, int y2)
 {
-    int diffX = x1 - x2;
-    int diffY = y1 - y2;
+    int diffX = (x1 - x2) * (x1 - x2);
+    int diffY = (y1 - y2) * (y1 - y2);
 
-    return std::abs(diffX) == (std::abs(diffY) == 1);
+    return diffX <= 1 && diffY <= 1;
+}
+
+void MapGenerator::buildVornoiPoints(int cells, std::vector<int>& px, std::vector<int>& py)
+{
+    // Build Voronoi points
+    std::set<std::pair<int, int>> points;
+    for(int i = 0; i < cells; ++i)
+    {
+        int x = dist(re);
+        int y = dist(re);
+
+        // Don't double up on Voronoi cell points
+        if(points.find(std::pair{x, y}) != std::end(points))
+        {
+            --i;
+            continue;
+        }
+
+        px[i] = x;
+        py[i] = y;
+        points.emplace(std::pair{x, y});
+    }
 }
 
 void MapGenerator::assignVoronoiCells(int dim, int cells, std::vector<int>& px, std::vector<int>& py, 
@@ -38,6 +60,9 @@ void MapGenerator::assignVoronoiCells(int dim, int cells, std::vector<int>& px, 
             else
                 it->second.emplace(std::pair{x, y});
         }
+    
+    // Make sure every map square is assigned to a vornoi cell
+    assert(mapCells.size() == dim*dim);
 }
 
 Map MapGenerator::voronoi(int dim, int cells, int numLeaders)
@@ -46,12 +71,7 @@ Map MapGenerator::voronoi(int dim, int cells, int numLeaders)
 
     std::vector<int> px(cells);
     std::vector<int> py(cells);
-
-    for(int i = 0; i < cells; ++i)
-    {
-        px[i] = dist(re);
-        py[i] = dist(re);
-    }
+    buildVornoiPoints(cells, px, py);
 
     // Find which map cells belong to which voronoi cells and vice versa
     std::map<std::pair<int, int>, int> mapCells;
@@ -60,13 +80,13 @@ Map MapGenerator::voronoi(int dim, int cells, int numLeaders)
 
     // Choose leader points
     std::vector<int> leaders;
-    std::uniform_int_distribution<int> distC{0, cells};
+    std::uniform_int_distribution<int> distC{0, cells-1};
     for(int i = 0; i < numLeaders; ++i)
     {
         // Don't duplicate leaders (unlikely, but possible)
         int n = distC(re);
         if(std::find(std::begin(leaders), std::end(leaders), n) == std::end(leaders))
-            leaders.emplace_back(distC(re));
+            leaders.emplace_back(n);
         else
             --i;
     }
@@ -83,8 +103,7 @@ Map MapGenerator::voronoi(int dim, int cells, int numLeaders)
         if(std::find(std::begin(leaders), std::end(leaders), i) == std::end(leaders))
             notFilled.emplace(i);
 
-
-    ///*
+    assert(notFilled.size() == cells - leaders.size());
 
     // Loop through the number of cells not assigned
     for(int d = 0; d < cells - numLeaders; ++d)
@@ -96,7 +115,7 @@ Map MapGenerator::voronoi(int dim, int cells, int numLeaders)
         // Loop through the members of each leaders group
         for(auto lm : lMembers[l])
         {
-            int nfId            = 0;
+            int nfId = 0;
             for(int nf : notFilled)
             {
                 nfId = nf;
@@ -130,7 +149,7 @@ Map MapGenerator::voronoi(int dim, int cells, int numLeaders)
         }
     }
     //*/
-
+    assert(notFilled.empty());
     return buildMap(dim, mapCells, voronoiCells, lMembers);
 }
 
@@ -158,30 +177,36 @@ Map MapGenerator::buildMap(int dim, std::map<std::pair<int, int>, int>& mapCells
     //int numMeadow   = numLeaders - numWater - numSwap; 
 
     int i = 0;
+    int mapCellCount = 0;
     for(auto& lm : lMemVec)
     {
         for(auto& cell : lm.second)
         {
             auto& cellMembers = voronoiCells.find(cell)->second;
             if(i < numWater)
-                setTileTypeFromGroup(map, Terrain::WATER, cellMembers);
+                setTileTypeFromGroup(map, Terrain::WATER, cellMembers, mapCellCount);
             else if (i < numSwap)
-                setTileTypeFromGroup(map, Terrain::SWAMP, cellMembers);
+                setTileTypeFromGroup(map, Terrain::SWAMP, cellMembers, mapCellCount);
             else
-                setTileTypeFromGroup(map, Terrain::MEADOW, cellMembers);
+                setTileTypeFromGroup(map, Terrain::MEADOW, cellMembers, mapCellCount);
         }
 
         ++i;
     }
 
+    assert(mapCellCount == dim*dim);
+
     return map;
 }
 
 void MapGenerator::setTileTypeFromGroup(Map& map, Terrain terrain, 
-    std::set<std::pair<int, int>>& cellMembers)
+    std::set<std::pair<int, int>>& cellMembers, int& mapCellCount)
 {
     for(auto [x, y] : cellMembers)
+    {
+        ++mapCellCount;
         map.sq(x, y).terrain = terrain;
+    }
 }
 
 
