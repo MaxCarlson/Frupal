@@ -67,5 +67,9 @@ bool Input::input(Player& player, Map& map)
             break;
     }
 
+  
+
+   
+
     return true;
 }
