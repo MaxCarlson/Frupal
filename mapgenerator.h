@@ -12,6 +12,7 @@ class MapGenerator
     int size;
     uint_fast32_t seed;
     std::default_random_engine re;
+    enum {NE, SE, SW, NW};
 
     std::vector<int>    px;
     std::vector<int>    py; 
@@ -60,7 +61,12 @@ private:
     void placeWallObstacles(Map& map, std::vector<bool>& isWallVerticle,
         std::map<int, std::vector<std::pair<int, int>>>& mapWallSquares);
 
-    void buildHouses(Map& map, int min, int max);
+    std::pair<int, int> moveSqDir(int x, int y, int dir, int len) const;
+    bool checkHouseSide(int x, int y, int dir, int length, 
+        const Map& map, std::vector<std::pair<int, int>>& corners);
+    std::tuple<int, int, int> findHouseLocation(const Map& map, int maxSide,
+        std::vector<std::pair<int, int>>& corners);
+    void buildHouses(Map& map, int min, int max, int minSide, int maxSide);
 
     // Place all items on the map
     void placeItems(Map& map);

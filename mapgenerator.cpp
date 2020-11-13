@@ -273,7 +273,7 @@ Map MapGenerator::buildMap()
 
     assert(mapCellCount == size*size);
 
-    buildHouses(map, 4, 12);
+    buildHouses(map, 4, 12, 5, 10);
     buildWalls(map, 20);
     placeItems(map);
 
@@ -314,7 +314,8 @@ void MapGenerator::buildWalls(Map& map, int num)
             return false;
         
         // No walls on water
-        if(terrainMappings.find(cell)->second == Terrain::WATER)
+        Terrain t = terrainMappings.find(cell)->second;
+        if(t == Terrain::WATER || t == Terrain::WALL)
             return false;
         return true;
     };
@@ -338,13 +339,18 @@ void MapGenerator::buildWalls(Map& map, int num)
         int dir = distDir(re);
         auto [xDir, yDir] = getDirMods(dir);
 
-        // Determine and store wall dir
-        isWallVerticle.emplace_back(xDir ? false : true);
-
         // Pick map cell out of the Voronoi cell to start in
         auto vMapCells = voronoiCells.find(cell)->second;
         auto [x, y] = *std::begin(vMapCells);
 
+        // Don't build walls on map edge
+        if(x < 1 || y < 1 || x >= map.getWidth() - 1 || y >= map.getHeight() - 1)
+            goto TRY_AGAIN;
+
+        // Determine and store wall dir
+        isWallVerticle.emplace_back(xDir ? false : true);
+
+        // Add root wall square
         map.sq(x, y).terrain = Terrain::WALL;
         auto [mapWallIt, done] = mapWallSquares.emplace(wall, std::vector<std::pair<int, int>>{std::pair{x, y}});
 
@@ -365,6 +371,13 @@ void MapGenerator::buildWalls(Map& map, int num)
             cell = newCell;
             map.sq(x, y).terrain = Terrain::WALL;
             mapWallIt->second.emplace_back(std::pair{x, y});
+        }
+
+        if(mapWallIt->second.size() <= 1)
+        {
+            mapWallSquares.erase(wall);
+            isWallVerticle.erase(std::end(isWallVerticle) - 1);
+            goto TRY_AGAIN;
         }
     }
 
@@ -411,107 +424,156 @@ void MapGenerator::placeWallObstacles(Map& map, std::vector<bool>& isWallVerticl
     }
 }
 
-void MapGenerator::buildHouses(Map& map, int min, int max)
+std::pair<int, int> MapGenerator::moveSqDir(int x, int y, int dir, int len) const
 {
+    // Start at one of the corners of the previous corners, move diagonally in dir
+    // and start iterating up the side clockwise
+    switch(dir)
+    {
+        case NE:
+        return std::pair{x + len, y - len};
+        case SE:
+        return std::pair{x + len, y + len};
+        case SW:
+        return std::pair{x - len, y + len};
+        case NW:
+        return std::pair{x - len, y - len};
+    }
+    return std::pair{0,0};
+}
+
+bool MapGenerator::checkHouseSide(int x, int y, int dir, int length, 
+    const Map& map, std::vector<std::pair<int, int>>& corners)
+{
+    int xMod, yMod;
+    switch(dir)
+    {
+        case NE:
+        xMod = 0;  yMod = 1;  break;
+        case SE:
+        xMod = -1; yMod = 0;  break;
+        case SW:
+        xMod = 0;  yMod = -1; break;
+        case NW:
+        xMod = 1;  yMod = 0;  break;
+    }
+
+    auto [xc, yc] = moveSqDir(x, y, dir, 1);
+
+    auto isValid = [&](int x, int y)
+    {
+        if(x < 0 || y < 0 || x >= map.getWidth() || y >= map.getWidth())
+            return false;
+        return map.sq(x, y).terrain == Terrain::MEADOW;
+    };
+
+    for(int i = 0; i < length; ++i)
+    {
+        if(!isValid(xc, yc))
+            return false;
+        xc += xMod;
+        yc += yMod;
+    }
+    return true;
+}
+
+std::tuple<int, int, int> MapGenerator::findHouseLocation(const Map& map, 
+    int maxSide, std::vector<std::pair<int, int>>& corners)
+{
+    std::uniform_int_distribution<int> distCell{0, static_cast<int>(voronoiCells.size()) - 1};
+
+    // TODO: This is ineffecient and could be made more so by 
+    // storing a map of all cells by terrain types
+    //
+    // Select random Meadow cell not occupied by a house
+    int mcell = -1;
+    for(;;)
+    {
+        mcell = distCell(re);
+        if(terrainMappings.find(mcell)->second == Terrain::MEADOW
+            && houseCells.find(mcell) == std::end(houseCells))
+            break;
+    }
+
+    // Select middle cell point of cell
+    auto find = voronoiCellsVec.find(mcell);
+    auto [x, y] = find->second[find->second.size() / 2];
+
+    // Find the largest Rectangle around the choosen point
+    int sideLength = 2;
+    std::fill(std::begin(corners), std::end(corners), std::pair{x, y});
+
+    int len;
+    for(len = 1; len <= maxSide - 1; len += 2)
+    {
+        // Check if all sides are valid
+        bool invalidSide    = false;
+        //bool sideSuccess[4] = {true, true, true, true};
+        for(int d = 0; d < 4; ++d)
+            if(!checkHouseSide(x, y, d, sideLength, map, corners))
+            {
+                invalidSide     = true;
+                // sideSuccess[d]  = false;
+                break;
+            }
+
+        if(invalidSide)
+        {
+            len -= 2;
+            break;
+        }
+        
+        // Move the corners outwards
+        int dir = 0;
+        for(auto& [xc, yc] : corners)
+        {
+            auto [nxc, nyc] = moveSqDir(xc, yc, dir++, 1);
+            xc = nxc;
+            yc = nyc;
+        }
+    }
+    return std::tuple{x, y, len};
+}
+
+void MapGenerator::buildHouses(Map& map, int min, int max, int minSide, int maxSide)
+{
+
+    std::vector<std::pair<int, int>> corners(4);
     std::uniform_int_distribution<int> dist{min, max};
     int numHouses = dist(re);
 
-    const int maxDimX = 10;
-    const int maxDimY = maxDimX;
-
-    enum {NE, SE, SW, NW};
-
-    // Start at one of the corners of the previous corners, move diagonally in dir
-    // and start iterating up the side clockwise
-    auto moveSqDir = [&](int x, int y, int dir)
-    {
-        switch(dir)
-        {
-            case NE:
-            return std::pair{x + 1, y - 1};
-            case SE:
-            return std::pair{x + 1, y + 1};
-            case SW:
-            return std::pair{x - 1, y + 1};
-            case NW:
-            return std::pair{x - 1, y - 1};
-        }
-    };
-
-    auto checkSide = [&](int x, int y, int dir, int length, auto& corners)
-    {
-        int xMod, yMod;
-        switch(dir)
-        {
-            case NE:
-            xMod = 0;  yMod = 1;  break;
-            case SE:
-            xMod = -1; yMod = 0;  break;
-            case SW:
-            xMod = 0;  yMod = -1; break;
-            case NW:
-            xMod = 1;  yMod = 0;  break;
-        }
-
-        auto [xc, yc] = moveSqDir(x, y, dir);
-
-        auto isValid = [&](int x, int y)
-        {
-            if(x < 0 || y < 0 || x >= map.getWidth() || y >= map.getWidth())
-                return false;
-            return map.sq(x, y).terrain == Terrain::MEADOW;
-        };
-
-        for(int i = 0; i < length; ++i)
-        {
-            if(!isValid(xc, yc))
-                return false;
-            xc += xMod;
-            yc += yMod;
-        }
-        return true;
-    };
-
     for(int i = 0; i < numHouses; ++i)
     {
-        // Select random Meadow cell not occupied by a house
-        int mcell = -1;
-        std::uniform_int_distribution<int> distCell{0, static_cast<int>(voronoiCells.size()) - 1};
-        for(;;)
+        auto [x, y, len] = findHouseLocation(map, maxSide, corners);        
+
+        // Try again if our minimum side length isn't met
+        if(len < minSide)
         {
-            mcell = distCell(re);
-            if(terrainMappings.find(mcell)->second == Terrain::MEADOW
-                && houseCells.find(mcell) == std::end(houseCells))
-                break;
+            --i;
+            continue;
         }
 
-        // Select middle cell point of cell
-        auto find = voronoiCellsVec.find(mcell);
-        auto [x, y] = find->second[find->second.size() / 2];
+        std::uniform_int_distribution<int> distS{minSide, len};
+        int halfXLen = (distS(re) - 1) / 2;
+        int halfYLen = (distS(re) - 1) / 2;
 
-        // Find the largest Rectangle around the choosen point
-        int sideLength = 2;
-        std::vector<std::pair<int, int>> corners(4);
-        std::fill(std::begin(corners), std::end(corners), std::pair{x, y});
-        for(int j = 0; j <= maxDimX - 2; ++j)
+        auto buildWalls = [&](int xMod, int yMod, int len)
         {
-            // Check if all sides are valid
-            bool invalidSide    = false;
-            bool sideSuccess[4] = {true, true, true, true};
-            for(int d = 0; d < 4; ++d)
-                if(!checkSide(x, y, d, sideLength, corners))
-                {
-                    invalidSide     = true;
-                    sideSuccess[d]  = false;
-                }
-
-            if(invalidSide)
+            int yts = y + yMod;
+            int xts = x + xMod;
+            map.sq(x, yts).terrain = Terrain::WALL;
+            for(int i = 0; i < len; ++i)
             {
-
+                map.sq(xts + i * (yMod != 0), yts + i * (xMod != 0)).terrain = Terrain::WALL;
+                map.sq(xts - i * (yMod != 0), yts - i * (xMod != 0)).terrain = Terrain::WALL;
             }
-            
+        };
 
-        }
+        // Build top and bottom of house
+        buildWalls(0,  halfYLen, halfYLen);
+        buildWalls(0, -halfYLen, halfYLen);
+        buildWalls(halfXLen,  0, halfXLen);
+        buildWalls(-halfXLen, 0, halfXLen);
     }
 }
 
@@ -519,9 +581,9 @@ void MapGenerator::placeItems(Map& map)
 {
 
     std::set<Terrain> mostItemTerrainTypes              = {Terrain::MEADOW, Terrain::SWAMP};
-    std::map<Terrain, float> foodChanceInTerrain        = {{Terrain::MEADOW, 0.5f}, {Terrain::SWAMP, 1.f}}; 
-    std::map<Terrain, float> toolChanceInTerrain        = {{Terrain::MEADOW, 0.2f}, {Terrain::SWAMP, 0.2f}}; 
-    std::map<Terrain, float> treasureChanceInTerrain    = {{Terrain::MEADOW, 0.1f}, {Terrain::SWAMP, 0.2f}}; 
+    std::map<Terrain, float> foodChanceInTerrain        = {{Terrain::MEADOW, 0.5f},  {Terrain::SWAMP, 1.f}}; 
+    std::map<Terrain, float> toolChanceInTerrain        = {{Terrain::MEADOW, 0.2f},  {Terrain::SWAMP, 0.2f}}; 
+    std::map<Terrain, float> treasureChanceInTerrain    = {{Terrain::MEADOW, 0.1f},  {Terrain::SWAMP, 0.2f}}; 
     std::map<Terrain, float> binocularChanceInTerrain   = {{Terrain::MEADOW, 0.01f}, {Terrain::SWAMP, 0.02f}}; 
 
 
