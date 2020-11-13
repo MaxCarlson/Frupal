@@ -25,9 +25,7 @@ struct MapSquare
     Terrain terrain;
     Item* item;
 
-    //MapSquare() = default;
-    MapSquare() : discovered{false}, terrain{}, item{} {} // Just for testing!
-
+    MapSquare() : discovered{true}, terrain{}, item{nullptr} {}
     MapSquare(bool discovered, Terrain terrain, Item* item) 
         : discovered{discovered}, terrain{terrain}, item{item}
     {}
@@ -51,16 +49,31 @@ public:
     int getWidth() const { return width; }
     int getHeight() const { return height; }
     std::pair<int, int> getXY() const { return {width, height}; }
-    const MapSquare& sq(int x, int y) const { return map[y][x]; }
-    MapSquare& sq(int x, int y) { return map[y][x]; }
+    const MapSquare& sq(int x, int y) const { return map[x][y]; }
+    MapSquare& sq(int x, int y) { return map[x][y]; }
 
     // Func is a lambda/function which takes (int, int, const MapSquare&)
     template<class Func>
     void loopMap(const Func& func) const
     {
-        for(int i = 0; i < height; ++i)
-            for(int j = 0; j < width; ++j)
-                func(j, i, map[i][j]);
+        for(int i = 0; i < width; ++i)
+            for(int j = 0; j < height; ++j)
+                func(i, j, map[i][j]);
     }
 
+    //template<class Func>
+    //void loopMap(const Func& func)
+    //{
+    //    for(int i = 0; i < height; ++i)
+    //        for(int j = 0; j < width; ++j)
+    //            func(j, i, map[i][j]);
+    //}
+
+    //template<class Func>
+    //void loopMapCoords(const Func& func) const
+    //{
+    //    for(int i = 0; i < height; ++i)
+    //        for(int j = 0; j < width; ++j)
+    //            func(j, i);
+    //}
 };
