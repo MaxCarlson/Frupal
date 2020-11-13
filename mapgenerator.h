@@ -17,10 +17,13 @@ class MapGenerator
     std::vector<int>    py; 
     std::vector<int>    leaders;
     std::set<int>       notFilled;
+    std::set<int>       houseCells;
+    std::map<int, Terrain>                          terrainMappings;
     std::map<std::pair<int, int>, int>              mapCells;
     std::map<int, std::set<std::pair<int, int>>>    voronoiCells;
     std::map<int, std::vector<std::pair<int, int>>> voronoiCellsVec; 
     std::map<int, std::vector<int>>                 lMembers;
+    std::map<int, std::vector<std::pair<int, int>>> houseCoords;
 
 public:
     MapGenerator(int size, uint_fast32_t seed) 
@@ -51,12 +54,14 @@ private:
     void setTileTypeFromGroup(Map& map, Terrain terrain, 
         std::set<std::pair<int, int>>& cellMembers, int& mapCellCount);
     
-    void buildWalls(Map& map, int num, std::map<int, Terrain>& terrainMappings);
+    void buildWalls(Map& map, int num);
 
     // Place obstacles in all walls in a way that allows all walls to be passed through
     void placeWallObstacles(Map& map, std::vector<bool>& isWallVerticle,
         std::map<int, std::vector<std::pair<int, int>>>& mapWallSquares);
 
+    void buildHouses(Map& map, int min, int max);
+
     // Place all items on the map
-    void placeItems(Map& map, std::map<int, Terrain>& terrainMappings);
+    void placeItems(Map& map);
 };

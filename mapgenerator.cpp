@@ -248,8 +248,6 @@ Map MapGenerator::buildMap()
     int numWater    = numLeaders / 3;
     int numSwap     = numWater / 4 + numWater;
 
-    std::map<int, Terrain> terrainMappings;
-
     // Place the terrain
     int i = 0;
     int mapCellCount = 0;
@@ -275,9 +273,9 @@ Map MapGenerator::buildMap()
 
     assert(mapCellCount == size*size);
 
-
-    buildWalls(map, 20, terrainMappings);
-    placeItems(map, terrainMappings);
+    buildHouses(map, 4, 12);
+    buildWalls(map, 20);
+    placeItems(map);
 
     return map;
 }
@@ -292,7 +290,7 @@ void MapGenerator::setTileTypeFromGroup(Map& map, Terrain terrain,
     }
 }
 
-void MapGenerator::buildWalls(Map& map, int num, std::map<int, Terrain>& terrainMappings)
+void MapGenerator::buildWalls(Map& map, int num)
 {
 
     auto getDirMods = [](int dir)
@@ -413,7 +411,111 @@ void MapGenerator::placeWallObstacles(Map& map, std::vector<bool>& isWallVerticl
     }
 }
 
-void MapGenerator::placeItems(Map& map, std::map<int, Terrain>& terrainMappings)
+void MapGenerator::buildHouses(Map& map, int min, int max)
+{
+    std::uniform_int_distribution<int> dist{min, max};
+    int numHouses = dist(re);
+
+    const int maxDimX = 10;
+    const int maxDimY = maxDimX;
+
+    enum {NE, SE, SW, NW};
+
+    // Start at one of the corners of the previous corners, move diagonally in dir
+    // and start iterating up the side clockwise
+    auto moveSqDir = [&](int x, int y, int dir)
+    {
+        switch(dir)
+        {
+            case NE:
+            return std::pair{x + 1, y - 1};
+            case SE:
+            return std::pair{x + 1, y + 1};
+            case SW:
+            return std::pair{x - 1, y + 1};
+            case NW:
+            return std::pair{x - 1, y - 1};
+        }
+    };
+
+    auto checkSide = [&](int x, int y, int dir, int length, auto& corners)
+    {
+        int xMod, yMod;
+        switch(dir)
+        {
+            case NE:
+            xMod = 0;  yMod = 1;  break;
+            case SE:
+            xMod = -1; yMod = 0;  break;
+            case SW:
+            xMod = 0;  yMod = -1; break;
+            case NW:
+            xMod = 1;  yMod = 0;  break;
+        }
+
+        auto [xc, yc] = moveSqDir(x, y, dir);
+
+        auto isValid = [&](int x, int y)
+        {
+            if(x < 0 || y < 0 || x >= map.getWidth() || y >= map.getWidth())
+                return false;
+            return map.sq(x, y).terrain == Terrain::MEADOW;
+        };
+
+        for(int i = 0; i < length; ++i)
+        {
+            if(!isValid(xc, yc))
+                return false;
+            xc += xMod;
+            yc += yMod;
+        }
+        return true;
+    };
+
+    for(int i = 0; i < numHouses; ++i)
+    {
+        // Select random Meadow cell not occupied by a house
+        int mcell = -1;
+        std::uniform_int_distribution<int> distCell{0, static_cast<int>(voronoiCells.size()) - 1};
+        for(;;)
+        {
+            mcell = distCell(re);
+            if(terrainMappings.find(mcell)->second == Terrain::MEADOW
+                && houseCells.find(mcell) == std::end(houseCells))
+                break;
+        }
+
+        // Select middle cell point of cell
+        auto find = voronoiCellsVec.find(mcell);
+        auto [x, y] = find->second[find->second.size() / 2];
+
+        // Find the largest Rectangle around the choosen point
+        int sideLength = 2;
+        std::vector<std::pair<int, int>> corners(4);
+        std::fill(std::begin(corners), std::end(corners), std::pair{x, y});
+        for(int j = 0; j <= maxDimX - 2; ++j)
+        {
+            // Check if all sides are valid
+            bool invalidSide    = false;
+            bool sideSuccess[4] = {true, true, true, true};
+            for(int d = 0; d < 4; ++d)
+                if(!checkSide(x, y, d, sideLength, corners))
+                {
+                    invalidSide     = true;
+                    sideSuccess[d]  = false;
+                }
+
+            if(invalidSide)
+            {
+
+            }
+            
+
+        }
+    }
+}
+
+void MapGenerator::placeItems(Map& map)
 {
 
     std::set<Terrain> mostItemTerrainTypes              = {Terrain::MEADOW, Terrain::SWAMP};
