@@ -25,7 +25,7 @@ bool isAdjacent(int x1, int y1, int x2, int y2)
     return diffX <= 1 && diffY <= 1;
 }
 
-void MapGenerator::buildVornoiPoints(int cells, std::vector<int>& px, std::vector<int>& py)
+void MapGenerator::buildVornoiPoints(int cells)
 {
     // Build Voronoi points
     std::set<std::pair<int, int>> points;
@@ -48,10 +48,7 @@ void MapGenerator::buildVornoiPoints(int cells, std::vector<int>& px, std::vecto
     }
 }
 
-void MapGenerator::assignVoronoiCells(int dim, int cells, std::vector<int>& px, std::vector<int>& py, 
-    std::map<std::pair<int, int>, int>& mapCells,
-    std::map<int, std::set<std::pair<int, int>>>& voronoiCells,
-    std::map<int, std::vector<std::pair<int, int>>>& voronoiCellsVec)
+void MapGenerator::assignVoronoiCells(int dim, int cells)
 {
     for(int x = 0; x < dim; ++x)
         for(int y = 0; y < dim; ++y)
@@ -81,9 +78,9 @@ void MapGenerator::assignVoronoiCells(int dim, int cells, std::vector<int>& px, 
     assert(mapCells.size() == dim*dim);
 }
 
-void MapGenerator::buildVoronoiHelpers(int numLeaders, int cells, std::set<int>& notFilled, 
-    std::vector<int>& leaders, std::map<int, std::vector<int>>& lMembers)
+void MapGenerator::buildVoronoiHelpers(int numLeaders, int cells)
 {
+    // Choose leader points
     std::uniform_int_distribution<int> distC{0, cells-1};
 
     for(int i = 0; i < numLeaders; ++i)
@@ -108,28 +105,24 @@ void MapGenerator::buildVoronoiHelpers(int numLeaders, int cells, std::set<int>&
     assert(notFilled.size() == cells - leaders.size());
 }
 
-Map MapGenerator::voronoi(int dim, int cells, int numLeaders)
+Map MapGenerator::generate(int dim, int cells, int numLeaders)
 {
     assert(numLeaders < cells);
 
-    std::vector<int> px(cells);
-    std::vector<int> py(cells);
-    buildVornoiPoints(cells, px, py);
+    px.resize(cells);
+    py.resize(cells);
+    buildVornoiPoints(cells);
 
     // Find which map cells belong to which voronoi cells and vice versa
-    std::map<std::pair<int, int>, int> mapCells;
-    std::map<int, std::set<std::pair<int, int>>> voronoiCells;
-    std::map<int, std::vector<std::pair<int, int>>> voronoiCellsVec;
+    assignVoronoiCells(dim, cells);
 
-    assignVoronoiCells(dim, cells, px, py, mapCells, voronoiCells, voronoiCellsVec);
+    buildVoronoiHelpers(numLeaders, cells);
 
-    // Choose leader points
-    std::set<int> notFilled;
-    std::vector<int> leaders;
-    std::map<int, std::vector<int>> lMembers;
+    return voronoi(dim, cells, numLeaders);
+}
 
-    buildVoronoiHelpers(numLeaders, cells, notFilled, leaders, lMembers);
-
+Map MapGenerator::voronoi(int dim, int cells, int numLeaders)
+{
     // Loop through the number of cells not assigned
     for(int d = 0; d < cells - numLeaders; ++d)
     {
@@ -175,7 +168,7 @@ Map MapGenerator::voronoi(int dim, int cells, int numLeaders)
     }
     //*/
     assert(notFilled.empty());
-    return buildMap(dim, mapCells, voronoiCells, voronoiCellsVec, lMembers);
+    return buildMap(dim);
 }
 
 template<class ItemType, class... Args>
@@ -236,10 +229,7 @@ void scatterItems(Map& map, std::map<int, std::set<std::pair<int, int>>>& vorono
     }
 }
 
-Map MapGenerator::buildMap(int dim, std::map<std::pair<int, int>, int>& mapCells,
-    std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 
-    std::map<int, std::vector<std::pair<int, int>>>& voronoiCellsVec,
-    std::map<int, std::vector<int>>& lMembers)
+Map MapGenerator::buildMap(int dim)
 {
     Map map{dim, dim};
 
@@ -286,8 +276,8 @@ Map MapGenerator::buildMap(int dim, std::map<std::pair<int, int>, int>& mapCells
     assert(mapCellCount == dim*dim);
 
 
-    buildWalls(map, 20, voronoiCells, mapCells, terrainMappings);
-    placeItems(map, voronoiCells, voronoiCellsVec, terrainMappings);
+    buildWalls(map, 20, terrainMappings);
+    placeItems(map, terrainMappings);
 
     return map;
 }
@@ -302,8 +292,7 @@ void MapGenerator::setTileTypeFromGroup(Map& map, Terrain terrain,
     }
 }
 
-void MapGenerator::buildWalls(Map& map, int num, std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 
-    std::map<std::pair<int, int>, int>& mapCells, std::map<int, Terrain>& terrainMappings)
+void MapGenerator::buildWalls(Map& map, int num, std::map<int, Terrain>& terrainMappings)
 {
 
     auto getDirMods = [](int dir)
@@ -424,9 +413,7 @@ void MapGenerator::placeWallObstacles(Map& map, std::vector<bool>& isWallVerticl
     }
 }
 
-void MapGenerator::placeItems(Map& map, std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 
-    std::map<int, std::vector<std::pair<int, int>>>& voronoiCellsVec,
-    std::map<int, Terrain>& terrainMappings)
+void MapGenerator::placeItems(Map& map, std::map<int, Terrain>& terrainMappings)
 {
 
     std::set<Terrain> mostItemTerrainTypes              = {Terrain::MEADOW, Terrain::SWAMP};
