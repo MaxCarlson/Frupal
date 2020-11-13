@@ -23,7 +23,8 @@ private:
     void buildVornoiPoints(int cells, std::vector<int>& px, std::vector<int>& py);
     void assignVoronoiCells(int dim, int cells, std::vector<int>& px, std::vector<int>& py,
         std::map<std::pair<int, int>, int>& mapCells,
-        std::map<int, std::set<std::pair<int, int>>>& voronoiCells);
+        std::map<int, std::set<std::pair<int, int>>>& voronoiCells,
+        std::map<int, std::vector<std::pair<int, int>>>& voronoiCellsVec);
 
     Map buildMap(int dim, std::map<std::pair<int, int>, int>& mapCells,
         std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 

@@ -44,7 +44,8 @@ void MapGenerator::buildVornoiPoints(int cells, std::vector<int>& px, std::vecto
 
 void MapGenerator::assignVoronoiCells(int dim, int cells, std::vector<int>& px, std::vector<int>& py, 
     std::map<std::pair<int, int>, int>& mapCells,
-    std::map<int, std::set<std::pair<int, int>>>& voronoiCells)
+    std::map<int, std::set<std::pair<int, int>>>& voronoiCells,
+    std::map<int, std::vector<std::pair<int, int>>>& voronoiCellsVec)
 {
     for(int x = 0; x < dim; ++x)
         for(int y = 0; y < dim; ++y)
@@ -79,7 +80,9 @@ Map MapGenerator::voronoi(int dim, int cells, int numLeaders)
     // Find which map cells belong to which voronoi cells and vice versa
     std::map<std::pair<int, int>, int> mapCells;
     std::map<int, std::set<std::pair<int, int>>> voronoiCells;
-    assignVoronoiCells(dim, cells, px, py, mapCells, voronoiCells);
+    std::map<int, std::vector<std::pair<int, int>>> voronoiCellsVec;
+
+    assignVoronoiCells(dim, cells, px, py, mapCells, voronoiCells, voronoiCellsVec);
 
     // Choose leader points
     std::vector<int> leaders;
@@ -156,12 +159,24 @@ Map MapGenerator::voronoi(int dim, int cells, int numLeaders)
     return buildMap(dim, mapCells, voronoiCells, lMembers);
 }
 
-// TODO
 template<class ItemType>
 void scatterItems(Map& map, std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 
-    std::map<int, Terrain>& terrainMappings, int number, Terrain type)
+    std::map<int, Terrain>& terrainMappings, const std::map<Terrain, float>& chanceInTerrain, std::set<Terrain> types)
 {
+    std::uniform_real_distribution<float> dist{0.f, 1.f};
 
+    for(const auto& [cId, coords] : voronoiCells)
+    {
+        Terrain ttype       = terrainMappings.find(cId)->second;
+        float cellChance    = chanceInTerrain.find(ttype)->second; 
+
+
+        std::uniform_int_distribution<int> distM{0, static_cast<int>(coords.size()) - 1};
+        while(cellChance >= 1.f)
+        {
+
+        }
+    }
 }
 
 Map MapGenerator::buildMap(int dim, std::map<std::pair<int, int>, int>& mapCells,
@@ -333,13 +348,15 @@ void MapGenerator::placeWallObstacles(Map& map, std::vector<bool>& isWallVerticl
                 validObstacleSqs.emplace_back(std::pair{x, y});
         }
 
-        std::uniform_int_distribution<int> obSqDist{0, validObstacleSqs.size() - 1};
+        std::uniform_int_distribution<int> obSqDist{0, static_cast<int>(validObstacleSqs.size()) - 1};
         int obIdx = obSqDist(re);
         auto [x, y] = validObstacleSqs[obIdx];
+
+
         // TODO: Pick random obstacle here
-        map.sq(x, y).item = new Obstacle{""};
+        map.sq(x, y).item = new Obstacle{"test", 10};
         
-        // Refill map terrain where obstacle was placed
+        // Refill map terrain where obstacle was placed (and the wall terrain was removed)
         if(isWallVerticle[wallId])
             map.sq(x, y).terrain = map.sq(x+1, y).terrain;
         else
