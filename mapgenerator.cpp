@@ -48,10 +48,10 @@ void MapGenerator::buildVornoiPoints(int cells)
     }
 }
 
-void MapGenerator::assignVoronoiCells(int dim, int cells)
+void MapGenerator::assignVoronoiCells(int cells)
 {
-    for(int x = 0; x < dim; ++x)
-        for(int y = 0; y < dim; ++y)
+    for(int x = 0; x < size; ++x)
+        for(int y = 0; y < size; ++y)
         {
             // Find the closest voronoi cell for each map cell
             int n = 0;
@@ -75,7 +75,7 @@ void MapGenerator::assignVoronoiCells(int dim, int cells)
         }
     
     // Make sure every map square is assigned to a vornoi cell
-    assert(mapCells.size() == dim*dim);
+    assert(mapCells.size() == size*size);
 }
 
 void MapGenerator::buildVoronoiHelpers(int numLeaders, int cells)
@@ -105,7 +105,7 @@ void MapGenerator::buildVoronoiHelpers(int numLeaders, int cells)
     assert(notFilled.size() == cells - leaders.size());
 }
 
-Map MapGenerator::generate(int dim, int cells, int numLeaders)
+Map MapGenerator::generate(int cells, int numLeaders)
 {
     assert(numLeaders < cells);
 
@@ -114,14 +114,14 @@ Map MapGenerator::generate(int dim, int cells, int numLeaders)
     buildVornoiPoints(cells);
 
     // Find which map cells belong to which voronoi cells and vice versa
-    assignVoronoiCells(dim, cells);
+    assignVoronoiCells(cells);
 
     buildVoronoiHelpers(numLeaders, cells);
 
-    return voronoi(dim, cells, numLeaders);
+    return voronoi(cells, numLeaders);
 }
 
-Map MapGenerator::voronoi(int dim, int cells, int numLeaders)
+Map MapGenerator::voronoi(int cells, int numLeaders)
 {
     // Loop through the number of cells not assigned
     for(int d = 0; d < cells - numLeaders; ++d)
@@ -168,7 +168,7 @@ Map MapGenerator::voronoi(int dim, int cells, int numLeaders)
     }
     //*/
     assert(notFilled.empty());
-    return buildMap(dim);
+    return buildMap();
 }
 
 template<class ItemType, class... Args>
@@ -229,9 +229,9 @@ void scatterItems(Map& map, std::map<int, std::set<std::pair<int, int>>>& vorono
     }
 }
 
-Map MapGenerator::buildMap(int dim)
+Map MapGenerator::buildMap()
 {
-    Map map{dim, dim};
+    Map map{size, size};
 
     int numLeaders = lMembers.size();
 
@@ -273,7 +273,7 @@ Map MapGenerator::buildMap(int dim)
         ++i;
     }
 
-    assert(mapCellCount == dim*dim);
+    assert(mapCellCount == size*size);
 
 
     buildWalls(map, 20, terrainMappings);

@@ -24,27 +24,28 @@ class MapGenerator
 
 public:
     MapGenerator(int size, uint_fast32_t seed) 
-        : size{size}, seed{seed}, re{seed}
+        : size{size}, seed{seed}, re{seed}, px{}, py{}, 
+        leaders{}, notFilled{}, mapCells{}, voronoiCells{}, 
+        voronoiCellsVec{}, lMembers{}
     {}
 
-    Map generate(int dim, int cells, int numLeaders);
-
+    Map generate(int cells, int numLeaders);
 
 private:
     // Build a voronoi map
-    Map voronoi(int dim, int cells, int numLeaders);
+    Map voronoi(int cells, int numLeaders);
 
     // Generate cells number of Voronoi points, coordinates of px & py
     void buildVornoiPoints(int cells);
 
     // Map map squares to the appropriate Voronoi cell
-    void assignVoronoiCells(int dim, int cells);
+    void assignVoronoiCells(int cells);
 
     // Build various data structures required by Build Map & other functions
     void buildVoronoiHelpers(int numLeaders, int cells);
 
     // Assign map squares terrain based on the Voronoi leader's groups
-    Map buildMap(int dim);
+    Map buildMap();
 
     // Assign all members of a Voronoi cell a particular terrain type
     void setTileTypeFromGroup(Map& map, Terrain terrain, 

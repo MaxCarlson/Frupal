@@ -26,7 +26,7 @@ int main()
 
     // TODO: Move this into the main menu
     MapGenerator mgen{128, 2};
-    Map m = mgen.generate(128, 400, 100);
+    Map m = mgen.generate(400, 100);
     
 
     // Main Loop
