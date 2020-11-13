@@ -26,15 +26,24 @@ private:
         std::map<int, std::set<std::pair<int, int>>>& voronoiCells,
         std::map<int, std::vector<std::pair<int, int>>>& voronoiCellsVec);
 
+    void buildVoronoiHelpers(int numLeaders, int cells, std::set<int>& notFilled, 
+        std::vector<int>& leaders, std::map<int, std::vector<int>>& lMembers);
+
     Map buildMap(int dim, std::map<std::pair<int, int>, int>& mapCells,
         std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 
+        std::map<int, std::vector<std::pair<int, int>>>& voronoiCellsVec,
         std::map<int, std::vector<int>>& lMembers);
+
     void setTileTypeFromGroup(Map& map, Terrain terrain, 
         std::set<std::pair<int, int>>& cellMembers, int& mapCellCount);
     
-    void buildWalls(Map& map, int num, std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 
+    void buildWalls(Map& map, int num, std::map<int, std::set<std::pair<int, int>>>& voronoiCells,
         std::map<std::pair<int, int>, int>& mapCells, std::map<int, Terrain>& terrainMappings);
 
     void placeWallObstacles(Map& map, std::vector<bool>& isWallVerticle,
         std::map<int, std::vector<std::pair<int, int>>>& mapWallSquares);
+
+    void placeItems(Map& map, std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 
+        std::map<int, std::vector<std::pair<int, int>>>& voronoiCellsVec,
+        std::map<int, Terrain>& terrainMappings);
 };

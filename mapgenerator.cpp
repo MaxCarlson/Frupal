@@ -1,5 +1,6 @@
 #include "mapgenerator.h"
 #include "map.h"
+#include "items/food.h"
 #include "items/obstacle.h"
 #include <assert.h>
 #include <algorithm>
@@ -60,13 +61,46 @@ void MapGenerator::assignVoronoiCells(int dim, int cells, std::vector<int>& px, 
 
             auto it = voronoiCells.find(n);
             if(it == std::end(voronoiCells))
+            {
                 voronoiCells.emplace(n, std::set<std::pair<int, int>>{std::pair{x, y}});
+                voronoiCellsVec.emplace(n, std::vector<std::pair<int, int>>{std::pair{x, y}});
+            }
             else
+            {
                 it->second.emplace(std::pair{x, y});
+                voronoiCellsVec.find(n)->second.emplace_back(std::pair{x, y});
+            }
         }
     
     // Make sure every map square is assigned to a vornoi cell
     assert(mapCells.size() == dim*dim);
+}
+
+void MapGenerator::buildVoronoiHelpers(int numLeaders, int cells, std::set<int>& notFilled, 
+    std::vector<int>& leaders, std::map<int, std::vector<int>>& lMembers)
+{
+    std::uniform_int_distribution<int> distC{0, cells-1};
+
+    for(int i = 0; i < numLeaders; ++i)
+    {
+        // Don't duplicate leaders (unlikely, but possible)
+        int n = distC(re);
+        if(std::find(std::begin(leaders), std::end(leaders), n) == std::end(leaders))
+            leaders.emplace_back(n);
+        else
+            --i;
+    }
+
+    // Add leaders as members of a leader cells group
+    for(int l : leaders)
+        lMembers.emplace(l, std::vector<int>{l});
+
+    // Find non-accounted for cells
+    for(int i = 0; i < cells; ++i)
+        if(std::find(std::begin(leaders), std::end(leaders), i) == std::end(leaders))
+            notFilled.emplace(i);
+
+    assert(notFilled.size() == cells - leaders.size());
 }
 
 Map MapGenerator::voronoi(int dim, int cells, int numLeaders)
@@ -85,31 +119,11 @@ Map MapGenerator::voronoi(int dim, int cells, int numLeaders)
     assignVoronoiCells(dim, cells, px, py, mapCells, voronoiCells, voronoiCellsVec);
 
     // Choose leader points
-    std::vector<int> leaders;
-    std::uniform_int_distribution<int> distC{0, cells-1};
-    for(int i = 0; i < numLeaders; ++i)
-    {
-        // Don't duplicate leaders (unlikely, but possible)
-        int n = distC(re);
-        if(std::find(std::begin(leaders), std::end(leaders), n) == std::end(leaders))
-            leaders.emplace_back(n);
-        else
-            --i;
-    }
-
     std::set<int> notFilled;
+    std::vector<int> leaders;
     std::map<int, std::vector<int>> lMembers;
 
-    // Add leaders as members of a leader cells group
-    for(int l : leaders)
-        lMembers.emplace(l, std::vector<int>{l});
-
-    // Find non-accounted for cells
-    for(int i = 0; i < cells; ++i)
-        if(std::find(std::begin(leaders), std::end(leaders), i) == std::end(leaders))
-            notFilled.emplace(i);
-
-    assert(notFilled.size() == cells - leaders.size());
+    buildVoronoiHelpers(numLeaders, cells, notFilled, leaders, lMembers);
 
     // Loop through the number of cells not assigned
     for(int d = 0; d < cells - numLeaders; ++d)
@@ -156,31 +170,65 @@ Map MapGenerator::voronoi(int dim, int cells, int numLeaders)
     }
     //*/
     assert(notFilled.empty());
-    return buildMap(dim, mapCells, voronoiCells, lMembers);
+    return buildMap(dim, mapCells, voronoiCells, voronoiCellsVec, lMembers);
 }
 
-template<class ItemType>
+template<class ItemType, class... Args>
 void scatterItems(Map& map, std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 
-    std::map<int, Terrain>& terrainMappings, const std::map<Terrain, float>& chanceInTerrain, std::set<Terrain> types)
+    std::map<int, std::vector<std::pair<int, int>>>& voronoiCellsVec,
+    std::map<int, Terrain>& terrainMappings, const std::map<Terrain, float>& chanceInTerrain, 
+    const std::set<Terrain>& types, Args&& ...args)
 {
     std::uniform_real_distribution<float> dist{0.f, 1.f};
 
-    for(const auto& [cId, coords] : voronoiCells)
+    // Note, in order to get the parameter pack args into the llambda, we need to use the ugly hack in the [] below
+    auto addItemToRandomSq = [&, targs=std::make_tuple(std::forward<Args>(args)...)]
+        (auto& distM, const auto& coords)
     {
-        Terrain ttype       = terrainMappings.find(cId)->second;
-        float cellChance    = chanceInTerrain.find(ttype)->second; 
+        for(int i = 0; i < static_cast<int>(coords.size()); ++i)
+        {
+            int mapCell = distM(re);
+            auto [x, y] = coords[mapCell];
+            MapSquare& sq = map.sq(x, y);
+            if(types.find(sq.terrain) == std::end(types) || sq.item)
+                continue;
 
+            // TODO: We're going to have to grab the Items arguments randomly from a loaded text file
+            sq.item = new ItemType{std::forward<Args>(args)...};
+            return true;
+        }
+        return false;
+    };
 
+    for(const auto& [cId, coords] : voronoiCellsVec)
+    {
+        Terrain ttype = terrainMappings.find(cId)->second;
+        // Don't add items to the wrong terrains
+        if(types.find(ttype) == std::end(types))
+            continue;
+
+        float cellChance = chanceInTerrain.find(ttype)->second; 
         std::uniform_int_distribution<int> distM{0, static_cast<int>(coords.size()) - 1};
         while(cellChance >= 1.f)
         {
+            // Add item to random map square inside the voronoi cell
+            addItemToRandomSq(distM, coords);
 
+
+            cellChance -= 1.f;
         }
+
+        float rv = dist(re);
+        if(rv < cellChance)
+            continue;
+
+        
     }
 }
 
 Map MapGenerator::buildMap(int dim, std::map<std::pair<int, int>, int>& mapCells,
     std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 
+    std::map<int, std::vector<std::pair<int, int>>>& voronoiCellsVec,
     std::map<int, std::vector<int>>& lMembers)
 {
     Map map{dim, dim};
@@ -227,7 +275,7 @@ Map MapGenerator::buildMap(int dim, std::map<std::pair<int, int>, int>& mapCells
 
 
     buildWalls(map, 20, voronoiCells, mapCells, terrainMappings);
-
+    placeItems(map, voronoiCells, voronoiCellsVec, terrainMappings);
 
     return map;
 }
@@ -364,3 +412,14 @@ void MapGenerator::placeWallObstacles(Map& map, std::vector<bool>& isWallVerticl
     }
 }
 
+void MapGenerator::placeItems(Map& map, std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 
+    std::map<int, std::vector<std::pair<int, int>>>& voronoiCellsVec,
+    std::map<int, Terrain>& terrainMappings)
+{
+
+    std::map<Terrain, float> foodChanceInTerrain = {{Terrain::MEADOW, 0.5}, {Terrain::SWAMP, 1.f}}; 
+    std::set<Terrain> foodTerrainTypes = {Terrain::MEADOW, Terrain::SWAMP};
+
+    scatterItems<Food>(map, voronoiCells, voronoiCellsVec, 
+        terrainMappings, foodChanceInTerrain, foodTerrainTypes, "FoodTest", 15, 50);
+}
