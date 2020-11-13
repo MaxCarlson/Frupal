@@ -1,7 +1,12 @@
 #include "mapgenerator.h"
 #include "map.h"
+#include "items/binoculars.h"
+#include "items/chest.h"
+#include "items/clue.h"
 #include "items/food.h"
 #include "items/obstacle.h"
+#include "items/ship.h"
+#include "items/tool.h"
 #include <assert.h>
 #include <algorithm>
 
@@ -207,22 +212,27 @@ void scatterItems(Map& map, std::map<int, std::set<std::pair<int, int>>>& vorono
         if(types.find(ttype) == std::end(types))
             continue;
 
+        // While cell chance is above 1.0, place an item in a cell
         float cellChance = chanceInTerrain.find(ttype)->second; 
         std::uniform_int_distribution<int> distM{0, static_cast<int>(coords.size()) - 1};
         while(cellChance >= 1.f)
         {
             // Add item to random map square inside the voronoi cell
-            addItemToRandomSq(distM, coords);
-
-
-            cellChance -= 1.f;
+            if(addItemToRandomSq(distM, coords))
+                cellChance -= 1.f;
+            else
+                break;
         }
-
-        float rv = dist(re);
-        if(rv < cellChance)
+        // No free map squares in this cell
+        if(cellChance >= 1.f)
             continue;
 
-        
+        // Skip this cell if we don't pass the check
+        float rv = dist(re);
+        if(rv >= cellChance)
+            continue;
+
+        addItemToRandomSq(distM, coords);
     }
 }
 
@@ -244,11 +254,13 @@ Map MapGenerator::buildMap(int dim, std::map<std::pair<int, int>, int>& mapCells
         return p1.second.size() < p2.second.size();
     });
 
+    // Choose number of cells for each terrain type
     int numWater    = numLeaders / 3;
     int numSwap     = numWater / 4 + numWater;
 
     std::map<int, Terrain> terrainMappings;
 
+    // Place the terrain
     int i = 0;
     int mapCellCount = 0;
     for(auto& lm : lMemVec)
@@ -417,9 +429,23 @@ void MapGenerator::placeItems(Map& map, std::map<int, std::set<std::pair<int, in
     std::map<int, Terrain>& terrainMappings)
 {
 
-    std::map<Terrain, float> foodChanceInTerrain = {{Terrain::MEADOW, 0.5}, {Terrain::SWAMP, 1.f}}; 
-    std::set<Terrain> foodTerrainTypes = {Terrain::MEADOW, Terrain::SWAMP};
+    std::set<Terrain> mostItemTerrainTypes              = {Terrain::MEADOW, Terrain::SWAMP};
+    std::map<Terrain, float> foodChanceInTerrain        = {{Terrain::MEADOW, 0.5f}, {Terrain::SWAMP, 1.f}}; 
+    std::map<Terrain, float> toolChanceInTerrain        = {{Terrain::MEADOW, 0.2f}, {Terrain::SWAMP, 0.2f}}; 
+    std::map<Terrain, float> treasureChanceInTerrain    = {{Terrain::MEADOW, 0.1f}, {Terrain::SWAMP, 0.2f}}; 
+    std::map<Terrain, float> binocularChanceInTerrain   = {{Terrain::MEADOW, 0.01f}, {Terrain::SWAMP, 0.02f}}; 
+
+
 
     scatterItems<Food>(map, voronoiCells, voronoiCellsVec, 
-        terrainMappings, foodChanceInTerrain, foodTerrainTypes, "FoodTest", 15, 50);
+        terrainMappings, foodChanceInTerrain, mostItemTerrainTypes, "FoodTest", 15, 50);
+
+    scatterItems<Chest>(map, voronoiCells, voronoiCellsVec, 
+        terrainMappings, treasureChanceInTerrain, mostItemTerrainTypes, "ChestTest");
+
+    scatterItems<Tool>(map, voronoiCells, voronoiCellsVec, 
+        terrainMappings, toolChanceInTerrain, mostItemTerrainTypes, "ToolTest");
+
+    scatterItems<Binoculars>(map, voronoiCells, voronoiCellsVec, 
+        terrainMappings, binocularChanceInTerrain, mostItemTerrainTypes, "BinocularTest");
 }

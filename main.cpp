@@ -23,9 +23,8 @@ int main()
     curs_set(0);
 
     // TODO: Start screen
-    // Load map
-    // Generate clues
 
+    // TODO: Move this into the main menu
     MapGenerator mgen{128, 2};
     Map m = mgen.voronoi(128, 400, 100);
     
