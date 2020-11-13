@@ -56,24 +56,24 @@ public:
     template<class Func>
     void loopMap(const Func& func) const
     {
-        for(int i = 0; i < width; ++i)
-            for(int j = 0; j < height; ++j)
+        for(int j = 0; j < height; ++j)
+            for(int i = 0; i < width; ++i)
                 func(i, j, map[i][j]);
     }
 
     //template<class Func>
     //void loopMap(const Func& func)
     //{
-    //    for(int i = 0; i < height; ++i)
-    //        for(int j = 0; j < width; ++j)
-    //            func(j, i, map[i][j]);
+    //    for(int j = 0; j < height; ++j)
+    //      for(int i = 0; i < width; ++i)
+    //          func(i, j, map[i][j]);
     //}
 
     //template<class Func>
     //void loopMapCoords(const Func& func) const
     //{
-    //    for(int i = 0; i < height; ++i)
-    //        for(int j = 0; j < width; ++j)
-    //            func(j, i);
+    //    for(int j = 0; j < height; ++j)
+    //      for(int i = 0; i < width; ++i)
+    //          func(i, j);
     //}
 };
