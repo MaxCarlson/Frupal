@@ -6,6 +6,7 @@
 #include "map.h"
 #include "item.h"
 #include "ui.h"
+#include <string.h>
 
 enum Colors
 {
@@ -119,4 +120,31 @@ void Display::printCeneteredText(int x1, int x2, int y, std::string text)
 {
     assert(static_cast<int>(text.length()) <= x2 - x1);
     mvaddstr(y, (x2 - x1) / 2 - text.length() / 2, text.c_str());
+}
+
+int Display::deathScreen()
+{
+  int ch = 0;
+  char s1[] = "You have died!";
+  char s2[] = "Press 'S' to start a new game or 'Q' to quit.";
+  int x = (LINES / 2);
+  int y = (COLS - strlen(s1)) / 2;
+
+
+  erase();
+  // Prints messages in center of screen
+  mvprintw(x, y, "%s", s1);
+  y = (COLS - strlen(s2)) / 2;
+  ++y;
+  ++x;
+  mvprintw(x, y, "%s", s2);
+
+ 
+  while(ch != 's' && ch != 'q')
+    ch = getch();
+
+  if(ch == 'q')
+    return 0;
+
+  return 1;
 }
