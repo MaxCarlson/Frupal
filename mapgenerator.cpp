@@ -489,7 +489,7 @@ bool MapGenerator::checkHouseSide(int x, int y, int dir, int length,
     return true;
 }
 
-std::tuple<int, int, int> MapGenerator::findHouseLocation(const Map& map, 
+std::tuple<int, int, int> MapGenerator::findHouseLocation(const Map& map, int minSide, 
     int maxSide, std::vector<std::pair<int, int>>& corners)
 {
     std::uniform_int_distribution<int> distCell{0, static_cast<int>(voronoiCells.size()) - 1};
@@ -498,6 +498,7 @@ std::tuple<int, int, int> MapGenerator::findHouseLocation(const Map& map,
     // storing a map of all cells by terrain types
     //
     // Select random Meadow cell not occupied by a house
+    RESTART:
     int mcell = -1;
     for(;;)
     {
@@ -511,18 +512,22 @@ std::tuple<int, int, int> MapGenerator::findHouseLocation(const Map& map,
     auto find = voronoiCellsVec.find(mcell);
     auto [x, y] = find->second[find->second.size() / 2];
 
+    if(x < minSide - 1 || y < minSide - 1 || x >= map.getWidth() - minSide - 1 
+        || x >= map.getHeight() - minSide - 1 )
+        goto RESTART;
+
     // Find the largest Rectangle around the choosen point
-    int sideLength = 2;
     std::fill(std::begin(corners), std::end(corners), std::pair{x, y});
 
     int len;
     for(len = 1; len <= maxSide - 1; len += 2)
     {
         // Check if all sides are valid
+        int cornerDistance  = 1;
         bool invalidSide    = false;
         //bool sideSuccess[4] = {true, true, true, true};
         for(int d = 0; d < 4; ++d)
-            if(!checkHouseSide(x, y, d, sideLength, map, corners))
+            if(!checkHouseSide(x, y, d, cornerDistance++, map, corners))
             {
                 invalidSide     = true;
                 // sideSuccess[d]  = false;
@@ -534,6 +539,8 @@ std::tuple<int, int, int> MapGenerator::findHouseLocation(const Map& map,
             len -= 1;
             break;
         }
+
+        houseCells.emplace(mcell);
         
         // Move the corners outwards
         int dir = 0;
@@ -542,6 +549,7 @@ std::tuple<int, int, int> MapGenerator::findHouseLocation(const Map& map,
             auto [nxc, nyc] = moveSqDir(xc, yc, dir++, 1);
             xc = nxc;
             yc = nyc;
+            houseCells.emplace(mapCells.find(std::pair{xc, yc})->second);
         }
     }
     return std::tuple{x, y, len-1};
@@ -556,7 +564,7 @@ void MapGenerator::buildHouses(Map& map, int min, int max, int minSide, int maxS
 
     for(int i = 0; i < numHouses; ++i)
     {
-        auto [x, y, len] = findHouseLocation(map, maxSide, corners);        
+        auto [x, y, len] = findHouseLocation(map, minSide, maxSide, corners);        
 
         // Try again if our minimum side length isn't met
         if(len < minSide)

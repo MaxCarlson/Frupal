@@ -64,7 +64,7 @@ private:
     std::pair<int, int> moveSqDir(int x, int y, int dir, int len) const;
     bool checkHouseSide(int x, int y, int dir, int length, 
         const Map& map, std::vector<std::pair<int, int>>& corners);
-    std::tuple<int, int, int> findHouseLocation(const Map& map, int maxSide,
+    std::tuple<int, int, int> findHouseLocation(const Map& map, int maxSide, int minSide,
         std::vector<std::pair<int, int>>& corners);
     void buildHouses(Map& map, int min, int max, int minSide, int maxSide);
 
