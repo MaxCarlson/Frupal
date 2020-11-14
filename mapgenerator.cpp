@@ -315,7 +315,7 @@ void MapGenerator::buildWalls(Map& map, int num)
         
         // No walls on water
         Terrain t = terrainMappings.find(cell)->second;
-        if(t == Terrain::WATER || t == Terrain::WALL)
+        if(t == Terrain::WATER)
             return false;
         return true;
     };
@@ -351,8 +351,13 @@ void MapGenerator::buildWalls(Map& map, int num)
         isWallVerticle.emplace_back(xDir ? false : true);
 
         // Add root wall square
-        map.sq(x, y).terrain = Terrain::WALL;
         auto [mapWallIt, done] = mapWallSquares.emplace(wall, std::vector<std::pair<int, int>>{std::pair{x, y}});
+
+        auto isValidSq = [&](int x, int y) {
+            if(x < 0 || y < 0 || x > map.getWidth() - 1 || y > map.getHeight() - 1)
+                return false;
+            return map.sq(x, y).terrain != Terrain::WATER;
+        };
 
         // Expand wall from root
         for(;;)
@@ -360,16 +365,21 @@ void MapGenerator::buildWalls(Map& map, int num)
             x += xDir;
             y += yDir;
 
-            if(x < 0 || y < 0 || x > map.getWidth() - 1 || y > map.getHeight() - 1)
+            if(x <= 0 || y <= 0 || x > map.getWidth() - 2 || y > map.getHeight() - 2)
                 break;
 
-            // We're moving into a new cell, handle it
-            int newCell = mapCells.find(std::pair{x, y})->second;
-            if(newCell != cell && !isValidCell(newCell))
+            MapSquare& sq = map.sq(x, y);
+            if(sq.terrain == Terrain::WATER || sq.terrain == Terrain::WALL)
                 break;
 
-            cell = newCell;
-            map.sq(x, y).terrain = Terrain::WALL;
+            // Don't place walls with their length==1 side next to 
+            // un-walkable terrain (except end squares)
+            if(!(isWallVerticle.back() && isValidSq(x+1, y) && isValidSq(x-1, y)))
+                break;
+            else if(!(isValidSq(x, y+1) && isValidSq(x, y-1)))
+                break;
+
+            sq.terrain = Terrain::WALL;
             mapWallIt->second.emplace_back(std::pair{x, y});
         }
 
@@ -379,6 +389,8 @@ void MapGenerator::buildWalls(Map& map, int num)
             isWallVerticle.erase(std::end(isWallVerticle) - 1);
             goto TRY_AGAIN;
         }
+
+        map.sq(x, y).terrain = Terrain::WALL;
     }
 
     placeWallObstacles(map, isWallVerticle, mapWallSquares);
