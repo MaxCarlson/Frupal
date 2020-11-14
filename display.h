@@ -15,4 +15,5 @@ public:
     void printCharacter(const Camera& camera, const Player& player);
     void printUI(const Camera& camera, UI& ui, const Player& player, Map& map);
     void printCeneteredText(int x1, int x2, int y, std::string text);
+    int deathScreen();
 };

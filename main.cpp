@@ -33,33 +33,55 @@ int main()
     //
     // Check for input
     // Apply user input
+    // Check for player death
     // Print map/character
     // Print UI
     // Refresh
     // Run any other systems
 
-    UI      ui{COLS};
-    //Map     map{128, 128};
-    Map map{std::move(m)};
-    Input   input;
-    Player  player;
-    Camera  camera{COLS, LINES};
-    Display display;
+    bool gameRunning = true;
 
-    for(;;)
+    while(gameRunning)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds{SleepTime});
+      UI      ui{COLS};
+      Map     map{std::move(m};
+      Input   input;
+      Player  player;
+      Camera  camera{COLS, LINES};
+      Display display;
 
-        if(!input.input(player, map))
-            break;
+      for(;;)
+      {
+          std::this_thread::sleep_for(std::chrono::milliseconds{SleepTime});
 
-        // This must come first so everything is printed properly
-        camera.setOffsets(player, map, ui);
+          if(!input.input(player, map))
+          {
+              gameRunning = false;
+              break;
+          }
 
-        player.discoverTerrrain(map);
-        display.printMap(camera, map, ui);
-        display.printCharacter(camera, player);
-        display.printUI(camera, ui, player, map);
+          // Toggle playerDeath on and off in player.h
+          if(player.showPlayerDeath() && player.getEnergy() <= 0)
+          {
+            // Player has chosen to start a new game
+            if(display.deathScreen() == 1)
+              break; 
+            // Player has chosen to quit the program
+            else
+            {
+              gameRunning = false;
+              break;
+            }
+          }
+
+          // This must come first so everything is printed properly
+          camera.setOffsets(player, map, ui);
+
+          player.discoverTerrrain(map);
+          display.printMap(camera, map, ui);
+          display.printCharacter(camera, player);
+          display.printUI(camera, ui, player, map);
+      }
     }
 
     endwin();

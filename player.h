@@ -20,13 +20,14 @@ class Player
     int x, y;
     bool hasBinoculars;
     bool onShip;
+    bool playerDeath;
     Direction dir; // TODO: Remove this and make it an xy coordinate pair for cursor location
     std::vector<Tool*> tools;
 
     
 public:
     Player() :
-        energy{100}, money{1000}, x{0}, y{0}, hasBinoculars{false}, onShip{false}, dir{SOUTH}, tools{}
+        energy{100}, money{1000}, x{0}, y{0}, hasBinoculars{false}, onShip{false}, playerDeath{true}, dir{SOUTH}, tools{}
     {} 
 
     int getX() const { return x; }
@@ -41,6 +42,8 @@ public:
     int getEnergy() const { return energy; }
     Direction getDir() const { return dir; }
     void setDir(Direction dr) { dir = dr; }
+
+    bool showPlayerDeath() const { return playerDeath; }
 
     std::pair<int, int> selectedSquare() const;
     std::pair<int, int> getXY() const { return {x, y}; }
