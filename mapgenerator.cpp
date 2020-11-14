@@ -374,7 +374,7 @@ void MapGenerator::buildWalls(Map& map, int num)
 
             // Don't place walls with their length==1 side next to 
             // un-walkable terrain (except end squares)
-            if(!(isWallVerticle.back() && isValidSq(x+1, y) && isValidSq(x-1, y)))
+            if(isWallVerticle.back() && !(isValidSq(x+1, y) && isValidSq(x-1, y)))
                 break;
             else if(!(isValidSq(x, y+1) && isValidSq(x, y-1)))
                 break;
