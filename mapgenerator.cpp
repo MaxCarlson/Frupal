@@ -561,8 +561,8 @@ void MapGenerator::buildHouses(Map& map, int min, int max, int minSide, int maxS
         {
             int yts = y + yMod;
             int xts = x + xMod;
-            map.sq(x, yts).terrain = Terrain::WALL;
-            for(int i = 0; i < len; ++i)
+            map.sq(xts, yts).terrain = Terrain::WALL;
+            for(int i = 1; i < len+1; ++i)
             {
                 map.sq(xts + i * (yMod != 0), yts + i * (xMod != 0)).terrain = Terrain::WALL;
                 map.sq(xts - i * (yMod != 0), yts - i * (xMod != 0)).terrain = Terrain::WALL;
@@ -570,10 +570,10 @@ void MapGenerator::buildHouses(Map& map, int min, int max, int minSide, int maxS
         };
 
         // Build top and bottom of house
-        buildWalls(0,  halfYLen, halfYLen);
-        buildWalls(0, -halfYLen, halfYLen);
-        buildWalls(halfXLen,  0, halfXLen);
-        buildWalls(-halfXLen, 0, halfXLen);
+        buildWalls(0,  halfYLen, halfXLen);
+        buildWalls(0, -halfYLen, halfXLen);
+        buildWalls(halfXLen,  0, halfYLen);
+        buildWalls(-halfXLen, 0, halfYLen);
     }
 }
 
