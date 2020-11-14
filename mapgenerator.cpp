@@ -411,7 +411,9 @@ void MapGenerator::placeWallObstacles(Map& map, std::vector<bool>& isWallVerticl
             auto isValidSq = [&](int x, int y) {
                 if(x < 0 || y < 0 || x > map.getWidth() - 1 || y > map.getHeight() - 1)
                     return false;
-                return map.sq(x, y).terrain != Terrain::WATER;
+                const MapSquare& sq = map.sq(x, y);
+                Terrain t = sq.terrain;
+                return t != Terrain::WATER && t != Terrain::WALL && !sq.item;
             };
 
             if((isWallVerticle[wallId] && isValidSq(x+1, y) && isValidSq(x-1, y)))
