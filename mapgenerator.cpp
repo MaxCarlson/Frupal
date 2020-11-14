@@ -29,7 +29,7 @@ void MapGenerator::buildVornoiPoints(int cells)
 {
     // Build Voronoi points
     std::set<std::pair<int, int>> points;
-    std::uniform_int_distribution<int> dist{0, size};
+    std::uniform_int_distribution<int> dist{0, size-1};
     for(int i = 0; i < cells; ++i)
     {
         int x = dist(re);
@@ -131,7 +131,7 @@ Map MapGenerator::voronoi(int cells, int numLeaders)
         int l   = leaders[idx];
         
         // Loop through the members of each leaders group
-        for(auto lm : lMembers[l])
+        for(int lm : lMembers[l])
         {
             int nfId = 0;
             for(int nf : notFilled)
