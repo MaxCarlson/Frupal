@@ -1,4 +1,5 @@
 #include "map.h"
+#include "item.h"
 
 Map::Map(int width, int height) :
     width{width}, height{height}
@@ -15,6 +16,10 @@ Map::~Map()
     if(!map)
         return;
     for(int i = 0; i < height; ++i)
+    {
+        for(int j = 0; j < width; ++j)
+            delete map[i][j].item;
         delete[] map[i];
+    }
     delete[] map;
 }

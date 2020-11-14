@@ -275,6 +275,7 @@ Map MapGenerator::buildMap()
 
     buildHouses(map, 4, 12, 5, 10);
     buildWalls(map, 20);
+    placeHouseObstacles(map); // Must come after building walls
     placeItems(map);
 
     return map;
@@ -353,12 +354,6 @@ void MapGenerator::buildWalls(Map& map, int num)
         // Add root wall square
         auto [mapWallIt, done] = mapWallSquares.emplace(wall, std::vector<std::pair<int, int>>{std::pair{x, y}});
 
-        auto isValidSq = [&](int x, int y) {
-            if(x < 0 || y < 0 || x > map.getWidth() - 1 || y > map.getHeight() - 1)
-                return false;
-            return map.sq(x, y).terrain != Terrain::WATER;
-        };
-
         // Expand wall from root
         for(;;)
         {
@@ -374,9 +369,11 @@ void MapGenerator::buildWalls(Map& map, int num)
 
             // Don't place walls with their length==1 side next to 
             // un-walkable terrain (except end squares)
-            if(isWallVerticle.back() && !(isValidSq(x+1, y) && isValidSq(x-1, y)))
+            if(isWallVerticle.back() && !(validAdjacentObstacleSq(map, x+1, y) 
+                && validAdjacentObstacleSq(map, x-1, y)))
                 break;
-            else if(!(isValidSq(x, y+1) && isValidSq(x, y-1)))
+
+            else if(!(validAdjacentObstacleSq(map, x, y+1) && validAdjacentObstacleSq(map, x, y-1)))
                 break;
 
             sq.terrain = Terrain::WALL;
@@ -408,17 +405,11 @@ void MapGenerator::placeWallObstacles(Map& map, std::vector<bool>& isWallVerticl
         std::vector<std::pair<int, int>> validObstacleSqs;
         for(auto& [x, y] : wallSquares)
         {
-            auto isValidSq = [&](int x, int y) {
-                if(x < 0 || y < 0 || x > map.getWidth() - 1 || y > map.getHeight() - 1)
-                    return false;
-                const MapSquare& sq = map.sq(x, y);
-                Terrain t = sq.terrain;
-                return t != Terrain::WATER && t != Terrain::WALL && !sq.item;
-            };
-
-            if((isWallVerticle[wallId] && isValidSq(x+1, y) && isValidSq(x-1, y)))
+            if((isWallVerticle[wallId] && validAdjacentObstacleSq(map, x+1, y) 
+                && validAdjacentObstacleSq(map, x-1, y)))
                 validObstacleSqs.emplace_back(std::pair{x, y});
-            else if(isValidSq(x, y+1) && isValidSq(x, y-1))
+
+            else if(validAdjacentObstacleSq(map, x, y+1) && validAdjacentObstacleSq(map, x, y-1))
                 validObstacleSqs.emplace_back(std::pair{x, y});
         }
 
@@ -436,6 +427,15 @@ void MapGenerator::placeWallObstacles(Map& map, std::vector<bool>& isWallVerticl
         else
             map.sq(x, y).terrain = map.sq(x, y-1).terrain;
     }
+}
+
+bool MapGenerator::validAdjacentObstacleSq(const Map& map, int x, int y) const
+{
+    if(x < 0 || y < 0 || x > map.getWidth() - 1 || y > map.getHeight() - 1)
+        return false;
+    const MapSquare& sq = map.sq(x, y);
+    Terrain t = sq.terrain;
+    return t != Terrain::WATER && t != Terrain::WALL && !sq.item;
 }
 
 std::pair<int, int> MapGenerator::moveSqDir(int x, int y, int dir, int len) const
@@ -527,12 +527,10 @@ std::tuple<int, int, int> MapGenerator::findHouseLocation(const Map& map, int mi
         // Check if all sides are valid
         int cornerDistance  = 1;
         bool invalidSide    = false;
-        //bool sideSuccess[4] = {true, true, true, true};
         for(int d = 0; d < 4; ++d)
             if(!checkHouseSide(x, y, d, cornerDistance++, map, corners))
             {
                 invalidSide     = true;
-                // sideSuccess[d]  = false;
                 break;
             }
 
@@ -583,11 +581,24 @@ void MapGenerator::buildHouses(Map& map, int min, int max, int minSide, int maxS
         {
             int yts = y + yMod;
             int xts = x + xMod;
+
+            // Handle root wall coordinate
             map.sq(xts, yts).terrain = Terrain::WALL;
+            auto [it, done] = houseWallCoords.emplace(i, 
+                std::vector<std::pair<int, int>>{std::pair{xts, yts}});
+
+            // 
             for(int i = 1; i < len+1; ++i)
             {
-                map.sq(xts + i * (yMod != 0), yts + i * (xMod != 0)).terrain = Terrain::WALL;
-                map.sq(xts - i * (yMod != 0), yts - i * (xMod != 0)).terrain = Terrain::WALL;
+                int xWall0 = xts + i * (yMod != 0);
+                int xWall1 = xts - i * (yMod != 0);
+                int yWall0 = yts + i * (xMod != 0);
+                int yWall1 = yts - i * (xMod != 0);
+                map.sq(xWall0, yWall0).terrain = Terrain::WALL;
+                map.sq(xWall1, yWall1).terrain = Terrain::WALL;
+                
+                it->second.emplace_back(std::pair{xWall0, yWall0});
+                it->second.emplace_back(std::pair{xWall1, yWall1});
             }
         };
 
@@ -600,6 +611,35 @@ void MapGenerator::buildHouses(Map& map, int min, int max, int minSide, int maxS
     }
 }
 
+void MapGenerator::placeHouseObstacles(Map& map)
+{
+    for(const auto& [wallId, coordsVec] : houseWallCoords)
+    {
+        std::uniform_int_distribution<int> dist{0, static_cast<int>(coordsVec.size()) - 1};
+        for(int i = 0; i < static_cast<int>(coordsVec.size()); ++i)
+        {
+            auto [x, y] = coordsVec[dist(re)];
+            int validSqs = 0;
+            validSqs += validAdjacentObstacleSq(map, x, y-1) ? 1 << 0 : 0;
+            validSqs += validAdjacentObstacleSq(map, x, y+1) ? 1 << 1 : 0;
+            validSqs += validAdjacentObstacleSq(map, x-1, y) ? 1 << 2 : 0;
+            validSqs += validAdjacentObstacleSq(map, x+1, y) ? 1 << 3 : 0;
+
+            // Neither a pair of squares above/below, nor left/right are free
+            // Don't place obstacle here
+            if(!(validSqs == 3 || validSqs == 12))
+                continue;
+
+            MapSquare& sq   = map.sq(x, y);
+            sq.item         = new Obstacle{"ObstacleTest", 10};
+            sq.terrain      = validSqs == 3 ? map.sq(x, y+1).terrain : map.sq(x+1, y).terrain;
+            if(sq.terrain == Terrain::WALL)
+                sq.terrain  = validSqs == 3 ? map.sq(x, y-1).terrain : map.sq(x-1, y).terrain;
+            break;
+        }
+    }
+}
+
 void MapGenerator::placeItems(Map& map)
 {
 
@@ -608,8 +648,6 @@ void MapGenerator::placeItems(Map& map)
     std::map<Terrain, float> toolChanceInTerrain        = {{Terrain::MEADOW, 0.2f},  {Terrain::SWAMP, 0.2f}}; 
     std::map<Terrain, float> treasureChanceInTerrain    = {{Terrain::MEADOW, 0.1f},  {Terrain::SWAMP, 0.2f}}; 
     std::map<Terrain, float> binocularChanceInTerrain   = {{Terrain::MEADOW, 0.01f}, {Terrain::SWAMP, 0.02f}}; 
-
-
 
     scatterItems<Food>(map, voronoiCells, voronoiCellsVec, 
         terrainMappings, foodChanceInTerrain, mostItemTerrainTypes, "FoodTest", 15, 50);

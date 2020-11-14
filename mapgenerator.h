@@ -24,7 +24,7 @@ class MapGenerator
     std::map<int, std::set<std::pair<int, int>>>    voronoiCells;
     std::map<int, std::vector<std::pair<int, int>>> voronoiCellsVec; 
     std::map<int, std::vector<int>>                 lMembers;
-    std::map<int, std::vector<std::pair<int, int>>> houseCoords;
+    std::map<int, std::vector<std::pair<int, int>>> houseWallCoords;
 
 public:
     MapGenerator(int size, uint_fast32_t seed) 
@@ -60,6 +60,7 @@ private:
     // Place obstacles in all walls in a way that allows all walls to be passed through
     void placeWallObstacles(Map& map, std::vector<bool>& isWallVerticle,
         std::map<int, std::vector<std::pair<int, int>>>& mapWallSquares);
+    bool validAdjacentObstacleSq(const Map& map, int x, int y) const;
 
     std::pair<int, int> moveSqDir(int x, int y, int dir, int len) const;
     bool checkHouseSide(int x, int y, int dir, int length, 
@@ -67,6 +68,7 @@ private:
     std::tuple<int, int, int> findHouseLocation(const Map& map, int maxSide, int minSide,
         std::vector<std::pair<int, int>>& corners);
     void buildHouses(Map& map, int min, int max, int minSide, int maxSide);
+    void placeHouseObstacles(Map& map);
 
     // Place all items on the map
     void placeItems(Map& map);
