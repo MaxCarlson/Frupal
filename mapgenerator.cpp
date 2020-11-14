@@ -519,7 +519,7 @@ std::tuple<int, int, int> MapGenerator::findHouseLocation(const Map& map,
 
         if(invalidSide)
         {
-            len -= 2;
+            len -= 1;
             break;
         }
         
@@ -532,7 +532,7 @@ std::tuple<int, int, int> MapGenerator::findHouseLocation(const Map& map,
             yc = nyc;
         }
     }
-    return std::tuple{x, y, len};
+    return std::tuple{x, y, len-1};
 }
 
 void MapGenerator::buildHouses(Map& map, int min, int max, int minSide, int maxSide)
@@ -572,6 +572,7 @@ void MapGenerator::buildHouses(Map& map, int min, int max, int minSide, int maxS
         // Build top and bottom of house
         buildWalls(0,  halfYLen, halfXLen);
         buildWalls(0, -halfYLen, halfXLen);
+        // Build left and right sides
         buildWalls(halfXLen,  0, halfYLen);
         buildWalls(-halfXLen, 0, halfYLen);
     }
