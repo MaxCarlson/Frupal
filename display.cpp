@@ -16,23 +16,19 @@ enum Colors
     SWAMP,
     WATER,
     WALL,
-    TREE,
-    BOULDER
+    DIAMOND
 };
 
 Display::Display()
 {
-    // Init colors
-
-    // Player Color {Index, Foreground, Background}
     start_color();
     init_pair(Colors::PLAYER, COLOR_YELLOW, COLOR_MAGENTA);
     init_pair(Colors::UNDSICOVERED, COLOR_BLACK, COLOR_BLACK);
-    init_pair(Colors::MEADOW, COLOR_GREEN, COLOR_GREEN);
-    init_pair(Colors::SWAMP, COLOR_MAGENTA, COLOR_MAGENTA);
-    init_pair(Colors::WATER, COLOR_BLUE, COLOR_BLUE);
+    init_pair(Colors::MEADOW, COLOR_BLACK, COLOR_GREEN);
+    init_pair(Colors::SWAMP, COLOR_BLACK, COLOR_MAGENTA);
+    init_pair(Colors::WATER, COLOR_WHITE, COLOR_BLUE);
     init_pair(Colors::WALL, COLOR_WHITE, COLOR_WHITE);
-    //clear();
+    init_pair(Colors::DIAMOND, COLOR_WHITE, COLOR_CYAN);
 }
 
 void Display::printMap(const Camera& camera, const Map& map, const UI& ui)
@@ -40,8 +36,7 @@ void Display::printMap(const Camera& camera, const Map& map, const UI& ui)
     auto [dimX, dimY]       = camera.getDims();
     auto [offsetX, offsetY] = camera.getOffsets();
 
-    // Discover adjacent terrain
-    clear();
+    erase();
 
     // Loop through each square of map. 
     // TODO: add camera checks as well as discovered/view checks later
@@ -53,6 +48,9 @@ void Display::printMap(const Camera& camera, const Map& map, const UI& ui)
         if(x < offsetX || x > offsetX + dimX - ui.getSize())
             return;
         if(y < offsetY || y > offsetY + dimY)
+            return;
+
+        if(!sq.discovered)
             return;
 
         int printX = x - offsetX;
