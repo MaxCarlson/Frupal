@@ -54,6 +54,9 @@ void Display::printMap(const Camera& camera, const Map& map, const UI& ui)
         if(y < offsetY || y > offsetY + dimY)
             return;
 
+        if(!sq.discovered)
+            return;
+
         int printX = x - offsetX;
         int printY = y - offsetY;
 

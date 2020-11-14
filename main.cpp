@@ -7,6 +7,7 @@
 #include "player.h"
 #include "camera.h"
 #include "ui.h"
+#include "mapgenerator.h"
 
 constexpr int FPS = 20;
 constexpr int SleepTime = 1000 / FPS;
@@ -22,8 +23,10 @@ int main()
     curs_set(0);
 
     // TODO: Start screen
-    // Load map
-    // Generate clues
+
+    // TODO: Move this into the main menu
+    MapGenerator mgen{128, 2};
+    Map m = mgen.generate(400, 100);
     
 
     // Main Loop
@@ -36,7 +39,8 @@ int main()
     // Run any other systems
 
     UI      ui{COLS};
-    Map     map{128, 128};
+    //Map     map{128, 128};
+    Map map{std::move(m)};
     Input   input;
     Player  player;
     Camera  camera{COLS, LINES};

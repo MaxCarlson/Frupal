@@ -12,6 +12,8 @@ Map::Map(int width, int height) :
 
 Map::~Map()
 {
+    if(!map)
+        return;
     for(int i = 0; i < height; ++i)
         delete[] map[i];
     delete[] map;
