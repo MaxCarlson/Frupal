@@ -35,7 +35,6 @@ int main()
     // Run any other systems
 
     bool gameRunning = true;
-
     while(gameRunning)
     {
         UI      ui{COLS};
@@ -61,12 +60,12 @@ int main()
             {
                 // Player has chosen to start a new game
                 if(display.deathScreen() == 1)
-                break; 
+                    break; 
                 // Player has chosen to quit the program
                 else
                 {
-                gameRunning = false;
-                break;
+                    gameRunning = false;
+                    break;
                 }
             }
 

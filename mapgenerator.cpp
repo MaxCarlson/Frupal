@@ -7,6 +7,7 @@
 #include "items/obstacle.h"
 #include "items/ship.h"
 #include "items/tool.h"
+#include "items/itemloader.h"
 #include <assert.h>
 #include <algorithm>
 
@@ -166,64 +167,6 @@ Map MapGenerator::voronoi(int cells, int numLeaders)
     //*/
     assert(notFilled.empty());
     return buildMap();
-}
-
-template<class ItemType, class... Args>
-void scatterItems(Map& map, std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 
-    std::map<int, std::vector<std::pair<int, int>>>& voronoiCellsVec,
-    std::map<int, Terrain>& terrainMappings, const std::map<Terrain, float>& chanceInTerrain, 
-    const std::set<Terrain>& types, Args&& ...args)
-{
-    std::uniform_real_distribution<float> dist{0.f, 1.f};
-
-    // Note, in order to get the parameter pack args into the llambda, we need to use the ugly hack in the [] below
-    auto addItemToRandomSq = [&, targs=std::make_tuple(std::forward<Args>(args)...)]
-        (auto& distM, const auto& coords)
-    {
-        for(int i = 0; i < static_cast<int>(coords.size()); ++i)
-        {
-            int mapCell = distM(re);
-            auto [x, y] = coords[mapCell];
-            MapSquare& sq = map.sq(x, y);
-            if(types.find(sq.terrain) == std::end(types) || sq.item)
-                continue;
-
-            // TODO: We're going to have to grab the Items arguments randomly from a loaded text file
-            sq.item = new ItemType{std::forward<Args>(args)...};
-            return true;
-        }
-        return false;
-    };
-
-    for(const auto& [cId, coords] : voronoiCellsVec)
-    {
-        Terrain ttype = terrainMappings.find(cId)->second;
-        // Don't add items to the wrong terrains
-        if(types.find(ttype) == std::end(types))
-            continue;
-
-        // While cell chance is above 1.0, place an item in a cell
-        float cellChance = chanceInTerrain.find(ttype)->second; 
-        std::uniform_int_distribution<int> distM{0, static_cast<int>(coords.size()) - 1};
-        while(cellChance >= 1.f)
-        {
-            // Add item to random map square inside the voronoi cell
-            if(addItemToRandomSq(distM, coords))
-                cellChance -= 1.f;
-            else
-                break;
-        }
-        // No free map squares in this cell
-        if(cellChance >= 1.f)
-            continue;
-
-        // Skip this cell if we don't pass the check
-        float rv = dist(re);
-        if(rv >= cellChance)
-            continue;
-
-        addItemToRandomSq(distM, coords);
-    }
 }
 
 Map MapGenerator::buildMap()
@@ -634,6 +577,64 @@ void MapGenerator::placeHouseObstacles(Map& map)
                 sq.terrain  = validSqs == 3 ? map.sq(x, y-1).terrain : map.sq(x-1, y).terrain;
             break;
         }
+    }
+}
+
+template<class ItemType, class... Args>
+void scatterItems(Map& map, std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 
+    std::map<int, std::vector<std::pair<int, int>>>& voronoiCellsVec,
+    std::map<int, Terrain>& terrainMappings, const std::map<Terrain, float>& chanceInTerrain, 
+    const std::set<Terrain>& types, Args&& ...args)
+{
+    std::uniform_real_distribution<float> dist{0.f, 1.f};
+
+    // Note, in order to get the parameter pack args into the llambda, we need to use the ugly hack in the [] below
+    auto addItemToRandomSq = [&, targs=std::make_tuple(std::forward<Args>(args)...)]
+        (auto& distM, const auto& coords)
+    {
+        for(int i = 0; i < static_cast<int>(coords.size()); ++i)
+        {
+            int mapCell = distM(re);
+            auto [x, y] = coords[mapCell];
+            MapSquare& sq = map.sq(x, y);
+            if(types.find(sq.terrain) == std::end(types) || sq.item)
+                continue;
+
+            // TODO: We're going to have to grab the Items arguments randomly from a loaded text file
+            sq.item = new ItemType{std::forward<Args>(args)...};
+            return true;
+        }
+        return false;
+    };
+
+    for(const auto& [cId, coords] : voronoiCellsVec)
+    {
+        Terrain ttype = terrainMappings.find(cId)->second;
+        // Don't add items to the wrong terrains
+        if(types.find(ttype) == std::end(types))
+            continue;
+
+        // While cell chance is above 1.0, place an item in a cell
+        float cellChance = chanceInTerrain.find(ttype)->second; 
+        std::uniform_int_distribution<int> distM{0, static_cast<int>(coords.size()) - 1};
+        while(cellChance >= 1.f)
+        {
+            // Add item to random map square inside the voronoi cell
+            if(addItemToRandomSq(distM, coords))
+                cellChance -= 1.f;
+            else
+                break;
+        }
+        // No free map squares in this cell
+        if(cellChance >= 1.f)
+            continue;
+
+        // Skip this cell if we don't pass the check
+        float rv = dist(re);
+        if(rv >= cellChance)
+            continue;
+
+        addItemToRandomSq(distM, coords);
     }
 }
 
