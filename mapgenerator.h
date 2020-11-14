@@ -53,7 +53,7 @@ private:
 
     // Assign all members of a Voronoi cell a particular terrain type
     void setTileTypeFromGroup(Map& map, Terrain terrain, 
-        std::set<std::pair<int, int>>& cellMembers, int& mapCellCount);
+        std::vector<std::pair<int, int>>& cellMembers, int& mapCellCount);
     
     void buildWalls(Map& map, int num);
 

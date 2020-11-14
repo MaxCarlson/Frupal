@@ -149,13 +149,10 @@ Map MapGenerator::voronoi(int cells, int numLeaders)
             }
             // We didn't find any adjacent voronoi cells to this leader's groups cells
             // Close the leader's group if it is completely blocked off by filled cells
-            // Remove the leader from the list, and decrement the count of leaders
+            // Try again
             if(lm == lMembers[l][lMembers.size() - 1])
             {
                 --d;
-                --numLeaders;
-                auto find = std::find(std::begin(leaders), std::end(leaders), l);
-                leaders.erase(find);
                 break;
             }
             
@@ -246,32 +243,32 @@ Map MapGenerator::buildMap()
 
     // Choose number of cells for each terrain type
     int numWater    = numLeaders / 3;
-    int numSwap     = numWater / 4 + numWater;
+    int numSwamp    = numWater / 4 + numWater;
 
     // Place the terrain
     int i = 0;
-    int mapCellCount = 0;
+    int mapSqCount = 0;
     for(auto& lm : lMemVec)
     {
         for(auto& cell : lm.second)
         {
             Terrain type;
-            auto& cellMembers = voronoiCells.find(cell)->second;
+            auto& cellMembers = voronoiCellsVec.find(cell)->second;
             if(i < numWater)
                 type = Terrain::WATER;
-            else if (i < numSwap)
+            else if (i < numSwamp)
                 type = Terrain::SWAMP;
             else
                 type = Terrain::MEADOW;
 
             terrainMappings.emplace(cell, type);
-            setTileTypeFromGroup(map, type, cellMembers, mapCellCount);
+            setTileTypeFromGroup(map, type, cellMembers, mapSqCount);
         }
 
         ++i;
     }
 
-    assert(mapCellCount == size*size);
+    assert(mapSqCount == size*size);
 
     buildHouses(map, 4, 12, 5, 10);
     buildWalls(map, 20);
@@ -282,11 +279,11 @@ Map MapGenerator::buildMap()
 }
 
 void MapGenerator::setTileTypeFromGroup(Map& map, Terrain terrain, 
-    std::set<std::pair<int, int>>& cellMembers, int& mapCellCount)
+    std::vector<std::pair<int, int>>& cellMembers, int& mapSqCount)
 {
     for(auto [x, y] : cellMembers)
     {
-        ++mapCellCount;
+        ++mapSqCount;
         map.sq(x, y).terrain = terrain;
     }
 }

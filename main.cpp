@@ -25,7 +25,7 @@ int main()
     // TODO: Start screen
 
     // TODO: Move this into the main menu
-    MapGenerator mgen{128, 4};
+    MapGenerator mgen{128, 1};
     Map m = mgen.generate(400, 100);
     
 
