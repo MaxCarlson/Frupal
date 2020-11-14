@@ -39,8 +39,7 @@ void Display::printMap(const Camera& camera, const Map& map, const UI& ui)
     auto [dimX, dimY]       = camera.getDims();
     auto [offsetX, offsetY] = camera.getOffsets();
 
-    // Discover adjacent terrain
-    clear();
+    erase();
 
     // Loop through each square of map. 
     // TODO: add camera checks as well as discovered/view checks later

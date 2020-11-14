@@ -9,7 +9,7 @@
 #include "ui.h"
 #include "mapgenerator.h"
 
-constexpr int FPS = 20;
+constexpr int FPS = 25;
 constexpr int SleepTime = 1000 / FPS;
 
 int main()
