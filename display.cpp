@@ -15,15 +15,11 @@ enum Colors
     SWAMP,
     WATER,
     WALL,
-    TREE,
-    BOULDER
+    DIAMOND
 };
 
 Display::Display()
 {
-    // Init colors
-
-    // Player Color {Index, Foreground, Background}
     start_color();
     init_pair(Colors::PLAYER, COLOR_YELLOW, COLOR_MAGENTA);
     init_pair(Colors::UNDSICOVERED, COLOR_BLACK, COLOR_BLACK);
@@ -31,7 +27,7 @@ Display::Display()
     init_pair(Colors::SWAMP, COLOR_BLACK, COLOR_MAGENTA);
     init_pair(Colors::WATER, COLOR_WHITE, COLOR_BLUE);
     init_pair(Colors::WALL, COLOR_WHITE, COLOR_WHITE);
-    //clear();
+    init_pair(Colors::DIAMOND, COLOR_WHITE, COLOR_CYAN);
 }
 
 void Display::printMap(const Camera& camera, const Map& map, const UI& ui)
