@@ -6,6 +6,7 @@
 #include "map.h"
 #include "item.h"
 #include "ui.h"
+#include <string.h>
 
 enum Colors
 {
@@ -15,15 +16,11 @@ enum Colors
     SWAMP,
     WATER,
     WALL,
-    TREE,
-    BOULDER
+    DIAMOND
 };
 
 Display::Display()
 {
-    // Init colors
-
-    // Player Color {Index, Foreground, Background}
     start_color();
     init_pair(Colors::PLAYER, COLOR_YELLOW, COLOR_MAGENTA);
     init_pair(Colors::UNDSICOVERED, COLOR_BLACK, COLOR_BLACK);
@@ -31,7 +28,7 @@ Display::Display()
     init_pair(Colors::SWAMP, COLOR_BLACK, COLOR_MAGENTA);
     init_pair(Colors::WATER, COLOR_WHITE, COLOR_BLUE);
     init_pair(Colors::WALL, COLOR_WHITE, COLOR_WHITE);
-    //clear();
+    init_pair(Colors::DIAMOND, COLOR_WHITE, COLOR_CYAN);
 }
 
 void Display::printMap(const Camera& camera, const Map& map, const UI& ui)
@@ -39,8 +36,7 @@ void Display::printMap(const Camera& camera, const Map& map, const UI& ui)
     auto [dimX, dimY]       = camera.getDims();
     auto [offsetX, offsetY] = camera.getOffsets();
 
-    // Discover adjacent terrain
-    clear();
+    erase();
 
     // Loop through each square of map. 
     // TODO: add camera checks as well as discovered/view checks later
@@ -122,4 +118,31 @@ void Display::printCeneteredText(int x1, int x2, int y, std::string text)
 {
     assert(static_cast<int>(text.length()) <= x2 - x1);
     mvaddstr(y, (x2 - x1) / 2 - text.length() / 2, text.c_str());
+}
+
+int Display::deathScreen()
+{
+  int ch = 0;
+  char s1[] = "You have died!";
+  char s2[] = "Press 'S' to start a new game or 'Q' to quit.";
+  int x = (LINES / 2);
+  int y = (COLS - strlen(s1)) / 2;
+
+
+  erase();
+  // Prints messages in center of screen
+  mvprintw(x, y, "%s", s1);
+  y = (COLS - strlen(s2)) / 2;
+  ++y;
+  ++x;
+  mvprintw(x, y, "%s", s2);
+
+ 
+  while(ch != 's' && ch != 'q')
+    ch = getch();
+
+  if(ch == 'q')
+    return 0;
+
+  return 1;
 }
