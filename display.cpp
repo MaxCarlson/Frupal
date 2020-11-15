@@ -121,27 +121,27 @@ void Display::printCeneteredText(int x1, int x2, int y, std::string text)
 
 int Display::deathScreen()
 {
-  int ch = 0;
-  char s1[] = "You have died!";
-  char s2[] = "Press 'S' to start a new game or 'Q' to quit.";
-  int x = (LINES / 2);
-  int y = (COLS - strlen(s1)) / 2;
+    int ch = 0;
+    char s1[] = "You have died!";
+    char s2[] = "Press 'S' to start a new game or 'Q' to quit.";
+    int x = (LINES / 2);
+    int y = (COLS - strlen(s1)) / 2;
 
 
-  erase();
-  // Prints messages in center of screen
-  mvprintw(x, y, "%s", s1);
-  y = (COLS - strlen(s2)) / 2;
-  ++y;
-  ++x;
-  mvprintw(x, y, "%s", s2);
+    erase();
+    // Prints messages in center of screen
+    mvprintw(x, y, "%s", s1);
+    y = (COLS - strlen(s2)) / 2;
+    ++y;
+    ++x;
+    mvprintw(x, y, "%s", s2);
 
- 
-  while(ch != 's' && ch != 'q')
-    ch = getch();
+    timeout(250); // Wait 250ms for keypress
+    while(ch != 's' && ch != 'q')
+        ch = getch();
 
-  if(ch == 'q')
-    return 0;
+    if(ch == 'q')
+        return 0;
 
-  return 1;
+    return 1;
 }

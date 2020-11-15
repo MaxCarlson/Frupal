@@ -16,7 +16,6 @@ int main()
 {
 
     initscr();
-    timeout(0);
     keypad(stdscr, true);
     cbreak();
     noecho();
@@ -37,6 +36,8 @@ int main()
     bool gameRunning = true;
     while(gameRunning)
     {
+        timeout(0);
+        
         UI      ui{COLS};
         MapGenerator mgen{128, 1};
         Map map = mgen.generate(400, 100);
