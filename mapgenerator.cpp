@@ -3,6 +3,7 @@
 #include "items/binoculars.h"
 #include "items/chest.h"
 #include "items/clue.h"
+#include "items/diamond.h"
 #include "items/food.h"
 #include "items/obstacle.h"
 #include "items/ship.h"
@@ -664,48 +665,43 @@ void MapGenerator::placeItems(Map& map)
     generatePlayerStart(map, placeDiamod(map));
 }
 
-MapGenerator::Corner MapGenerator::placeDiamod(Map& map)
+std::tuple<int, int, int, int, int> getRandomCornerCoords(const Map& map, int notThisCorner=-1)
 {
     int xMin, xMax;
     int yMin, yMax;
-    std::uniform_int_distribution<int> distCorner{0, 3}; 
-    int corner = distCorner(re);
-
-
-
-    return static_cast<Corner>(corner);
-}
-
-void MapGenerator::generatePlayerStart(Map& map, Corner diamondCorner) 
-{
-    int xMin, xMax;
-    int yMin, yMax;
-    int corner = diamondCorner;
+    int corner = notThisCorner;
     std::uniform_int_distribution<int> distCorner{0, 3};
 
-    while(corner == diamondCorner)
+    while(corner == notThisCorner)
         corner = distCorner(re);
 
     switch(corner)
     {
-        case NE:
+        case MapGenerator::Corner::NE:
         xMin = map.getWidth() / 2 - 1; xMax = map.getWidth() - 1;
         yMin = 0; yMax = map.getHeight() / 2 - 1;
         break;
-        case SE:
+        case MapGenerator::Corner::SE:
         xMin = map.getWidth()  / 2 - 1; xMax = map.getWidth()  - 1;
         yMin = map.getHeight() / 2 - 1; yMax = map.getHeight() - 1;
         break;
-        case SW:
+        case MapGenerator::Corner::SW:
         xMin = 0; xMax = map.getWidth() / 2 - 1;
         yMin = map.getHeight() / 2 - 1; yMax = map.getHeight() - 1;
         break;
-        case NW:
+        case MapGenerator::Corner::NW:
         xMin = 0; xMax = map.getWidth() / 2 - 1;
         yMin = 0; yMax = map.getHeight() / 2 - 1;
         break;
-    }
+    }  
 
+    return std::make_tuple(xMin, xMax, yMin, yMax, corner);
+}
+
+template<class RandomEngine, class Func>
+void placeInCorner(Map& map, RandomEngine& re, int xMin, int xMax, 
+    int yMin, int yMax, Func&& func)
+{
     std::uniform_int_distribution<int> distX{xMin, xMax};
     std::uniform_int_distribution<int> distY{yMin, yMax};
 
@@ -714,17 +710,41 @@ void MapGenerator::generatePlayerStart(Map& map, Corner diamondCorner)
         int x = distX(re);
         int y = distY(re);
 
-        const MapSquare& sq = map.sq(x, y);
+        MapSquare& sq = map.sq(x, y);
 
         if(sq.terrain == Terrain::WALL || sq.terrain == Terrain::WATER
             || sq.item)
             continue;
 
+        if(func(x, y, sq))
+            return;
+    }
+}
+
+MapGenerator::Corner MapGenerator::placeDiamod(Map& map)
+{
+    auto [xMin, xMax, yMin, yMax, corner] = getRandomCornerCoords(map);
+
+    placeInCorner(map, re, xMin, xMax, yMin, yMax, [&](int x, int y, MapSquare& sq)
+    {
+        sq.item = new Diamond{"Diamond"};
+        return true;
+    });
+    return static_cast<Corner>(corner);
+}
+
+void MapGenerator::generatePlayerStart(Map& map, Corner diamondCorner) 
+{
+    auto [xMin, xMax, yMin, yMax, corner] = getRandomCornerCoords(map, diamondCorner);
+
+    placeInCorner(map, re, xMin, xMax, yMin, yMax, [&](int x, int y, MapSquare& sq)
+    {
         // TODO: Need to check if game is completeable
 
-        playerCoords = std::pair{x, y};
-        return;
-    }
 
-    assert(false);
+        playerCoords = std::pair{x, y};
+        return true;
+    });
+
+    
 }

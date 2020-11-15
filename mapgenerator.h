@@ -9,10 +9,13 @@ enum class Terrain;
 
 class MapGenerator
 {
+public:
+    enum Corner {NE, SE, SW, NW};
+private:
+
     int size;
     uint_fast32_t seed;
     std::default_random_engine re;
-    enum Corner {NE, SE, SW, NW};
 
     Corner playerCorner;
     std::pair<int, int> playerCoords;

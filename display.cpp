@@ -6,6 +6,7 @@
 #include "map.h"
 #include "item.h"
 #include "ui.h"
+#include "items/diamond.h"
 #include <string.h>
 
 enum Colors
@@ -50,13 +51,11 @@ void Display::printMap(const Camera& camera, const Map& map, const UI& ui)
         if(y < offsetY || y > offsetY + dimY)
             return;
 
-        if(!sq.discovered)
-            return;
-
         int printX = x - offsetX;
         int printY = y - offsetY;
 
         if(sq.discovered)
+        {
             switch(sq.terrain)
             {
                 case Terrain::MEADOW:
@@ -83,6 +82,14 @@ void Display::printMap(const Camera& camera, const Map& map, const UI& ui)
                 default:
                     break;
             }
+
+            if(dynamic_cast<Diamond*>(sq.item))
+            {
+                attron(COLOR_PAIR(Colors::DIAMOND));
+                mvaddch(printY, printX, ch);
+                attroff(COLOR_PAIR(Colors::DIAMOND));
+            }
+        }
         else
         {
             attron(COLOR_PAIR(Terrain::UNDISCOVERED));
