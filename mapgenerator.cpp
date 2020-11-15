@@ -11,6 +11,52 @@
 #include <assert.h>
 #include <algorithm>
 
+std::pair<int, int> MapGenerator::generatePlayerStart(Map& map) 
+{
+    std::uniform_int_distribution<int> distCorner{0, 3};
+    int corner = distCorner(re);
+    int xMin, xMax;
+    int yMin, yMax;
+
+    switch(corner)
+    {
+        case NE:
+        xMin = map.getWidth() / 2 - 1; xMax = map.getWidth() - 1;
+        yMin = 0; yMax = map.getHeight() / 2 - 1;
+        break;
+        case SE:
+        xMin = map.getWidth()  / 2 - 1; xMax = map.getWidth()  - 1;
+        yMin = map.getHeight() / 2 - 1; yMax = map.getHeight() - 1;
+        break;
+        case SW:
+        xMin = 0; xMax = map.getWidth() / 2 - 1;
+        yMin = map.getHeight() / 2 - 1; yMax = map.getHeight() - 1;
+        break;
+        case NW:
+        xMin = 0; xMax = map.getWidth() / 2 - 1;
+        yMin = 0; yMax = map.getHeight() / 2 - 1;
+        break;
+    }
+
+    std::uniform_int_distribution<int> distX{xMin, xMax};
+    std::uniform_int_distribution<int> distY{yMin, yMax};
+
+    for(;;)
+    {
+        int x = distX(re);
+        int y = distY(re);
+
+        const MapSquare& sq = map.sq(x, y);
+
+        if(sq.terrain == Terrain::WALL || sq.terrain == Terrain::WATER
+            || sq.item)
+            continue;
+        return std::pair{x, y};
+    }
+    assert(false);
+    return std::pair{0,0};
+}
+
 double distance(int x1, int y1, int x2, int y2)
 {
     //return ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)); // Euclidean Distance
@@ -213,7 +259,7 @@ Map MapGenerator::buildMap()
 
     assert(mapSqCount == size*size);
 
-    buildHouses(map, 4, 12, 5, 10);
+    buildHouses(map, 6, 16, 5, 10);
     buildWalls(map, 20);
     placeHouseObstacles(map); // Must come after building walls
     placeItems(map);
@@ -658,4 +704,9 @@ void MapGenerator::placeItems(Map& map)
 
     scatterItems<Binoculars>(map, voronoiCells, voronoiCellsVec, 
         terrainMappings, binocularChanceInTerrain, mostItemTerrainTypes, "BinocularTest");
+}
+
+void MapGenerator::placeDiamod(Map& map)
+{
+
 }

@@ -41,7 +41,7 @@ int main()
         MapGenerator mgen{128, 1};
         Map map = mgen.generate(400, 100);
         Input   input;
-        Player  player;
+        Player  player{mgen.generatePlayerStart(map)};
         Camera  camera{COLS, LINES};
         Display display;
 

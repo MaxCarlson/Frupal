@@ -34,6 +34,7 @@ public:
     {}
 
     Map generate(int cells, int numLeaders);
+    std::pair<int, int> generatePlayerStart(Map& map);
 
 private:
     // Build a voronoi map
@@ -72,4 +73,5 @@ private:
 
     // Place all items on the map
     void placeItems(Map& map);
+    void placeDiamod(Map& map);
 };
