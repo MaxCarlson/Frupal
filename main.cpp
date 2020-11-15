@@ -16,7 +16,6 @@ int main()
 {
 
     initscr();
-    timeout(0);
     keypad(stdscr, true);
     cbreak();
     noecho();
@@ -35,14 +34,15 @@ int main()
     // Run any other systems
 
     bool gameRunning = true;
-
     while(gameRunning)
     {
+        timeout(0);
+        
         UI      ui{COLS};
         MapGenerator mgen{128, 1};
         Map map = mgen.generate(400, 100);
         Input   input;
-        Player  player;
+        Player  player{mgen.getPlayerCoords()};
         Camera  camera{COLS, LINES};
         Display display;
 
@@ -61,12 +61,12 @@ int main()
             {
                 // Player has chosen to start a new game
                 if(display.deathScreen() == 1)
-                break; 
+                    break; 
                 // Player has chosen to quit the program
                 else
                 {
-                gameRunning = false;
-                break;
+                    gameRunning = false;
+                    break;
                 }
             }
 

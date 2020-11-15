@@ -3,10 +3,12 @@
 #include "items/binoculars.h"
 #include "items/chest.h"
 #include "items/clue.h"
+#include "items/diamond.h"
 #include "items/food.h"
 #include "items/obstacle.h"
 #include "items/ship.h"
 #include "items/tool.h"
+#include "items/itemloader.h"
 #include <assert.h>
 #include <algorithm>
 
@@ -168,64 +170,6 @@ Map MapGenerator::voronoi(int cells, int numLeaders)
     return buildMap();
 }
 
-template<class ItemType, class... Args>
-void scatterItems(Map& map, std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 
-    std::map<int, std::vector<std::pair<int, int>>>& voronoiCellsVec,
-    std::map<int, Terrain>& terrainMappings, const std::map<Terrain, float>& chanceInTerrain, 
-    const std::set<Terrain>& types, Args&& ...args)
-{
-    std::uniform_real_distribution<float> dist{0.f, 1.f};
-
-    // Note, in order to get the parameter pack args into the llambda, we need to use the ugly hack in the [] below
-    auto addItemToRandomSq = [&, targs=std::make_tuple(std::forward<Args>(args)...)]
-        (auto& distM, const auto& coords)
-    {
-        for(int i = 0; i < static_cast<int>(coords.size()); ++i)
-        {
-            int mapCell = distM(re);
-            auto [x, y] = coords[mapCell];
-            MapSquare& sq = map.sq(x, y);
-            if(types.find(sq.terrain) == std::end(types) || sq.item)
-                continue;
-
-            // TODO: We're going to have to grab the Items arguments randomly from a loaded text file
-            sq.item = new ItemType{std::forward<Args>(args)...};
-            return true;
-        }
-        return false;
-    };
-
-    for(const auto& [cId, coords] : voronoiCellsVec)
-    {
-        Terrain ttype = terrainMappings.find(cId)->second;
-        // Don't add items to the wrong terrains
-        if(types.find(ttype) == std::end(types))
-            continue;
-
-        // While cell chance is above 1.0, place an item in a cell
-        float cellChance = chanceInTerrain.find(ttype)->second; 
-        std::uniform_int_distribution<int> distM{0, static_cast<int>(coords.size()) - 1};
-        while(cellChance >= 1.f)
-        {
-            // Add item to random map square inside the voronoi cell
-            if(addItemToRandomSq(distM, coords))
-                cellChance -= 1.f;
-            else
-                break;
-        }
-        // No free map squares in this cell
-        if(cellChance >= 1.f)
-            continue;
-
-        // Skip this cell if we don't pass the check
-        float rv = dist(re);
-        if(rv >= cellChance)
-            continue;
-
-        addItemToRandomSq(distM, coords);
-    }
-}
-
 Map MapGenerator::buildMap()
 {
     Map map{size, size};
@@ -270,7 +214,7 @@ Map MapGenerator::buildMap()
 
     assert(mapSqCount == size*size);
 
-    buildHouses(map, 4, 12, 5, 10);
+    buildHouses(map, 6, 16, 5, 10);
     buildWalls(map, 20);
     placeHouseObstacles(map); // Must come after building walls
     placeItems(map);
@@ -637,6 +581,64 @@ void MapGenerator::placeHouseObstacles(Map& map)
     }
 }
 
+template<class ItemType, class... Args>
+void scatterItems(Map& map, std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 
+    std::map<int, std::vector<std::pair<int, int>>>& voronoiCellsVec,
+    std::map<int, Terrain>& terrainMappings, const std::map<Terrain, float>& chanceInTerrain, 
+    const std::set<Terrain>& types, Args&& ...args)
+{
+    std::uniform_real_distribution<float> dist{0.f, 1.f};
+
+    // Note, in order to get the parameter pack args into the llambda, we need to use the ugly hack in the [] below
+    auto addItemToRandomSq = [&, targs=std::make_tuple(std::forward<Args>(args)...)]
+        (auto& distM, const auto& coords)
+    {
+        for(int i = 0; i < static_cast<int>(coords.size()); ++i)
+        {
+            int mapCell = distM(re);
+            auto [x, y] = coords[mapCell];
+            MapSquare& sq = map.sq(x, y);
+            if(types.find(sq.terrain) == std::end(types) || sq.item)
+                continue;
+
+            // TODO: We're going to have to grab the Items arguments randomly from a loaded text file
+            sq.item = new ItemType{std::forward<Args>(args)...};
+            return true;
+        }
+        return false;
+    };
+
+    for(const auto& [cId, coords] : voronoiCellsVec)
+    {
+        Terrain ttype = terrainMappings.find(cId)->second;
+        // Don't add items to the wrong terrains
+        if(types.find(ttype) == std::end(types))
+            continue;
+
+        // While cell chance is above 1.0, place an item in a cell
+        float cellChance = chanceInTerrain.find(ttype)->second; 
+        std::uniform_int_distribution<int> distM{0, static_cast<int>(coords.size()) - 1};
+        while(cellChance >= 1.f)
+        {
+            // Add item to random map square inside the voronoi cell
+            if(addItemToRandomSq(distM, coords))
+                cellChance -= 1.f;
+            else
+                break;
+        }
+        // No free map squares in this cell
+        if(cellChance >= 1.f)
+            continue;
+
+        // Skip this cell if we don't pass the check
+        float rv = dist(re);
+        if(rv >= cellChance)
+            continue;
+
+        addItemToRandomSq(distM, coords);
+    }
+}
+
 void MapGenerator::placeItems(Map& map)
 {
 
@@ -657,4 +659,92 @@ void MapGenerator::placeItems(Map& map)
 
     scatterItems<Binoculars>(map, voronoiCells, voronoiCellsVec, 
         terrainMappings, binocularChanceInTerrain, mostItemTerrainTypes, "BinocularTest");
+
+
+    // We never place the diamond in the same corner as the player
+    generatePlayerStart(map, placeDiamod(map));
+}
+
+std::tuple<int, int, int, int, int> getRandomCornerCoords(const Map& map, int notThisCorner=-1)
+{
+    int xMin, xMax;
+    int yMin, yMax;
+    int corner = notThisCorner;
+    std::uniform_int_distribution<int> distCorner{0, 3};
+
+    while(corner == notThisCorner)
+        corner = distCorner(re);
+
+    switch(corner)
+    {
+        case MapGenerator::Corner::NE:
+        xMin = map.getWidth() / 2 - 1; xMax = map.getWidth() - 1;
+        yMin = 0; yMax = map.getHeight() / 2 - 1;
+        break;
+        case MapGenerator::Corner::SE:
+        xMin = map.getWidth()  / 2 - 1; xMax = map.getWidth()  - 1;
+        yMin = map.getHeight() / 2 - 1; yMax = map.getHeight() - 1;
+        break;
+        case MapGenerator::Corner::SW:
+        xMin = 0; xMax = map.getWidth() / 2 - 1;
+        yMin = map.getHeight() / 2 - 1; yMax = map.getHeight() - 1;
+        break;
+        case MapGenerator::Corner::NW:
+        xMin = 0; xMax = map.getWidth() / 2 - 1;
+        yMin = 0; yMax = map.getHeight() / 2 - 1;
+        break;
+    }  
+
+    return std::make_tuple(xMin, xMax, yMin, yMax, corner);
+}
+
+template<class RandomEngine, class Func>
+void placeInCorner(Map& map, RandomEngine& re, int xMin, int xMax, 
+    int yMin, int yMax, Func&& func)
+{
+    std::uniform_int_distribution<int> distX{xMin, xMax};
+    std::uniform_int_distribution<int> distY{yMin, yMax};
+
+    for(;;)
+    {
+        int x = distX(re);
+        int y = distY(re);
+
+        MapSquare& sq = map.sq(x, y);
+
+        if(sq.terrain == Terrain::WALL || sq.terrain == Terrain::WATER
+            || sq.item)
+            continue;
+
+        if(func(x, y, sq))
+            return;
+    }
+}
+
+MapGenerator::Corner MapGenerator::placeDiamod(Map& map)
+{
+    auto [xMin, xMax, yMin, yMax, corner] = getRandomCornerCoords(map);
+
+    placeInCorner(map, re, xMin, xMax, yMin, yMax, [&](int x, int y, MapSquare& sq)
+    {
+        sq.item = new Diamond{"Diamond"};
+        return true;
+    });
+    return static_cast<Corner>(corner);
+}
+
+void MapGenerator::generatePlayerStart(Map& map, Corner diamondCorner) 
+{
+    auto [xMin, xMax, yMin, yMax, corner] = getRandomCornerCoords(map, diamondCorner);
+
+    placeInCorner(map, re, xMin, xMax, yMin, yMax, [&](int x, int y, MapSquare& sq)
+    {
+        // TODO: Need to check if game is completeable
+
+
+        playerCoords = std::pair{x, y};
+        return true;
+    });
+
+    
 }

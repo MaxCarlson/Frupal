@@ -6,6 +6,7 @@
 #include "map.h"
 #include "item.h"
 #include "ui.h"
+#include "items/diamond.h"
 #include <string.h>
 
 enum Colors
@@ -50,47 +51,45 @@ void Display::printMap(const Camera& camera, const Map& map, const UI& ui)
         if(y < offsetY || y > offsetY + dimY)
             return;
 
-        if(!sq.discovered)
-            return;
-
         int printX = x - offsetX;
         int printY = y - offsetY;
 
-        if(sq.discovered)
-            switch(sq.terrain)
-            {
-                case Terrain::MEADOW:
-                    attron(COLOR_PAIR(Colors::MEADOW));
-                    mvaddch(printY, printX, ch);
-                    attroff(COLOR_PAIR(Colors::MEADOW));
-                    break;
-                case Terrain::SWAMP:
-                    attron(COLOR_PAIR(Colors::SWAMP));
-                    mvaddch(printY, printX, ch);
-                    attroff(COLOR_PAIR(Colors::SWAMP));
-                    break;
-                case Terrain::WATER:
-                    attron(COLOR_PAIR(Colors::WATER));
-                    mvaddch(printY, printX, ch);
-                    attroff(COLOR_PAIR(Colors::WATER));
-                    break;
-                case Terrain::WALL:
-                    attron(COLOR_PAIR(Colors::WALL));
-                    mvaddch(printY, printX, ch);
-                    attroff(COLOR_PAIR(Colors::WALL));
-                    break;
-                case Terrain::UNDISCOVERED: // Get rid of error
-                default:
-                    break;
-            }
-        else
+        if(!sq.discovered)
+            return;
+
+        switch(sq.terrain)
         {
-            attron(COLOR_PAIR(Terrain::UNDISCOVERED));
-            mvaddch(printY, printX, ch);
-            attroff(COLOR_PAIR(Terrain::UNDISCOVERED));
+            case Terrain::MEADOW:
+                attron(COLOR_PAIR(Colors::MEADOW));
+                mvaddch(printY, printX, ch);
+                attroff(COLOR_PAIR(Colors::MEADOW));
+                break;
+            case Terrain::SWAMP:
+                attron(COLOR_PAIR(Colors::SWAMP));
+                mvaddch(printY, printX, ch);
+                attroff(COLOR_PAIR(Colors::SWAMP));
+                break;
+            case Terrain::WATER:
+                attron(COLOR_PAIR(Colors::WATER));
+                mvaddch(printY, printX, ch);
+                attroff(COLOR_PAIR(Colors::WATER));
+                break;
+            case Terrain::WALL:
+                attron(COLOR_PAIR(Colors::WALL));
+                mvaddch(printY, printX, ch);
+                attroff(COLOR_PAIR(Colors::WALL));
+                break;
+            case Terrain::UNDISCOVERED: // Get rid of error
+            default:
+                break;
         }
 
-        
+        if(dynamic_cast<Diamond*>(sq.item))
+        {
+            attron(COLOR_PAIR(Colors::DIAMOND));
+            mvaddch(printY, printX, ch);
+            attroff(COLOR_PAIR(Colors::DIAMOND));
+        }
     });
 }
 
@@ -122,27 +121,27 @@ void Display::printCeneteredText(int x1, int x2, int y, std::string text)
 
 int Display::deathScreen()
 {
-  int ch = 0;
-  char s1[] = "You have died!";
-  char s2[] = "Press 'S' to start a new game or 'Q' to quit.";
-  int x = (LINES / 2);
-  int y = (COLS - strlen(s1)) / 2;
+    int ch = 0;
+    char s1[] = "You have died!";
+    char s2[] = "Press 'S' to start a new game or 'Q' to quit.";
+    int x = (LINES / 2);
+    int y = (COLS - strlen(s1)) / 2;
 
 
-  erase();
-  // Prints messages in center of screen
-  mvprintw(x, y, "%s", s1);
-  y = (COLS - strlen(s2)) / 2;
-  ++y;
-  ++x;
-  mvprintw(x, y, "%s", s2);
+    erase();
+    // Prints messages in center of screen
+    mvprintw(x, y, "%s", s1);
+    y = (COLS - strlen(s2)) / 2;
+    ++y;
+    ++x;
+    mvprintw(x, y, "%s", s2);
 
- 
-  while(ch != 's' && ch != 'q')
-    ch = getch();
+    timeout(250); // Wait 250ms for keypress
+    while(ch != 's' && ch != 'q')
+        ch = getch();
 
-  if(ch == 'q')
-    return 0;
+    if(ch == 'q')
+        return 0;
 
-  return 1;
+    return 1;
 }

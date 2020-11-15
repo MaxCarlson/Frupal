@@ -9,11 +9,16 @@ enum class Terrain;
 
 class MapGenerator
 {
+public:
+    enum Corner {NE, SE, SW, NW};
+private:
+
     int size;
     uint_fast32_t seed;
     std::default_random_engine re;
-    enum {NE, SE, SW, NW};
 
+    Corner playerCorner;
+    std::pair<int, int> playerCoords;
     std::vector<int>    px;
     std::vector<int>    py; 
     std::vector<int>    leaders;
@@ -34,8 +39,10 @@ public:
     {}
 
     Map generate(int cells, int numLeaders);
+    std::pair<int, int> getPlayerCoords() const { return playerCoords; }
 
 private:
+
     // Build a voronoi map
     Map voronoi(int cells, int numLeaders);
 
@@ -72,4 +79,7 @@ private:
 
     // Place all items on the map
     void placeItems(Map& map);
+    Corner placeDiamod(Map& map);
+
+    void generatePlayerStart(Map& map, Corner diamondCorner);
 };
