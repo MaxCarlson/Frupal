@@ -54,50 +54,42 @@ void Display::printMap(const Camera& camera, const Map& map, const UI& ui)
         int printX = x - offsetX;
         int printY = y - offsetY;
 
-        if(sq.discovered)
-        {
-            switch(sq.terrain)
-            {
-                case Terrain::MEADOW:
-                    attron(COLOR_PAIR(Colors::MEADOW));
-                    mvaddch(printY, printX, ch);
-                    attroff(COLOR_PAIR(Colors::MEADOW));
-                    break;
-                case Terrain::SWAMP:
-                    attron(COLOR_PAIR(Colors::SWAMP));
-                    mvaddch(printY, printX, ch);
-                    attroff(COLOR_PAIR(Colors::SWAMP));
-                    break;
-                case Terrain::WATER:
-                    attron(COLOR_PAIR(Colors::WATER));
-                    mvaddch(printY, printX, ch);
-                    attroff(COLOR_PAIR(Colors::WATER));
-                    break;
-                case Terrain::WALL:
-                    attron(COLOR_PAIR(Colors::WALL));
-                    mvaddch(printY, printX, ch);
-                    attroff(COLOR_PAIR(Colors::WALL));
-                    break;
-                case Terrain::UNDISCOVERED: // Get rid of error
-                default:
-                    break;
-            }
+        if(!sq.discovered)
+            return;
 
-            if(dynamic_cast<Diamond*>(sq.item))
-            {
-                attron(COLOR_PAIR(Colors::DIAMOND));
+        switch(sq.terrain)
+        {
+            case Terrain::MEADOW:
+                attron(COLOR_PAIR(Colors::MEADOW));
                 mvaddch(printY, printX, ch);
-                attroff(COLOR_PAIR(Colors::DIAMOND));
-            }
-        }
-        else
-        {
-            attron(COLOR_PAIR(Terrain::UNDISCOVERED));
-            mvaddch(printY, printX, ch);
-            attroff(COLOR_PAIR(Terrain::UNDISCOVERED));
+                attroff(COLOR_PAIR(Colors::MEADOW));
+                break;
+            case Terrain::SWAMP:
+                attron(COLOR_PAIR(Colors::SWAMP));
+                mvaddch(printY, printX, ch);
+                attroff(COLOR_PAIR(Colors::SWAMP));
+                break;
+            case Terrain::WATER:
+                attron(COLOR_PAIR(Colors::WATER));
+                mvaddch(printY, printX, ch);
+                attroff(COLOR_PAIR(Colors::WATER));
+                break;
+            case Terrain::WALL:
+                attron(COLOR_PAIR(Colors::WALL));
+                mvaddch(printY, printX, ch);
+                attroff(COLOR_PAIR(Colors::WALL));
+                break;
+            case Terrain::UNDISCOVERED: // Get rid of error
+            default:
+                break;
         }
 
-        
+        if(dynamic_cast<Diamond*>(sq.item))
+        {
+            attron(COLOR_PAIR(Colors::DIAMOND));
+            mvaddch(printY, printX, ch);
+            attroff(COLOR_PAIR(Colors::DIAMOND));
+        }
     });
 }
 
