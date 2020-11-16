@@ -79,7 +79,5 @@ private:
 
     // Place all items on the map
     void placeItems(Map& map);
-    Corner placeDiamod(Map& map);
-
-    void generatePlayerStart(Map& map, Corner diamondCorner);
+    void placePlayerAndDiamod(Map& map);
 };
