@@ -1,7 +1,7 @@
 #pragma once
 #include "camera.h"
-#include <random> // Just for testing
-
+#include <random>
+#include <functional>
 static std::random_device rd;           // For random maps that change
 static std::default_random_engine re;   // For random maps that don't change
 //static std::uniform_int_distribution<int> distr(1, 4);
@@ -29,6 +29,18 @@ struct Point
 
     bool operator==(const Point& p) const { return x == p.x && y == p.y; }
 };
+
+namespace std
+{
+    template<>
+    struct hash<Point>
+    {
+        size_t operator()(const Point& p) const
+        {
+            return p.x + p.y * 128;
+        }
+    };
+}
 
 struct MapSquare
 {
@@ -73,6 +85,27 @@ public:
         for(int j = 0; j < height; ++j)
             for(int i = 0; i < width; ++i)
                 func(i, j, map[i][j]);
+    }
+
+    template<class Func>
+    void loopNeighbors(Point p, const Func& func) const
+    {
+        bool stop = false;
+        // Up
+        if(p.y > 0)
+            func(Point{p.x, p.y-1}, stop);
+
+        // Right
+        if(!stop && p.x < getWidth() - 1)
+            func(Point{p.x+1, p.y}, stop);
+
+        // Down
+        if(!stop && p.y < getHeight() - 1)
+            func(Point{p.x, p.y+1}, stop);
+
+        // Left
+        if(!stop && p.x > 0)
+            func(Point{p.x-1, p.y}, stop);
     }
 
     //template<class Func>

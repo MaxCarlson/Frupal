@@ -98,25 +98,11 @@ std::vector<Node> neighbors(const Map& map, const Point& p)
         return true;
     };
 
-    auto addSq = [&](const MapSquare& sq, Point p) {
-        neighbors.emplace_back(Node{p});
-    };
-
-    // Up
-    if(p.y > 0 && isValidSq(map.sq(p.x, p.y - 1)))
-        addSq(map.sq(p.x, p.y - 1), Point{p.x, p.y - 1});
-
-    // Right
-    if(p.x < map.getWidth() - 1 && isValidSq(map.sq(p.x + 1, p.y)))
-        addSq(map.sq(p.x + 1, p.y), Point{p.x + 1, p.y});
-
-    // Down
-    if(p.y < map.getHeight() - 1 && isValidSq(map.sq(p.x, p.y + 1)))
-        addSq(map.sq(p.x, p.y + 1), Point{p.x, p.y + 1});
-
-    // Left
-    if(p.x > 0 && p.y > 0 && isValidSq(map.sq(p.x - 1, p.y)))
-        addSq(map.sq(p.x - 1, p.y), Point{p.x - 1, p.y});
+    map.loopNeighbors(p, [&](Point np, bool& stop)
+    {
+        if(isValidSq(map.sq(np)))
+            neighbors.emplace_back(Node{np});
+    });
 
     return neighbors;
 }
@@ -138,6 +124,8 @@ std::vector<Point> getPath(std::unordered_map<Node, Node>& cameFrom, Node curren
 
 // https://en.wikipedia.org/wiki/A*_search_algorithm#Pseudocode
 //
+// Find out if pathing to the diamond from the player is possible
+// Store that path so we can place ships where possibly required
 std::vector<Point> Pathing::aStar(const Map& map, Point player, Point diamond, 
         std::vector<Point>& requiredBoats)
 {

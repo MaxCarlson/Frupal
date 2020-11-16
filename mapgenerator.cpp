@@ -12,6 +12,8 @@
 #include "pathing.h"
 #include <assert.h>
 #include <algorithm>
+#include <unordered_set>
+
 
 double distance(int x1, int y1, int x2, int y2)
 {
@@ -663,7 +665,7 @@ void MapGenerator::placeItems(Map& map)
 
     std::vector<Point> reqBoats;
     placePlayerAndDiamod(map, reqBoats);
-    placeBoats(map, reqBoats);
+    placeBoats(map, reqBoats, 0.4f);
 }
 
 std::tuple<int, int, int, int, int> getRandomCornerCoords(const Map& map, int notThisCorner=-1)
@@ -757,16 +759,62 @@ void MapGenerator::placePlayerAndDiamod(Map& map, std::vector<Point>& reqBoats)
     }
 }
 
-void MapGenerator::placeBoats(Map& map, const std::vector<Point>& reqBoats)
+void MapGenerator::placeBoats(Map& map, 
+    const std::vector<Point>& reqBoats, float chancePerCell)
 {
     // Place boats that might be required
+    std::set<int> shipCells;
     for(Point p : reqBoats)
     {
+        // Add ships
         MapSquare& sq = map.sq(p);
         assert(sq.terrain == Terrain::WATER);
-
         sq.item = new Ship{"Ship"};
+
+        // Add the cell the ship occupies to the set of ship cells
+        shipCells.emplace(mapCells.find(std::pair{p.x, p.y})->second);
     }
 
-    
+    // Place boats randomly
+    //
+    // TODO: Create a map opposite of terrainMappings, 
+    // map terrain types to a vector of cells of that terrain type
+    // 
+    std::uniform_real_distribution<float> dist;
+    for(auto [cellId, terrain] : terrainMappings)
+    {
+        if(terrain != Terrain::WATER)
+            continue;
+
+        float r = dist(re);
+        if(r < chancePerCell)
+            continue;
+
+        // Don't place boats it cells that already contain them
+        auto [it, done] = shipCells.emplace(cellId);
+        if(!done)
+            continue;
+
+        // Find squares ships can be placed on in the cell
+        std::vector<Point> validShipSqs;
+        auto mapSqs = voronoiCells.find(cellId)->second;
+
+        for(auto [x, y] : mapSqs)
+        {
+            map.loopNeighbors(Point{x, y}, [&](Point np, bool& stop)
+            {
+                const MapSquare& sq = map.sq(np);
+                if(!(sq.terrain == Terrain::MEADOW || sq.terrain == Terrain::SWAMP)
+                    && !sq.item)
+                    return;
+
+                stop = true;
+                validShipSqs.emplace_back(Point{x, y});
+            });
+        }
+
+        std::uniform_int_distribution<int> distSq{0, static_cast<int>(validShipSqs.size()) - 1};
+        int sqIdx = distSq(re);
+        map.sq(validShipSqs[sqIdx]).item = new Ship{"Ship"};
+    }
 }

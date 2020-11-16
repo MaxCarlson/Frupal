@@ -81,5 +81,5 @@ private:
     // Place all items on the map
     void placeItems(Map& map);
     void placePlayerAndDiamod(Map& map, std::vector<Point>& reqBoats);
-    void placeBoats(Map& map, const std::vector<Point>& reqBoats);
+    void placeBoats(Map& map, const std::vector<Point>& reqBoats, float chancePerCell);
 };
