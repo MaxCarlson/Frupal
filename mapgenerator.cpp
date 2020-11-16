@@ -661,8 +661,9 @@ void MapGenerator::placeItems(Map& map)
     scatterItems<Binoculars>(map, voronoiCells, voronoiCellsVec, 
         terrainMappings, binocularChanceInTerrain, mostItemTerrainTypes, "BinocularTest");
 
-
-    placePlayerAndDiamod(map);
+    std::vector<Point> reqBoats;
+    placePlayerAndDiamod(map, reqBoats);
+    placeBoats(map, reqBoats);
 }
 
 std::tuple<int, int, int, int, int> getRandomCornerCoords(const Map& map, int notThisCorner=-1)
@@ -721,11 +722,10 @@ void placeInCorner(Map& map, RandomEngine& re, int xMin, int xMax,
     }
 }
 
-void MapGenerator::placePlayerAndDiamod(Map& map)
+void MapGenerator::placePlayerAndDiamod(Map& map, std::vector<Point>& reqBoats)
 {
     Point diamondPoint;
     Corner diamondCorner;
-    std::vector<Point> requiredBoats;
     {
         auto [xMin, xMax, yMin, yMax, corner] = getRandomCornerCoords(map);
 
@@ -748,11 +748,25 @@ void MapGenerator::placePlayerAndDiamod(Map& map)
         {
             // TODO: Need to check if game is completeable
 
-            bool success = pathing.playerToDiamond(map, Point{x, y}, diamondPoint, requiredBoats);
+            bool success = pathing.playerToDiamond(map, Point{x, y}, diamondPoint, reqBoats);
             playerCoords = std::pair{x, y};
             if(success)
                 return true;
             return false;
         });
     }
+}
+
+void MapGenerator::placeBoats(Map& map, const std::vector<Point>& reqBoats)
+{
+    // Place boats that might be required
+    for(Point p : reqBoats)
+    {
+        MapSquare& sq = map.sq(p);
+        assert(sq.terrain == Terrain::WATER);
+
+        sq.item = new Ship{"Ship"};
+    }
+
+    
 }
