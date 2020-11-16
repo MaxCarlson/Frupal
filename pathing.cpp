@@ -61,8 +61,30 @@ bool Pathing::playerToDiamond(const Map& map, Point player, Point diamond,
      std::vector<Point>& requiredBoats)
 {
     std::vector<Point> path = aStar(map, player, diamond, requiredBoats);
-    return true;
+    if(!path.empty())
+        findRequiredBoatLocs(map, requiredBoats, path);
+
+    return !path.empty();
 }
+
+void Pathing::findRequiredBoatLocs(const Map& map, std::vector<Point>& rqPoints, 
+    const std::vector<Point>& path)
+{
+    // Walk path backwards (start of path is at end of vec)
+    bool inWater = false;
+    for(int i = path.size() - 1; i > 0; --i)
+    {
+        Point p = path[i];
+        if(!inWater && map.sq(p).terrain == Terrain::WATER)
+        {
+            rqPoints.emplace_back(p);
+            inWater = true;
+        }
+        else if(inWater && map.sq(p).terrain != Terrain::WATER)
+            inWater = false;
+    }
+}
+
 
 std::vector<Node> neighbors(const Map& map, const Point& p)
 {
