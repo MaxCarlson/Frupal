@@ -18,6 +18,7 @@
           "${workspaceRoot}/ui.cpp",
           "${workspaceRoot}/display.cpp",
           "${workspaceRoot}/mapgenerator.cpp",
+          "${workspaceRoot}/pathing.cpp",
           "-lncurses",
           "-Wall",
           //"-Werror",

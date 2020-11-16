@@ -9,6 +9,7 @@
 #include "items/ship.h"
 #include "items/tool.h"
 #include "items/itemloader.h"
+#include "pathing.h"
 #include <assert.h>
 #include <algorithm>
 
@@ -660,9 +661,9 @@ void MapGenerator::placeItems(Map& map)
     scatterItems<Binoculars>(map, voronoiCells, voronoiCellsVec, 
         terrainMappings, binocularChanceInTerrain, mostItemTerrainTypes, "BinocularTest");
 
-
-    // We never place the diamond in the same corner as the player
-    generatePlayerStart(map, placeDiamod(map));
+    std::vector<Point> reqBoats;
+    placePlayerAndDiamod(map, reqBoats);
+    placeBoats(map, reqBoats);
 }
 
 std::tuple<int, int, int, int, int> getRandomCornerCoords(const Map& map, int notThisCorner=-1)
@@ -721,30 +722,51 @@ void placeInCorner(Map& map, RandomEngine& re, int xMin, int xMax,
     }
 }
 
-MapGenerator::Corner MapGenerator::placeDiamod(Map& map)
+void MapGenerator::placePlayerAndDiamod(Map& map, std::vector<Point>& reqBoats)
 {
-    auto [xMin, xMax, yMin, yMax, corner] = getRandomCornerCoords(map);
-
-    placeInCorner(map, re, xMin, xMax, yMin, yMax, [&](int x, int y, MapSquare& sq)
+    Point diamondPoint;
+    Corner diamondCorner;
     {
-        sq.item = new Diamond{"Diamond"};
-        return true;
-    });
-    return static_cast<Corner>(corner);
+        auto [xMin, xMax, yMin, yMax, corner] = getRandomCornerCoords(map);
+
+        placeInCorner(map, re, xMin, xMax, yMin, yMax, [&](int x, int y, MapSquare& sq)
+        {
+            diamondPoint = Point{x, y};
+            sq.item = new Diamond{"Diamond"};
+            return true;
+        });
+        diamondCorner = static_cast<Corner>(corner);
+
+    }
+
+    {
+        // We never place the diamond in the same corner as the player
+        auto [xMin, xMax, yMin, yMax, corner] = getRandomCornerCoords(map, diamondCorner);
+        Pathing pathing;
+
+        placeInCorner(map, re, xMin, xMax, yMin, yMax, [&](int x, int y, MapSquare& sq)
+        {
+            // TODO: Need to check if game is completeable
+
+            bool success = pathing.playerToDiamond(map, Point{x, y}, diamondPoint, reqBoats);
+            playerCoords = std::pair{x, y};
+            if(success)
+                return true;
+            return false;
+        });
+    }
 }
 
-void MapGenerator::generatePlayerStart(Map& map, Corner diamondCorner) 
+void MapGenerator::placeBoats(Map& map, const std::vector<Point>& reqBoats)
 {
-    auto [xMin, xMax, yMin, yMax, corner] = getRandomCornerCoords(map, diamondCorner);
-
-    placeInCorner(map, re, xMin, xMax, yMin, yMax, [&](int x, int y, MapSquare& sq)
+    // Place boats that might be required
+    for(Point p : reqBoats)
     {
-        // TODO: Need to check if game is completeable
+        MapSquare& sq = map.sq(p);
+        assert(sq.terrain == Terrain::WATER);
 
-
-        playerCoords = std::pair{x, y};
-        return true;
-    });
+        sq.item = new Ship{"Ship"};
+    }
 
     
 }

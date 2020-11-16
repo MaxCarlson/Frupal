@@ -19,6 +19,17 @@ enum class Terrain
     WALL
 };
 
+// Note: This isn't in widespread use, but should be used for all future points. 
+// It was stupid not to have it from the start
+struct Point
+{
+    int x, y;
+    Point() = default;
+    Point(int x, int y) : x{x}, y{y} {}
+
+    bool operator==(const Point& p) const { return x == p.x && y == p.y; }
+};
+
 struct MapSquare
 {
     bool discovered;
@@ -50,7 +61,10 @@ public:
     int getHeight() const { return height; }
     std::pair<int, int> getXY() const { return {width, height}; }
     const MapSquare& sq(int x, int y) const { return map[x][y]; }
+    const MapSquare& sq(const Point& p) const { return map[p.x][p.y]; }
+
     MapSquare& sq(int x, int y) { return map[x][y]; }
+    MapSquare& sq(const Point& p) { return map[p.x][p.y]; }
 
     // Func is a lambda/function which takes (int, int, const MapSquare&)
     template<class Func>

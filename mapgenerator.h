@@ -5,6 +5,7 @@
 #include <set>
 
 class Map;
+struct Point;
 enum class Terrain;
 
 class MapGenerator
@@ -79,7 +80,6 @@ private:
 
     // Place all items on the map
     void placeItems(Map& map);
-    Corner placeDiamod(Map& map);
-
-    void generatePlayerStart(Map& map, Corner diamondCorner);
+    void placePlayerAndDiamod(Map& map, std::vector<Point>& reqBoats);
+    void placeBoats(Map& map, const std::vector<Point>& reqBoats);
 };
