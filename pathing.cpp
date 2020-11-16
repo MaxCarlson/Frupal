@@ -3,16 +3,16 @@
 #include <map>
 #include <queue>
 #include <set>
+#include <unordered_set>
 #include <unordered_map>
 
 struct Node
 {
-    bool water;
     Point p;
     Node() = default;
-    Node(bool water, Point p) : water{water}, p{p} {}
+    Node(Point p) : p{p} {}
 
-    bool operator==(const Node& n) { return p == n.p; }
+    bool operator==(const Node& n) const { return p == n.p; }
 };
 
 double dist(const Point& p0, const Point& p1)
@@ -44,11 +44,23 @@ struct CompareNode
     }
 };
 
+namespace std
+{
+    template<>
+    struct hash<Node>
+    {
+        size_t operator()(const Node& n) const
+        {
+            return n.p.x + n.p.y * 128;
+        }
+    };
+}
+
 
 bool Pathing::playerToDiamond(const Map& map, Point player, Point diamond,
      std::vector<Point>& requiredBoats)
 {
-    aStar(map, player, diamond, requiredBoats);
+    std::vector<Point> path = aStar(map, player, diamond, requiredBoats);
     return true;
 }
 
@@ -65,7 +77,7 @@ std::vector<Node> neighbors(const Map& map, const Point& p)
     };
 
     auto addSq = [&](const MapSquare& sq, Point p) {
-        neighbors.emplace_back(Node{true, p});
+        neighbors.emplace_back(Node{p});
     };
 
     // Up
@@ -87,21 +99,31 @@ std::vector<Node> neighbors(const Map& map, const Point& p)
     return neighbors;
 }
 
-std::vector<Point> getPath(std::map<Node, Node, CompareNode>& cameFrom, Node current)
+std::vector<Point> getPath(std::unordered_map<Node, Node>& cameFrom, Node current)
 {
-
+    std::vector<Point> path;
+    path.emplace_back(current.p);
+    while(true)
+    {
+        auto find = cameFrom.find(current);
+        if(find == std::end(cameFrom))
+            break;
+        current = find->second;
+        path.emplace_back(current.p);
+    }
+    return path;
 }
 
 // https://en.wikipedia.org/wiki/A*_search_algorithm#Pseudocode
 //
-void Pathing::aStar(const Map& map, Point player, Point diamond, 
+std::vector<Point> Pathing::aStar(const Map& map, Point player, Point diamond, 
         std::vector<Point>& requiredBoats)
 {
-    Node start{false, player};
-    Node end{false, diamond};
+    Node start{player};
+    Node end{diamond};
 
     CompareNodeDist cp{diamond};
-    std::set<Node, CompareNode> openSetVals;
+    std::unordered_set<Node> openSetVals;
     std::priority_queue<Node, std::vector<Node>, CompareNodeDist> openSet{cp};
 
     openSet.emplace(start);
@@ -110,20 +132,20 @@ void Pathing::aStar(const Map& map, Point player, Point diamond,
 
     // Key is a Node, and value is the previous node that node came from,
     // on the cheapest path from the start
-    std::map<Node, Node, CompareNode> cameFrom;
+    std::unordered_map<Node, Node> cameFrom;
 
     // For the Key, the value is the cost of the cheapest path from start to n known
-    std::map<Node, float, CompareNode> gScore;
+    std::unordered_map<Node, float> gScore;
     gScore.emplace(start, 0.f);
 
-    std::map<Node, float, CompareNode> fScore;
+    std::unordered_map<Node, float> fScore;
     fScore.emplace(start, dist(start.p, end.p));
 
     while(!openSet.empty())
     {
         Node current = openSet.top();
         if(current == end)
-            getPath(cameFrom, current); 
+            return getPath(cameFrom, current); 
 
         openSet.pop();
         auto osFind = openSetVals.find(current);
@@ -131,12 +153,15 @@ void Pathing::aStar(const Map& map, Point player, Point diamond,
 
         for(Node n : neighbors(map, current.p))
         {
-            auto gScoreFind = gScore.find(current);
-            auto gScoreNeig = gScore.find(n);
-            float tgScore = gScoreFind->second;
+            auto gScoreFind         = gScore.find(current);
+            auto gScoreNeighFind    = gScore.find(n);
+            float tgScore           = gScoreFind->second + 1;
+            float gScoreNeigh       = std::numeric_limits<float>::max();
+            if(gScoreNeighFind != std::end(gScore))
+                gScoreNeigh = gScoreNeighFind->second;
 
             // This path doesn't look better
-            if(tgScore >= gScoreNeig->second)
+            if(tgScore >= gScoreNeigh)
                 continue;
 
             cameFrom[n] = current;
@@ -151,5 +176,5 @@ void Pathing::aStar(const Map& map, Point player, Point diamond,
             }
         }
     }
-
+    return std::vector<Point>{};
 }
