@@ -44,3 +44,12 @@ void Player::discoverTerrrain(Map& map)
 
     // TODO: Finish out binocular squares here
 }
+
+bool Player::buyFood(int ch)
+{
+    // execute food functionality
+    if(ch == 'y')
+        return true;
+
+    return false;
+}

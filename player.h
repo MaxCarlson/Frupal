@@ -50,4 +50,6 @@ public:
     std::pair<int, int> getXY() const { return {x, y}; }
     void discoverTerrrain(Map& map);
 
+    bool buyFood(int ch);
+    
 };
