@@ -49,7 +49,11 @@ bool Player::buyFood(int ch)
 {
     // execute food functionality
     if(ch == 'y')
-        return true;
+    {
 
+        return true;
+    }
+
+    // player chose not to buy food (do nothing.)
     return false;
 }

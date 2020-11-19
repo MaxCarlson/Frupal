@@ -6,7 +6,7 @@
 void Movement::movePlayer(Player& player, Map& map, int x, int y)
 {
     int xf = player.getX() + x;
-    int yf = player.getY() + y;
+    int yf = player.getY() + y; 
 
     const MapSquare& sq = map.sq(xf, yf);
 
@@ -29,4 +29,14 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
 
     player.setX(xf);
     player.setY(yf);
+
+    if(sq.item)
+    {
+        // Item is food
+        //if(sq.item->getName().compare("F") == 0)
+            // Allow player to purchase food
+    }
+
+
+        
 }
