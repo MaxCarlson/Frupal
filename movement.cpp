@@ -1,6 +1,15 @@
 #include "movement.h"
 #include "player.h"
 #include "map.h"
+#include "items/binoculars.h"
+#include "items/chest.h"
+#include "items/clue.h"
+#include "items/diamond.h"
+#include "items/food.h"
+#include "items/obstacle.h"
+#include "items/ship.h"
+#include "items/tool.h"
+#include "items/itemloader.h"
 
 
 void Movement::movePlayer(Player& player, Map& map, int x, int y)
@@ -33,8 +42,13 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
     if(sq.item)
     {
         // Item is food
-        //if(sq.item->getName().compare("F") == 0)
-            // Allow player to purchase food
+        //if(dynamic_cast<Food*>(sq.item))
+        // Allow player to buy or not buy food
+        // If no, do nothing
+        // If yes, subtract corresponding money from player,
+        // Add corresponding energy to player
+        // delete food
+           
     }
 
 
