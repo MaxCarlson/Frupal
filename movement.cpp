@@ -1,6 +1,7 @@
 #include "movement.h"
 #include "player.h"
 #include "map.h"
+#include "display.h"
 #include "items/binoculars.h"
 #include "items/chest.h"
 #include "items/clue.h"
@@ -39,10 +40,16 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
     player.setX(xf);
     player.setY(yf);
 
-    if(sq.item)
+    /*if(sq.item)
     {
         // Item is food
-        //if(dynamic_cast<Food*>(sq.item))
+        if(dynamic_cast<Food*>(sq.item))
+        {
+            Display display;
+            std::string text = "Purchase Food? (Y/N)";
+            display.printCenteredText(x, x, y, text);
+
+        }
         // Allow player to buy or not buy food
         // If no, do nothing
         // If yes, subtract corresponding money from player,
@@ -50,6 +57,7 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
         // delete food
            
     }
+    */
 
 
         
