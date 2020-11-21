@@ -1,6 +1,7 @@
 #include "movement.h"
 #include "player.h"
 #include "map.h"
+#include "input.h"
 #include "items/binoculars.h"
 #include "items/chest.h"
 #include "items/clue.h"
@@ -16,6 +17,7 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
 {
     int xf = player.getX() + x;
     int yf = player.getY() + y; 
+    Input input;
 
     MapSquare& sq = map.sq(xf, yf);
 
@@ -47,7 +49,7 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
             Food *food = dynamic_cast<Food*>(sq.item);
 
             // player chooses to buy food and can afford to do so
-            if(player.buyFood() && player.getMoney() >= food->getCost())
+            if(input.buyFood() && player.getMoney() >= food->getCost())
             {
                 player.modifyMoney(-food->getCost());
                 player.modifyEnergy(food->getEnergy());

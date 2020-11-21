@@ -10,4 +10,5 @@ public:
     Input() = default;
 
     bool input(Player& player, Map& map);
+    bool buyFood();
 };
