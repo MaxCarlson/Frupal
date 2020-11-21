@@ -38,9 +38,6 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
             return;
     }
 
-    player.setX(xf);
-    player.setY(yf);
-
     if(sq.item)
     {
         // item is food
@@ -58,10 +55,23 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
                 delete sq.item;
                 sq.item = nullptr;
             }
+            return;
 
             // if player doesn't have enough money, maybe inform the player?
         }
+
+        if(dynamic_cast<Obstacle*>(sq.item))
+        {
+            //Obstacle *obstacle = dynamic_cast<Obstacle*>(sq.item);
+
+            
+
+        }
+
     }
+
+    player.setX(xf);
+    player.setY(yf);
     
 
 
