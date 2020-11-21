@@ -1,5 +1,6 @@
 #include "player.h"
 #include "map.h"
+#include <ncurses.h>
 
 std::pair<int, int> Player::selectedSquare() const
 {
@@ -45,15 +46,14 @@ void Player::discoverTerrrain(Map& map)
     // TODO: Finish out binocular squares here
 }
 
-bool Player::buyFood(int ch)
+bool Player::buyFood()
 {
+    int ch = 0;
     // execute food functionality
+    while(ch != 'y' && ch != 'n')
+        ch = getch();
+
     if(ch == 'y')
-    {
-
         return true;
-    }
-
-    // player chose not to buy food (do nothing.)
     return false;
 }

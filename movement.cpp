@@ -17,7 +17,7 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
     int xf = player.getX() + x;
     int yf = player.getY() + y; 
 
-    const MapSquare& sq = map.sq(xf, yf);
+    MapSquare& sq = map.sq(xf, yf);
 
     switch(sq.terrain)
     {
@@ -41,19 +41,24 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
 
     if(sq.item)
     {
-        // Item is food
+        // item is food
         if(dynamic_cast<Food*>(sq.item))
         {
+            Food *food = dynamic_cast<Food*>(sq.item);
 
+            // player chooses to buy food and can afford to do so
+            if(player.buyFood() && player.getMoney() >= food->getCost())
+            {
+                player.modifyMoney(-food->getCost());
+                player.modifyEnergy(food->getEnergy());
 
+                food = nullptr;
+                delete sq.item;
+                sq.item = nullptr;
+            }
 
+            // if player doesn't have enough money, maybe inform the player?
         }
-        // Allow player to buy or not buy food
-        // If no, do nothing
-        // If yes, subtract corresponding money from player,
-        // Add corresponding energy to player
-        // delete food
-           
     }
     
 
