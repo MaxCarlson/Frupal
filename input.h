@@ -11,4 +11,5 @@ public:
 
     bool input(Player& player, Map& map);
     bool buyFood();
+    bool canBreakObstacle(Player& player, int obstacleCost);
 };

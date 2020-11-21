@@ -62,9 +62,22 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
 
         if(dynamic_cast<Obstacle*>(sq.item))
         {
-            //Obstacle *obstacle = dynamic_cast<Obstacle*>(sq.item);
+            Obstacle *obstacle = dynamic_cast<Obstacle*>(sq.item);
+            if(input.canBreakObstacle(player, obstacle->getEnergy()))
+            {
+                obstacle = nullptr;
+                delete sq.item;
+                sq.item = nullptr;
+            }
 
-            
+            else
+                return;
+                
+            // Check if player can afford to remove obstacle
+            // either with current energy or energy combined with tool
+            //
+            // If the player can't afford it...kill player
+            // If the player can affor it, remove obstacle
 
         }
 
@@ -72,8 +85,5 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
 
     player.setX(xf);
     player.setY(yf);
-    
-
-
-        
+            
 }

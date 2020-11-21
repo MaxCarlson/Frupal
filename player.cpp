@@ -46,4 +46,3 @@ void Player::discoverTerrrain(Map& map)
     // TODO: Finish out binocular squares here
 }
 
-
