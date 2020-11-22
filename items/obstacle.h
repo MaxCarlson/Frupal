@@ -3,13 +3,23 @@
 
 class Obstacle : public Item
 {
-    int energy; // Energy cost to remove
+    std::string type;   // Tool's type should match
+    int energy;         // Energy cost to remove
 
 public:
     Obstacle(std::string name, int energy) :
         Item{'!', name}, energy{energy}
     {}
 
+    Obstacle(std::string name, std::string type, int energy) :
+        Item{'!', name}, type{type}, energy{energy}
+    {}
+
     int getEnergy() const { return energy; }
+    
+    int match(std::string toolType)
+    {
+        return !type.compare(toolType);
+    }
 };
 
