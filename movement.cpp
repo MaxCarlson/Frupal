@@ -81,7 +81,14 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
 
         }
 
+        if(dynamic_cast<Tool*>(sq.item))
+        {
+            //Tool *obstacle = dynamic_cast<Tool*>(sq.item);
+
+        }
+
     }
+    
 
     player.setX(xf);
     player.setY(yf);
