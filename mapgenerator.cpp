@@ -658,7 +658,7 @@ void MapGenerator::placeItems(Map& map)
         terrainMappings, treasureChanceInTerrain, mostItemTerrainTypes, "ChestTest");
 
     scatterItems<Tool>(map, voronoiCells, voronoiCellsVec, 
-        terrainMappings, toolChanceInTerrain, mostItemTerrainTypes, "ToolTest");
+        terrainMappings, toolChanceInTerrain, mostItemTerrainTypes, "ToolTest", 20, 2);
 
     scatterItems<Binoculars>(map, voronoiCells, voronoiCellsVec, 
         terrainMappings, binocularChanceInTerrain, mostItemTerrainTypes, "BinocularTest");
