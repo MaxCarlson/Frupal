@@ -70,10 +70,10 @@ bool Input::input(Player& player, Map& map)
     return true;
 }
 
-bool Input::buyFood()
+bool Input::buyItem()
 {
     int ch = 0;
-    // execute food functionality
+    
     while(ch != 'y' && ch != 'n')
         ch = getch();
 

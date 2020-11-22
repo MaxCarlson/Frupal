@@ -10,6 +10,6 @@ public:
     Input() = default;
 
     bool input(Player& player, Map& map);
-    bool buyFood();
+    bool buyItem();
     bool canBreakObstacle(Player& player, int obstacleCost);
 };

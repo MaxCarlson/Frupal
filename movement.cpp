@@ -46,7 +46,7 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
             Food *food = dynamic_cast<Food*>(sq.item);
 
             // player chooses to buy food and can afford to do so
-            if(input.buyFood() && player.getMoney() >= food->getCost())
+            if(input.buyItem() && player.getMoney() >= food->getCost())
             {
                 player.modifyMoney(-food->getCost());
                 player.modifyEnergy(food->getEnergy());
