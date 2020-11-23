@@ -1,5 +1,6 @@
 #include "player.h"
 #include "map.h"
+#include <ncurses.h>
 
 std::pair<int, int> Player::selectedSquare() const
 {
@@ -43,4 +44,9 @@ void Player::discoverTerrrain(Map& map)
     }
 
     // TODO: Finish out binocular squares here
+}
+
+void Player::addTool(Tool *&tool)
+{
+    tools.push_back(tool);
 }

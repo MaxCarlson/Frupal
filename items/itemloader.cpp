@@ -108,9 +108,11 @@ Obstacle* ItemLoader::getObstacle() const
 }
 Tool* ItemLoader::getTool() const
 {
+
     std::srand(std::time(nullptr));
     int rand = std::rand() % tools.size();
     Tool * const toolptr = const_cast<Tool*>(&tools[rand]);
 
     return toolptr;
 }
+

@@ -113,7 +113,7 @@ void Display::printUI(const Camera& camera, UI& ui, const Player& player, Map& m
     refresh();
 }
 
-void Display::printCeneteredText(int x1, int x2, int y, std::string text)
+void Display::printCenteredText(int x1, int x2, int y, std::string text)
 {
     assert(static_cast<int>(text.length()) <= x2 - x1);
     mvaddstr(y, (x2 - x1) / 2 - text.length() / 2, text.c_str());
