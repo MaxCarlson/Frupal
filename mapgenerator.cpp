@@ -361,15 +361,15 @@ void MapGenerator::placeWallObstacles(Map& map, std::vector<bool>& isWallVerticl
         int obIdx = obSqDist(re);
         auto [x, y] = validObstacleSqs[obIdx];
 
-
         // TODO: Pick random obstacle here
-        map.sq(x, y).item = new Obstacle{"test", 10};
+        map.sq(x, y).item = new Obstacle{"test", "testType", 20}; 
         
         // Refill map terrain where obstacle was placed (and the wall terrain was removed)
         if(isWallVerticle[wallId])
             map.sq(x, y).terrain = map.sq(x+1, y).terrain;
         else
             map.sq(x, y).terrain = map.sq(x, y-1).terrain;
+
     }
 }
 
@@ -575,7 +575,7 @@ void MapGenerator::placeHouseObstacles(Map& map)
                 continue;
 
             MapSquare& sq   = map.sq(x, y);
-            sq.item         = new Obstacle{"ObstacleTest", 10};
+            sq.item         = new Obstacle{"ObstacleTest", "ObstacleType", 10};
             sq.terrain      = validSqs == 3 ? map.sq(x, y+1).terrain : map.sq(x+1, y).terrain;
             if(sq.terrain == Terrain::WALL)
                 sq.terrain  = validSqs == 3 ? map.sq(x, y-1).terrain : map.sq(x-1, y).terrain;
@@ -644,7 +644,6 @@ void scatterItems(Map& map, std::map<int, std::set<std::pair<int, int>>>& vorono
 
 void MapGenerator::placeItems(Map& map)
 {
-
     std::set<Terrain> mostItemTerrainTypes              = {Terrain::MEADOW, Terrain::SWAMP};
     std::map<Terrain, float> foodChanceInTerrain        = {{Terrain::MEADOW, 0.5f},  {Terrain::SWAMP, 1.f}}; 
     std::map<Terrain, float> toolChanceInTerrain        = {{Terrain::MEADOW, 0.2f},  {Terrain::SWAMP, 0.2f}}; 
@@ -658,7 +657,7 @@ void MapGenerator::placeItems(Map& map)
         terrainMappings, treasureChanceInTerrain, mostItemTerrainTypes, "ChestTest");
 
     scatterItems<Tool>(map, voronoiCells, voronoiCellsVec, 
-        terrainMappings, toolChanceInTerrain, mostItemTerrainTypes, "ToolTest", 20, 2);
+        terrainMappings, toolChanceInTerrain, mostItemTerrainTypes, "ToolTest", "ToolType", 20, 2);
 
     scatterItems<Binoculars>(map, voronoiCells, voronoiCellsVec, 
         terrainMappings, binocularChanceInTerrain, mostItemTerrainTypes, "BinocularTest", 100);

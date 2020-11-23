@@ -73,7 +73,7 @@ bool Input::input(Player& player, Map& map)
 bool Input::buyItem()
 {
     int ch = 0;
-    
+
     while(ch != 'y' && ch != 'n')
         ch = getch();
 
