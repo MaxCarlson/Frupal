@@ -46,3 +46,7 @@ void Player::discoverTerrrain(Map& map)
     // TODO: Finish out binocular squares here
 }
 
+void Player::addTool(Tool *&tool)
+{
+    tools.push_back(tool);
+}

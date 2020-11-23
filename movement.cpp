@@ -83,8 +83,18 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
 
         if(dynamic_cast<Tool*>(sq.item))
         {
-            //Tool *obstacle = dynamic_cast<Tool*>(sq.item);
-
+            Tool *tool = dynamic_cast<Tool*>(sq.item);
+            if(input.buyItem() && player.getMoney() >= tool->getCost())
+            {
+                // put tool in player's tool belt
+                player.modifyMoney(-tool->getCost());
+                player.addTool(tool);
+                
+                tool = nullptr;
+                delete sq.item;
+                sq.item = nullptr;
+            }
+            return;
         }
 
     }
