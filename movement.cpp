@@ -102,12 +102,20 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
 
         if(dynamic_cast<Binoculars*>(sq.item))
         {
+            Binoculars *binoculars = dynamic_cast<Binoculars*>(sq.item);
+            if(input.buyItem() && player.getMoney() >= binoculars->getCost())
+            {
+                player.modifyMoney(-binoculars->getCost());
+                player.boughtBinoculars();
+                binoculars = nullptr;
+                delete sq.item;
+                sq.item = nullptr;
 
+            }
+            return;
         }
-
     }
     
-
     player.setX(xf);
     player.setY(yf);
             

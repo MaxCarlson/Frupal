@@ -51,5 +51,6 @@ public:
     void discoverTerrrain(Map& map);
 
     void addTool(Tool *&tool);
+    void boughtBinoculars() { hasBinoculars = true; }
     
 };
