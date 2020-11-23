@@ -658,10 +658,10 @@ void MapGenerator::placeItems(Map& map)
         terrainMappings, treasureChanceInTerrain, mostItemTerrainTypes, "ChestTest");
 
     scatterItems<Tool>(map, voronoiCells, voronoiCellsVec, 
-        terrainMappings, toolChanceInTerrain, mostItemTerrainTypes, "ToolTest");
+        terrainMappings, toolChanceInTerrain, mostItemTerrainTypes, "ToolTest", 20, 2);
 
     scatterItems<Binoculars>(map, voronoiCells, voronoiCellsVec, 
-        terrainMappings, binocularChanceInTerrain, mostItemTerrainTypes, "BinocularTest");
+        terrainMappings, binocularChanceInTerrain, mostItemTerrainTypes, "BinocularTest", 100);
 
     std::vector<Point> reqBoats;
     placePlayerAndDiamod(map, reqBoats);
