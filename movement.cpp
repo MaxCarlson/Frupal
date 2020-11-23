@@ -71,7 +71,10 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
             }
 
             else
+            {
+                player.modifyEnergy(-obstacle->getEnergy());
                 return;
+            }
                 
             // Check if player can afford to remove obstacle
             // either with current energy or energy combined with tool
@@ -95,6 +98,11 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
                 sq.item = nullptr;
             }
             return;
+        }
+
+        if(dynamic_cast<Binoculars*>(sq.item))
+        {
+
         }
 
     }

@@ -661,7 +661,7 @@ void MapGenerator::placeItems(Map& map)
         terrainMappings, toolChanceInTerrain, mostItemTerrainTypes, "ToolTest", 20, 2);
 
     scatterItems<Binoculars>(map, voronoiCells, voronoiCellsVec, 
-        terrainMappings, binocularChanceInTerrain, mostItemTerrainTypes, "BinocularTest");
+        terrainMappings, binocularChanceInTerrain, mostItemTerrainTypes, "BinocularTest", 100);
 
     std::vector<Point> reqBoats;
     placePlayerAndDiamod(map, reqBoats);
