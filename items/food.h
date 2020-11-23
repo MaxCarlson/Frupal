@@ -15,7 +15,6 @@ public:
     int getCost()   const { return cost; }
     int getEnergy() const { return energy; }
     
-    
     StringTuple getDescription() const
     {
         std::string l1, l2, l3; 
