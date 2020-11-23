@@ -12,4 +12,5 @@ public:
 
     int getCost()   const { return cost; }
     int getRating() const { return rating; }
+
 };
