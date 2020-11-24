@@ -1,13 +1,15 @@
 #pragma once
 #include "map.h"
+#include <string>
+#include <fstream>
 
 class mapStoreAndLoad 
 {
   public:
   //Variables
-  Map map;
 
   //Constructor
+  //mapStoreAndLoad(Map& map);
   mapStoreAndLoad() = default;
 
   //Functions
