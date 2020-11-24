@@ -7,10 +7,14 @@ mapStoreAndLoad::mapStoreAndLoad(Map& map) {
 }
 */
 
-int mapStoreAndLoad::load(Map& map, const std::string fileName) {
+
+bool mapStoreAndLoad::save(Map& map, const std::string fileName) {
+  std::ofstream outFile;
+  outFile.open(fileName);
+
   return 1;
 }
 
-int mapStoreAndLoad::save(Map& map, const std::string fileName) {
+bool mapStoreAndLoad::load(Map& map, const std::string fileName) {
   return 1;
 }
