@@ -813,6 +813,9 @@ void MapGenerator::placeBoats(Map& map,
             });
         }
 
+        if(validShipSqs.empty())
+            continue;
+
         std::uniform_int_distribution<int> distSq{0, static_cast<int>(validShipSqs.size()) - 1};
         int sqIdx = distSq(re);
         map.sq(validShipSqs[sqIdx]).item = new Ship{"Ship"};
