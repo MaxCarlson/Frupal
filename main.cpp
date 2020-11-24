@@ -39,7 +39,7 @@ int main()
         timeout(0);
         
         UI      ui{COLS};
-        MapGenerator mgen{128, 1};
+        MapGenerator mgen{128, 3};
         Map map = mgen.generate(400, 100);
         Input   input;
         Player  player{mgen.getPlayerCoords()};
