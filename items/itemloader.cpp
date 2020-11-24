@@ -18,9 +18,6 @@ void ItemLoader::loadItems()
      * FOOD|Food Name|cost|energy
      * OBSTACLE|Obstacle Name|TYPE|energy
      * 
-     * std::vector<Food>       foods;
-     * std::vector<Tool>       tools;
-     * std::vector<Obstacle>   obstacles;
      */
 
     char del = '|';         // Delimiter
@@ -35,7 +32,7 @@ void ItemLoader::loadItems()
     std::ifstream file("items.txt");
     if (!file) return;
 
-    getline(file, sname, '|');
+    getline(file, sname, del);
 
     while(file && !file.eof())
     {
@@ -43,8 +40,8 @@ void ItemLoader::loadItems()
         {
             if (!sname.compare("TOOL"))
             {
-                getline(file, sname, '|');
-                getline(file, stype, '|');
+                getline(file, sname, del);
+                getline(file, stype, del);
                 file >> cost;
                 file.ignore(size, del);
                 file >> rating;
@@ -53,7 +50,7 @@ void ItemLoader::loadItems()
             }
             else if (!sname.compare("FOOD"))
             {
-                getline(file, sname, '|');
+                getline(file, sname, del);
                 file >> cost;
                 file.ignore(size, del);
                 file >> energy;
@@ -62,8 +59,8 @@ void ItemLoader::loadItems()
             }
             else if (!sname.compare("OBSTACLE"))
             {
-                getline(file, sname, '|');
-                getline(file, stype, '|');
+                getline(file, sname, del);
+                getline(file, stype, del);
                 file >> energy;
                 item_ptr = new Obstacle(sname,stype,energy);
                 obstacles.push_back(*(dynamic_cast<Obstacle*>(item_ptr)));
@@ -74,7 +71,7 @@ void ItemLoader::loadItems()
         }
 
         file.ignore(size, '\n');
-        getline(file, sname, '|');
+        getline(file, sname, del);
     }
 
     file.close();
@@ -108,11 +105,9 @@ Obstacle* ItemLoader::getObstacle() const
 }
 Tool* ItemLoader::getTool() const
 {
-
     std::srand(std::time(nullptr));
     int rand = std::rand() % tools.size();
     Tool * const toolptr = const_cast<Tool*>(&tools[rand]);
 
     return toolptr;
 }
-
