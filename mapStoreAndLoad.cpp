@@ -1,4 +1,6 @@
 #include "mapStoreAndLoad.h"
+#include <fstream>
+#include <iostream>
 
 //Constructor
 /*
@@ -10,11 +12,20 @@ mapStoreAndLoad::mapStoreAndLoad(Map& map) {
 
 bool mapStoreAndLoad::save(Map& map, const std::string fileName) {
   std::ofstream outFile;
+  outFile.exceptions ( std::ofstream::failbit | std::ofstream::badbit );
+  try {
   outFile.open(fileName);
 
-  return 1;
+  outFile.close();
+  }
+  catch(std::ofstream::failure &e) {
+    std::cerr << "Exception opening/reading/closing file\n";
+    return false;
+  }
+
+  return true;
 }
 
 bool mapStoreAndLoad::load(Map& map, const std::string fileName) {
-  return 1;
+  return true;
 }

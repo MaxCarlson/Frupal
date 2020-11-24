@@ -1,7 +1,6 @@
 #pragma once
 #include "map.h"
 #include <string>
-#include <fstream>
 
 class mapStoreAndLoad 
 {
