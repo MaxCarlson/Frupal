@@ -3,8 +3,24 @@
 
 class Tool : public Item
 {
+
+    std::string type;   // Obstacle's type should match
+    int cost;           // Amt in whiffles to purchase
+    int rating;         // Effectiveness (1x, 2x, 3x, etc.)
+
 public:
-    Tool(std::string name) 
-        : Item{'T', name}
+
+    // Full constructor
+    Tool(std::string name, std::string type, int cost, int rating)
+        : Item{'T', name}, type{type}, cost{cost}, rating{rating}
     {}
+
+    int match(std::string obsType)
+    {
+        return !type.compare(obsType);
+    }
+    int getCost()   const { return cost; }
+    int getRating() const { return rating; }
+
 };
+

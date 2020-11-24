@@ -42,7 +42,6 @@ void UI::printOutline(Display& display, const Camera& camera)
 {
     auto [cx, cy] = camera.getDims();
 
-
     // TODO: Eventually make this so if the terminal is larger than the map, 
     // the UI rests at the edge of the map instead of the edge of the screen?
     int xpos = cx - cols;
@@ -74,23 +73,27 @@ void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera,
     if(!sq.item)
         return;
 
-
     // TODO: Add all other item types in here
     std::string l1, l2, l3;
 
     if(dynamic_cast<const Food*>(sq.item))
     {
-        static const std::string food   = "> Food: ";
-        static const std::string cost   = "> Cost: ";
-        static const std::string energy = "> Energy: ";
-        l1 = food   + sq.item->getName();
-        l2 = cost   + std::to_string(dynamic_cast<const Food*>(sq.item)->getCost());
-        l3 = energy + std::to_string(dynamic_cast<const Food*>(sq.item)->getEnergy());
+        auto [ll1, ll2, ll3] = sq.item->getDescription();
+        l1 = ll1; 
+        l2 = ll2; 
+        l3 = ll3;
     }
-    //else if(dynamic_cast<const Binoculars*>(sq.item)) //...etc
 
-
+   /* if(dynamic_cast<const Binoculors*>(sq.item))
+    {
+        auto [ll1, ll2, ll3] = sq.item->getDescription();
+        l1 = ll1; 
+        l2 = ll2; 
+        l3 = ll3;
+    }*/
+    
     mvaddstr(1, xOffset, l1.c_str());
     mvaddstr(2, xOffset, l2.c_str());
     mvaddstr(3, xOffset, l3.c_str());
 }
+
