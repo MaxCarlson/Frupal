@@ -13,8 +13,8 @@ class mapStoreAndLoad
   mapStoreAndLoad() = default;
 
   //Functions
-  int load(Map& map);
-  int save(Map& map);
+  int load(Map& map, const std::string fileName);
+  int save(Map& map, const std::string fileName);
 
   private:
 };

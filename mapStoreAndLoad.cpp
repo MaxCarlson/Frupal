@@ -7,10 +7,10 @@ mapStoreAndLoad::mapStoreAndLoad(Map& map) {
 }
 */
 
-int mapStoreAndLoad::load(Map& map) {
+int mapStoreAndLoad::load(Map& map, const std::string fileName) {
   return 1;
 }
 
-int mapStoreAndLoad::save(Map& map) {
+int mapStoreAndLoad::save(Map& map, const std::string fileName) {
   return 1;
 }
