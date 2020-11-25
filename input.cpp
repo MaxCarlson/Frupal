@@ -52,7 +52,7 @@ bool Input::input(Player& player, Map& map, UI& ui, Camera& camera)
             break;
 
         case 50: // 2
-            player.setCursor(player.getX(), player.getY() - 1); //Direction::EAST);
+            player.setCursor(player.getX(), player.getY() + 1); //Direction::EAST);
             break;
 
         case 51: // 3
@@ -60,7 +60,7 @@ bool Input::input(Player& player, Map& map, UI& ui, Camera& camera)
             break;
 
         case 52: // 4
-            player.setCursor(player.getX(), player.getY() + 1); //Direction::WEST);
+            player.setCursor(player.getX(), player.getY() - 1); //Direction::WEST);
             break;
 
         case -1: // Default ERR input, just here for debugging so we can catch unknown key cods in defualt
