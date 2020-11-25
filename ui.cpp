@@ -19,7 +19,6 @@ void UI::print(Display& display, const Player& player, const Camera& camera, Map
     printOutline(display, camera);
     auto [cx, cy] = camera.getDims();
 
-
     // Offset for all printed text in UI
     int xOffset = cx - cols + 2;
 
@@ -52,23 +51,16 @@ void UI::printOutline(Display& display, const Camera& camera)
 
 void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera, int xOffset)
 {
-    auto [cx, cy]   = camera.getDims();
+    auto [cx, cy]   = player.getCursor();
     auto [cxo, cyo] = camera.getOffsets();
-    auto [sx, sy]   = player.selectedSquare();
 
-    if(sx < 0 || sy < 0 || sx > cx - 1 || sy > cy - 1)
-    {
-        curs_set(0);
-        return;
-    }
-    else
-        curs_set(1);
+    curs_set(1);
 
     // TODO: This is non-functional right now for the right half of the map
     // Set the cursor to its given pos
-    move(sy - cyo, sx - cxo);
+    move(cy - cyo, cx - cxo);
 
-    const MapSquare& sq =  map.sq(sx, sy);
+    const MapSquare& sq =  map.sq(cx, cy);
 
     if(!sq.item)
         return;
@@ -96,4 +88,3 @@ void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera,
     mvaddstr(2, xOffset, l2.c_str());
     mvaddstr(3, xOffset, l3.c_str());
 }
-

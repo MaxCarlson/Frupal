@@ -2,22 +2,6 @@
 #include "map.h"
 #include <ncurses.h>
 
-std::pair<int, int> Player::selectedSquare() const
-{
-    switch(dir)
-    {
-        case NORTH:
-            return {x, y-1};
-        case EAST:
-            return {x+1, y};
-        case SOUTH:
-            return {x, y+1};
-        case WEST:
-            return {x-1, y};
-    }
-    return {-1, -1};
-}
-
 void Player::discoverTerrrain(Map& map)
 {
     constexpr std::pair<int, int> dirs[] = 

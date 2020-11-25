@@ -12,7 +12,6 @@ enum Direction
     WEST
 };
 
-
 class Player
 {
     int energy;
@@ -21,14 +20,13 @@ class Player
     bool hasBinoculars;
     bool onShip;
     bool playerDeath;
-    Direction dir; // TODO: Remove this and make it an xy coordinate pair for cursor location
+    int px, py;
     std::vector<Tool*> tools;
-
     
 public:
 
     Player(std::pair<int, int> xy) :
-        energy{100}, money{1000}, x{xy.first}, y{xy.second}, hasBinoculars{false}, onShip{false}, playerDeath{true}, dir{SOUTH}, tools{}
+        energy{100}, money{1000}, x{xy.first}, y{xy.second}, hasBinoculars{false}, onShip{false}, playerDeath{true}, px{xy.first}, py{xy.second},  tools{}
     {} 
 
     int getX() const { return x; }
@@ -41,9 +39,8 @@ public:
 
     int getMoney()  const { return money; }
     int getEnergy() const { return energy; }
-    Direction getDir() const { return dir; }
-    void setDir(Direction dr) { dir = dr; }
-
+    std::pair<int, int> getCursor() const { return std::pair{px, py}; }
+    void setCursor(int tpx, int tpy) {px = tpx; py = tpy;}
     bool showPlayerDeath() const { return playerDeath; }
 
     std::pair<int, int> selectedSquare() const;

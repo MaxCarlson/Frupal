@@ -50,7 +50,7 @@ int main()
         {
             std::this_thread::sleep_for(std::chrono::milliseconds{SleepTime});
 
-            if(!input.input(player, map))
+            if(!input.input(player, map, ui, camera))
             {
                 gameRunning = false;
                 break;
