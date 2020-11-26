@@ -48,7 +48,7 @@ bool Input::input(Player& player, Map& map, UI& ui, Camera& camera)
         // TODO: Apparently these are supposed to be arrow keys, and number keys are used for movement?
         // TODO: Also, these should move the cursor in that dir, not set the cursor next to the player in that dir
         case 49: // 1
-            player.setCursor(player.getX(), player.getY() + 1);  //move cursor to Direction::NORTH
+            player.setCursor(player.getX(), player.getY() - 1);  //move cursor to Direction::SOUTH
             break;
 
         case 50: // 2
@@ -56,7 +56,7 @@ bool Input::input(Player& player, Map& map, UI& ui, Camera& camera)
             break;
 
         case 51: // 3
-            player.setCursor(player.getX(), player.getY() - 1); //Direction::SOUTH);
+            player.setCursor(player.getX(), player.getY() + 1); //Direction::NORTH; 
             break;
 
         case 52: // 4
