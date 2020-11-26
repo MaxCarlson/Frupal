@@ -17,9 +17,10 @@ int main()
 {
   MapGenerator mgen{128, 13};
   Map map = mgen.generate(400, 100);
+  Player  player{mgen.getPlayerCoords()};
   
   mapStoreAndLoad saveLoad;
-  saveLoad.save(map, "mapSave.txt");
+  saveLoad.save(map, player, "mapSave.txt");
 
   
     return 0;

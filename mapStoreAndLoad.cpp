@@ -10,7 +10,7 @@ mapStoreAndLoad::mapStoreAndLoad(Map& map) {
 */
 
 
-bool mapStoreAndLoad::save(Map& map, const std::string fileName) {
+bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName) {
   std::ofstream outFile;
   outFile.exceptions ( std::ofstream::failbit | std::ofstream::badbit );
   try {
