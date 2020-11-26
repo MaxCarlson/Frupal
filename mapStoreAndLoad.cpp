@@ -22,8 +22,13 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
     outFile << player.getMoney() << " ";
     outFile << player.getX() << " ";
     outFile << player.getY() << " ";
+    outFile << player.getHasBinoculars() << " ";
+    outFile << player.getOnShip() << " ";
+    outFile << player.showPlayerDeath() << " ";
+    outFile << static_cast<int>(player.getDir()) << " ";
+    //Not sure if this works properly, should save all tools.
+    for(const auto &e : player.getTools()) outFile << e << " ";
     outFile  << "\n";
-
 
     //Map info.
     outFile << map.getWidth() << " ";
