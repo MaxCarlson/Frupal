@@ -17,6 +17,15 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
   outFile.open(fileName);
 
   if(outFile.is_open()) {
+    //Player info.
+    outFile << player.getEnergy() << " ";
+    outFile << player.getMoney() << " ";
+    outFile << player.getX() << " ";
+    outFile << player.getY() << " ";
+    outFile  << "\n";
+
+
+    //Map info.
     outFile << map.getWidth() << " ";
     outFile << map.getHeight() << "\n";
     MapSquare squareToSave;

@@ -16,6 +16,7 @@ class mapStoreAndLoad
   /**
     * Saves to a given file from a given map.
     * @param map Address of the map to save.
+    * @param player Address of the player to save.
     * @param fileName Name of the file to load from.
     * @return Returns true if the map saves succesfully, false otherwise.
     */
