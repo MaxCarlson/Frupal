@@ -19,7 +19,13 @@ bool mapStoreAndLoad::save(Map& map, const std::string fileName) {
   if(outFile.is_open()) {
     outFile << map.getWidth() << " ";
     outFile << map.getHeight() << "\n";
-    
+    MapSquare squareToSave;
+    for(int i = 0; i < map.getHeight(); ++i)
+    {
+        for(int j = 0; j < map.getWidth(); ++j) {
+          squareToSave = map.sq(j, i);
+        }
+    }
   }
   else {
     std::cerr << "ERROR:" << fileName << " did not open.";
