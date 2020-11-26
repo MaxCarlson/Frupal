@@ -24,8 +24,13 @@ bool mapStoreAndLoad::save(Map& map, const std::string fileName) {
     {
         for(int j = 0; j < map.getWidth(); ++j) {
           squareToSave = map.sq(j, i);
+          outFile << j << " " << i << " ";
           outFile << squareToSave.discovered << " ";
           outFile << static_cast<int>(squareToSave.terrain) << " ";
+          if(squareToSave.item != nullptr) {
+          outFile << squareToSave.item->getCh() << " ";
+          outFile << squareToSave.item->getName() << " ";
+          }
           outFile  << "\n";
         }
     }
