@@ -17,7 +17,8 @@ bool mapStoreAndLoad::save(Map& map, const std::string fileName) {
   outFile.open(fileName);
 
   if(outFile.is_open()) {
-    outFile << map.getWidth();
+    outFile << map.getWidth() << " ";
+    outFile << map.getHeight() << "\n";
     
   }
   else {
