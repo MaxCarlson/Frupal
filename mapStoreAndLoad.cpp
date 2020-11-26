@@ -16,6 +16,13 @@ bool mapStoreAndLoad::save(Map& map, const std::string fileName) {
   try {
   outFile.open(fileName);
 
+  if(outFile.is_open()) {
+    
+  }
+  else {
+    std::cerr << "ERROR:" << fileName << " did not open.";
+  }
+
   outFile.close();
   }
   catch(std::ofstream::failure &e) {
