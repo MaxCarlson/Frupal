@@ -1,5 +1,6 @@
 #pragma once
 #include "camera.h"
+#include "item.h"
 #include <random>
 #include <functional>
 static std::random_device rd;           // For random maps that change
