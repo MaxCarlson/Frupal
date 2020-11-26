@@ -8,8 +8,6 @@ static std::default_random_engine re;   // For random maps that don't change
 //static std::uniform_int_distribution<int> distr(1, 4);
 static std::geometric_distribution<int> distr;
 
-//class Item;
-
 // Must use like: Terrain::Meadow, this is to keep them getting mixed up with the color enums in display
 enum class Terrain
 {

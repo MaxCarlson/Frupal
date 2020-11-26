@@ -52,5 +52,8 @@ public:
 
     void addTool(Tool *&tool);
     void boughtBinoculars() { hasBinoculars = true; }
+    bool getHasBinoculars() const { return hasBinoculars; }
+    bool getOnShip() const { return onShip; }
+    std::vector<Tool*> getTools() const { return tools; }
     
 };
