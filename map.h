@@ -1,5 +1,6 @@
 #pragma once
 #include "camera.h"
+#include "item.h"
 #include <random>
 #include <functional>
 static std::random_device rd;           // For random maps that change
@@ -7,7 +8,7 @@ static std::default_random_engine re;   // For random maps that don't change
 //static std::uniform_int_distribution<int> distr(1, 4);
 static std::geometric_distribution<int> distr;
 
-class Item;
+//class Item;
 
 // Must use like: Terrain::Meadow, this is to keep them getting mixed up with the color enums in display
 enum class Terrain
