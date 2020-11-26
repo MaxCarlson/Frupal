@@ -59,7 +59,6 @@ void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera,
     // TODO: This is non-functional right now for the right half of the map
     // Set the cursor to its given pos
     move(cy - cyo, cx - cxo);
-
     const MapSquare& sq =  map.sq(cx, cy);
 
     if(!sq.item)
@@ -76,14 +75,14 @@ void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera,
         l3 = ll3;
     }
 
-   /* if(dynamic_cast<const Binoculors*>(sq.item))
+    if(dynamic_cast<const Binoculars*>(sq.item))
     {
         auto [ll1, ll2, ll3] = sq.item->getDescription();
         l1 = ll1; 
         l2 = ll2; 
-        l3 = ll3;
-    }*/
-    
+        l3 = ll3; 
+    }
+
     mvaddstr(1, xOffset, l1.c_str());
     mvaddstr(2, xOffset, l2.c_str());
     mvaddstr(3, xOffset, l3.c_str());

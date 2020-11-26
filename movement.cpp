@@ -67,7 +67,6 @@ void Movement::movePlayer(Player& player, Map& map, UI& ui, Camera& camera, int 
                 delete sq.item;
                 sq.item = nullptr;
             }
-
             else
             {
                 player.modifyEnergy(-obstacle->getEnergy());
