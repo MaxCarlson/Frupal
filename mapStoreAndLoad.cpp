@@ -19,6 +19,19 @@ bool mapStoreAndLoad::save(Map& map, const std::string fileName) {
   if(outFile.is_open()) {
     outFile << map.getWidth() << " ";
     outFile << map.getHeight() << "\n";
+
+    for(int i = 0; i < map.getHeight(); ++i)
+    {
+        for(int j = 0; j < map.getWidth(); ++j) {
+          MapSquare squareToSave = map.sq(i, j);
+          outFile << squareToSave.discovered << " ";
+          outFile << static_cast<int>(squareToSave.terrain) << " ";
+          //outFile << squareToSave.*Item << " ";
+          outFile << "\n";
+            //delete map[i][j].item;
+        }
+        //delete[] map[i];
+    }
     
   }
   else {
