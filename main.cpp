@@ -7,6 +7,7 @@
 #include "player.h"
 #include "camera.h"
 #include "ui.h"
+#include "items/itemloader.h"
 #include "mapgenerator.h"
 
 constexpr int FPS = 25;
@@ -34,12 +35,15 @@ int main()
     // Run any other systems
 
     bool gameRunning = true;
+    ItemLoader itemLoader;
+    itemLoader.loadItems();
+    
     while(gameRunning)
     {
         timeout(0);
         
         UI      ui{COLS};
-        MapGenerator mgen{128, 3};
+        MapGenerator mgen{128, 13, itemLoader};
         Map map = mgen.generate(400, 100);
         Input   input;
         Player  player{mgen.getPlayerCoords()};

@@ -5,6 +5,7 @@
 #include <set>
 
 class Map;
+class ItemLoader;
 struct Point;
 enum class Terrain;
 
@@ -16,6 +17,7 @@ private:
 
     int size;
     uint_fast32_t seed;
+    const ItemLoader& itemLoader;
     std::default_random_engine re;
 
     Corner playerCorner;
@@ -33,11 +35,7 @@ private:
     std::map<int, std::vector<std::pair<int, int>>> houseWallCoords;
 
 public:
-    MapGenerator(int size, uint_fast32_t seed) 
-        : size{size}, seed{seed}, re{seed}, px{}, py{}, 
-        leaders{}, notFilled{}, mapCells{}, voronoiCells{}, 
-        voronoiCellsVec{}, lMembers{}
-    {}
+    MapGenerator(int size, uint_fast32_t seed, const ItemLoader& itemLoader);
 
     Map generate(int cells, int numLeaders);
     std::pair<int, int> getPlayerCoords() const { return playerCoords; }

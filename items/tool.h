@@ -19,6 +19,7 @@ public:
     {
         return !type.compare(obsType);
     }
+    std::string getType() const { return type; }
     int getCost()   const { return cost; }
     int getRating() const { return rating; }
 

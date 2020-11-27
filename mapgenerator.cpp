@@ -14,6 +14,11 @@
 #include <algorithm>
 #include <unordered_set>
 
+MapGenerator::MapGenerator(int size, uint_fast32_t seed, const ItemLoader& itemLoader) 
+        : size{size}, seed{seed}, itemLoader{itemLoader}, re{seed}, px{}, py{}, 
+        leaders{}, notFilled{}, mapCells{}, voronoiCells{}, 
+        voronoiCellsVec{}, lMembers{}
+{}
 
 double distance(int x1, int y1, int x2, int y2)
 {
@@ -362,7 +367,7 @@ void MapGenerator::placeWallObstacles(Map& map, std::vector<bool>& isWallVerticl
         auto [x, y] = validObstacleSqs[obIdx];
 
         // TODO: Pick random obstacle here
-        map.sq(x, y).item = new Obstacle{"test", "testType", 20}; 
+        map.sq(x, y).item = new Obstacle{itemLoader.getObstacle(re)};
         
         // Refill map terrain where obstacle was placed (and the wall terrain was removed)
         if(isWallVerticle[wallId])
@@ -650,14 +655,16 @@ void MapGenerator::placeItems(Map& map)
     std::map<Terrain, float> treasureChanceInTerrain    = {{Terrain::MEADOW, 0.1f},  {Terrain::SWAMP, 0.2f}}; 
     std::map<Terrain, float> binocularChanceInTerrain   = {{Terrain::MEADOW, 0.01f}, {Terrain::SWAMP, 0.02f}}; 
 
+    Food f = itemLoader.getFood(re);
     scatterItems<Food>(map, voronoiCells, voronoiCellsVec, 
-        terrainMappings, foodChanceInTerrain, mostItemTerrainTypes, "FoodTest", 15, 50);
+        terrainMappings, foodChanceInTerrain, mostItemTerrainTypes, f.getName(), f.getCost(), f.getEnergy());
 
     scatterItems<Chest>(map, voronoiCells, voronoiCellsVec, 
         terrainMappings, treasureChanceInTerrain, mostItemTerrainTypes, "ChestTest");
 
+    Tool t = itemLoader.getTool(re);
     scatterItems<Tool>(map, voronoiCells, voronoiCellsVec, 
-        terrainMappings, toolChanceInTerrain, mostItemTerrainTypes, "ToolTest", "ToolType", 20, 2);
+        terrainMappings, toolChanceInTerrain, mostItemTerrainTypes, t.getName(), t.getType(), t.getCost(), t.getRating());
 
     scatterItems<Binoculars>(map, voronoiCells, voronoiCellsVec, 
         terrainMappings, binocularChanceInTerrain, mostItemTerrainTypes, "BinocularTest", 100);
