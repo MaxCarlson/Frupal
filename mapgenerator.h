@@ -18,6 +18,7 @@ private:
     int size;
     uint_fast32_t seed;
     const ItemLoader& itemLoader;
+    int diamondX, diamondY;
     std::default_random_engine re;
 
     Corner playerCorner;
@@ -41,6 +42,7 @@ public:
 
     Map generate(int cells, int numLeaders);
     std::pair<int, int> getPlayerCoords() const { return playerCoords; }
+    std::pair<int, int> getDiamondCoords() const { return std::pair{diamondX, diamondY}; }
 
 private:
 

@@ -709,7 +709,7 @@ void MapGenerator::placeItemsInHouses(Map& map)
     // Chance per house cell 
     // for each item type  
     float chestChance   = 0.09;
-    float clueChance    = 0.05;
+    float clueChance    = 0.03;
     float foodChance    = 0.03;
     float toolChance    = 0.03;
 
@@ -785,6 +785,8 @@ void MapGenerator::placePlayerAndDiamod(Map& map, std::vector<Point>& reqBoats)
         placeInCorner(map, re, xMin, xMax, yMin, yMax, [&](int x, int y, MapSquare& sq)
         {
             diamondPoint = Point{x, y};
+            diamondX = x;
+            diamondY = y;
             sq.item = new Diamond{"Diamond"};
             return true;
         });
