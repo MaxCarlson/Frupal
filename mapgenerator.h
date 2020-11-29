@@ -33,6 +33,8 @@ private:
     std::map<int, std::vector<std::pair<int, int>>> voronoiCellsVec; 
     std::map<int, std::vector<int>>                 lMembers;
     std::map<int, std::vector<std::pair<int, int>>> houseWallCoords;
+    std::vector<std::vector<std::pair<int, int>>>   houseCoords;
+
 
 public:
     MapGenerator(int size, uint_fast32_t seed, const ItemLoader& itemLoader);
@@ -78,6 +80,7 @@ private:
 
     // Place all items on the map
     void placeItems(Map& map);
+    void placeItemsInHouses(Map& map);
     void placePlayerAndDiamod(Map& map, std::vector<Point>& reqBoats);
     void placeBoats(Map& map, const std::vector<Point>& reqBoats, float chancePerCell);
 };

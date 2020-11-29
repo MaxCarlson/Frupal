@@ -1,5 +1,6 @@
 #include "itemloader.h"
 #include "../item.h"
+#include "binoculars.h"
 #include "chest.h"
 #include "clue.h"
 #include "food.h"
@@ -83,9 +84,15 @@ void ItemLoader::loadItems()
     file.close();
 }
 
+Binoculars ItemLoader::getBinoculars(std::default_random_engine& re) const
+{
+    return Binoculars{"Binoculars", 100};
+}
+
 Chest ItemLoader::getChest(std::default_random_engine& re) const
 {
-    return Chest{};
+    static std::poisson_distribution<int> dist{4};
+    return Chest{"Chest", (dist(re) + 1) * 50};
 }
 
 Clue ItemLoader::getClue(std::default_random_engine& re) const

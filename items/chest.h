@@ -4,9 +4,10 @@
 
 class Chest : public Item
 {
+    int value;
 public:
     Chest() = default;
-    Chest(std::string name) 
+    Chest(std::string name, int value) 
         : Item{'$', name}
     {}
 };
