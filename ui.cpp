@@ -72,6 +72,7 @@ uint32_t UI::seedSelection(Display& display, uint32_t currentSeed)
 
         switch(ch)
         {
+            // Set seed
             case 49: // 1 
             echo();
             display.printCenteredText(0, COLS, 8,  seedText + std::to_string(currentSeed));

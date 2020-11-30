@@ -684,6 +684,8 @@ void MapGenerator::placeItems(Map& map)
     std::map<Terrain, float> toolChanceInTerrain        = {{Terrain::MEADOW, 0.2f},  {Terrain::SWAMP, 0.2f}}; 
     std::map<Terrain, float> treasureChanceInTerrain    = {{Terrain::MEADOW, 0.1f},  {Terrain::SWAMP, 0.2f}}; 
     std::map<Terrain, float> binocularChanceInTerrain   = {{Terrain::MEADOW, 0.01f}, {Terrain::SWAMP, 0.02f}}; 
+    std::map<Terrain, float> clueChanceInTerrain        = {{Terrain::MEADOW, 0.005f}, {Terrain::SWAMP, 0.008f}}; 
+
 
     scatterItems<Food>(map, voronoiCells, voronoiCellsVec, 
         terrainMappings, foodChanceInTerrain, mostItemTerrainTypes, itemLoader, re);
@@ -696,6 +698,9 @@ void MapGenerator::placeItems(Map& map)
 
     scatterItems<Binoculars>(map, voronoiCells, voronoiCellsVec, 
         terrainMappings, binocularChanceInTerrain, mostItemTerrainTypes, itemLoader, re);
+
+    scatterItems<Clue>(map, voronoiCells, voronoiCellsVec, 
+        terrainMappings, clueChanceInTerrain, mostItemTerrainTypes, itemLoader, re);
 
     placeItemsInHouses(map);
 
