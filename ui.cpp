@@ -23,7 +23,7 @@ void UI::mainMenu(Display& display, bool& gameRunning, uint32_t& seed)
     {
         display.printCenteredText(0, COLS, 8 , "Press number to select option");
         display.printCenteredText(0, COLS, 10, "1). Start Game");
-        display.printCenteredText(0, COLS, 12, "2). Select Seed");
+        display.printCenteredText(0, COLS, 12, "2). Select Map Seed");
         display.printCenteredText(0, COLS, 14, "3). Quit Game");
 
         refresh();
