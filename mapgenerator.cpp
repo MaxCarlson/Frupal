@@ -14,6 +14,11 @@
 #include <algorithm>
 #include <unordered_set>
 
+MapGenerator::MapGenerator(int size, uint_fast32_t seed, const ItemLoader& itemLoader) 
+        : size{size}, seed{seed}, itemLoader{itemLoader}, re{seed}, px{}, py{}, 
+        leaders{}, notFilled{}, mapCells{}, voronoiCells{}, 
+        voronoiCellsVec{}, lMembers{}
+{}
 
 double distance(int x1, int y1, int x2, int y2)
 {
@@ -362,7 +367,7 @@ void MapGenerator::placeWallObstacles(Map& map, std::vector<bool>& isWallVerticl
         auto [x, y] = validObstacleSqs[obIdx];
 
         // TODO: Pick random obstacle here
-        map.sq(x, y).item = new Obstacle{"test", "testType", 20}; 
+        map.sq(x, y).item = new Obstacle{itemLoader.getObstacle(re)};
         
         // Refill map terrain where obstacle was placed (and the wall terrain was removed)
         if(isWallVerticle[wallId])
@@ -552,6 +557,17 @@ void MapGenerator::buildHouses(Map& map, int min, int max, int minSide, int maxS
         // Build left and right sides
         buildWalls(halfXLen,  0, halfYLen);
         buildWalls(-halfXLen, 0, halfYLen);
+
+        // Build the coordiantes of houses
+        int topLeftX = x - halfXLen + 1;
+        int topLeftY = y - halfYLen + 1;
+
+        for(int i = topLeftX; i < topLeftX + halfXLen * 2 - 1; ++i)
+        {
+            auto& it = houseCoords.emplace_back(std::vector<std::pair<int, int>>{});
+            for(int j = topLeftY; j < topLeftY + halfYLen * 2 - 1; ++j)
+                it.emplace_back(std::pair{i, j});
+        }
     }
 }
 
@@ -584,16 +600,16 @@ void MapGenerator::placeHouseObstacles(Map& map)
     }
 }
 
-template<class ItemType, class... Args>
+template<class ItemType>
 void scatterItems(Map& map, std::map<int, std::set<std::pair<int, int>>>& voronoiCells, 
     std::map<int, std::vector<std::pair<int, int>>>& voronoiCellsVec,
     std::map<int, Terrain>& terrainMappings, const std::map<Terrain, float>& chanceInTerrain, 
-    const std::set<Terrain>& types, Args&& ...args)
+    const std::set<Terrain>& types, const ItemLoader& itemLoader, std::default_random_engine& re)
 {
     std::uniform_real_distribution<float> dist{0.f, 1.f};
 
     // Note, in order to get the parameter pack args into the llambda, we need to use the ugly hack in the [] below
-    auto addItemToRandomSq = [&, targs=std::make_tuple(std::forward<Args>(args)...)]
+    auto addItemToRandomSq = [&]
         (auto& distM, const auto& coords)
     {
         for(int i = 0; i < static_cast<int>(coords.size()); ++i)
@@ -605,7 +621,7 @@ void scatterItems(Map& map, std::map<int, std::set<std::pair<int, int>>>& vorono
                 continue;
 
             // TODO: We're going to have to grab the Items arguments randomly from a loaded text file
-            sq.item = new ItemType{std::forward<Args>(args)...};
+            sq.item = new ItemType{itemLoader.getItem<ItemType>(re)};
             return true;
         }
         return false;
@@ -642,6 +658,25 @@ void scatterItems(Map& map, std::map<int, std::set<std::pair<int, int>>>& vorono
     }
 }
 
+template<class ItemType>
+void scatterItemsInHouses(float chancePerCell, Map& map, const ItemLoader& itemLoader,
+    std::vector<std::vector<std::pair<int, int>>>& houseCoords, std::default_random_engine& re)
+{
+    std::uniform_real_distribution<float> dist{};
+    for(const auto& coordsVec : houseCoords)
+        for(const auto& [x, y] : coordsVec)
+        {
+            if(chancePerCell < dist(re))
+                continue;
+
+            MapSquare& sq = map.sq(x, y);
+            if(sq.terrain == Terrain::WATER || sq.item)
+                continue;
+
+            sq.item = new ItemType{itemLoader.getItem<ItemType>(re)};
+        }
+}
+
 void MapGenerator::placeItems(Map& map)
 {
     std::set<Terrain> mostItemTerrainTypes              = {Terrain::MEADOW, Terrain::SWAMP};
@@ -649,22 +684,44 @@ void MapGenerator::placeItems(Map& map)
     std::map<Terrain, float> toolChanceInTerrain        = {{Terrain::MEADOW, 0.2f},  {Terrain::SWAMP, 0.2f}}; 
     std::map<Terrain, float> treasureChanceInTerrain    = {{Terrain::MEADOW, 0.1f},  {Terrain::SWAMP, 0.2f}}; 
     std::map<Terrain, float> binocularChanceInTerrain   = {{Terrain::MEADOW, 0.01f}, {Terrain::SWAMP, 0.02f}}; 
+    std::map<Terrain, float> clueChanceInTerrain        = {{Terrain::MEADOW, 0.005f}, {Terrain::SWAMP, 0.008f}}; 
+
 
     scatterItems<Food>(map, voronoiCells, voronoiCellsVec, 
-        terrainMappings, foodChanceInTerrain, mostItemTerrainTypes, "FoodTest", 15, 50);
+        terrainMappings, foodChanceInTerrain, mostItemTerrainTypes, itemLoader, re);
 
     scatterItems<Chest>(map, voronoiCells, voronoiCellsVec, 
-        terrainMappings, treasureChanceInTerrain, mostItemTerrainTypes, "ChestTest");
+        terrainMappings, treasureChanceInTerrain, mostItemTerrainTypes, itemLoader, re);
 
     scatterItems<Tool>(map, voronoiCells, voronoiCellsVec, 
-        terrainMappings, toolChanceInTerrain, mostItemTerrainTypes, "ToolTest", "ToolType", 20, 2);
+        terrainMappings, toolChanceInTerrain, mostItemTerrainTypes, itemLoader, re);
 
     scatterItems<Binoculars>(map, voronoiCells, voronoiCellsVec, 
-        terrainMappings, binocularChanceInTerrain, mostItemTerrainTypes, "BinocularTest", 100);
+        terrainMappings, binocularChanceInTerrain, mostItemTerrainTypes, itemLoader, re);
+
+    scatterItems<Clue>(map, voronoiCells, voronoiCellsVec, 
+        terrainMappings, clueChanceInTerrain, mostItemTerrainTypes, itemLoader, re);
+
+    placeItemsInHouses(map);
 
     std::vector<Point> reqBoats;
     placePlayerAndDiamod(map, reqBoats);
     placeBoats(map, reqBoats, 0.4f);
+}
+
+void MapGenerator::placeItemsInHouses(Map& map)
+{
+    // Chance per house cell 
+    // for each item type  
+    float chestChance   = 0.09;
+    float clueChance    = 0.03;
+    float foodChance    = 0.03;
+    float toolChance    = 0.03;
+
+    scatterItemsInHouses<Chest>(chestChance, map, itemLoader, houseCoords, re);
+    scatterItemsInHouses<Clue>(  clueChance, map, itemLoader, houseCoords, re);
+    scatterItemsInHouses<Food>(  foodChance, map, itemLoader, houseCoords, re);
+    scatterItemsInHouses<Tool>(  toolChance, map, itemLoader, houseCoords, re);
 }
 
 std::tuple<int, int, int, int, int> getRandomCornerCoords(const Map& map, int notThisCorner=-1)
@@ -733,6 +790,8 @@ void MapGenerator::placePlayerAndDiamod(Map& map, std::vector<Point>& reqBoats)
         placeInCorner(map, re, xMin, xMax, yMin, yMax, [&](int x, int y, MapSquare& sq)
         {
             diamondPoint = Point{x, y};
+            diamondX = x;
+            diamondY = y;
             sq.item = new Diamond{"Diamond"};
             return true;
         });
@@ -811,6 +870,9 @@ void MapGenerator::placeBoats(Map& map,
                 validShipSqs.emplace_back(Point{x, y});
             });
         }
+
+        if(validShipSqs.empty())
+            continue;
 
         std::uniform_int_distribution<int> distSq{0, static_cast<int>(validShipSqs.size()) - 1};
         int sqIdx = distSq(re);
