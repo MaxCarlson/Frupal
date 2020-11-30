@@ -13,6 +13,39 @@
 #include "items/ship.h"
 #include "items/tool.h"
 #include <ncurses.h>
+#include <iostream>
+
+void UI::mainMenu(Display& display, bool& gameRunning, uint32_t& seed)
+{
+    nodelay(stdscr, false);
+    clear();
+    while(true)
+    {
+        display.printCenteredText(0, COLS, 8 , "Press number to select option");
+        display.printCenteredText(0, COLS, 10, "1). Start Game");
+        display.printCenteredText(0, COLS, 12, "2). Select Seed");
+        display.printCenteredText(0, COLS, 14, "3). Quit Game");
+
+        refresh();
+        int input = getch();
+
+        switch(input)
+        {
+            case 49: // 1 
+            return;
+
+            case 50: // 2
+            break;
+
+            case 51: // 3
+            gameRunning = false;
+            return;
+        }
+        break;
+    }
+    clear();
+    //nodelay(stdscr, true);
+}
 
 void UI::print(Display& display, const Player& player, const Camera& camera, Map& map)
 {

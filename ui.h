@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 
 class Map;
 class Player;
@@ -10,10 +11,19 @@ class UI
     int cols;
 public:
 
+    enum MenuItem
+    {
+        Start,
+        Quit,
+        ChangeSeed,
+        LoadMap
+    };
+
     UI(int tcols)
         : cols{tcols % 2 ? 23 : 22} // This handles the rounding issues that arise from the camera
     {}
 
+    void mainMenu(Display& display, bool& gameRunning, uint32_t& seed);
     int getSize() const { return cols; }
     void print(Display& display, const Player& player, const Camera& camera, Map& map);
 
