@@ -26,7 +26,7 @@ public:
         l2 = cost   + std::to_string(getCost());
         l3 = energy + std::to_string(getEnergy());
 
-        return StringTuple{l1, l2, l3}; 
+        return StringTuple{l1, l2, l3, ""}; 
     }
 
 };

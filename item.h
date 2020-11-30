@@ -7,7 +7,8 @@ class Item
 protected:
     char ch;
     std::string name;
-    using StringTuple = std::tuple<std::string,std::string,std::string>; 
+
+    using StringTuple = std::tuple<std::string,std::string,std::string,std::string>; 
 
 public:
     Item() = default;    

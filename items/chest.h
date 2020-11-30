@@ -8,11 +8,11 @@ class Chest : public Item
 public:
     Chest() = default;
     Chest(std::string name, int value) 
-        : Item{'$', name}
+        : Item{'$', name}, value{value}
     {}
 
     Item::StringTuple getDescription() const 
     {
-        return {"Treasure", "$" + std::to_string(value), ""};
+        return {"Treasure", "$" + std::to_string(value), "", ""};
     }
 };

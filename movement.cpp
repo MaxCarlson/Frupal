@@ -33,7 +33,7 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
             player.modifyEnergy(-2);
             break;
 
-        case Terrain::WATER: // TODO: Handle ship and remove drop-through
+        case Terrain::WATER:
 
             // Moving onto a ship costs energy
             if(dynamic_cast<Ship*>(sq.item) && startSq.terrain != Terrain::WATER)

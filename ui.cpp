@@ -23,11 +23,11 @@ void UI::print(Display& display, const Player& player, const Camera& camera, Map
     // Offset for all printed text in UI
     int xOffset = cx - cols + 2;
 
-    mvaddstr(4, xOffset, "Options:");
-    mvaddstr(5, xOffset, "1) North");
-    mvaddstr(6, xOffset, "2) East");
-    mvaddstr(7, xOffset, "3) South");
-    mvaddstr(8, xOffset, "4) West");
+    mvaddstr(5, xOffset, "Options:");
+    mvaddstr(6, xOffset, "1) North");
+    mvaddstr(7, xOffset, "2) East");
+    mvaddstr(8, xOffset, "3) South");
+    mvaddstr(9, xOffset, "4) West");
 
     std::string wifs = "Whiffles: " + std::to_string(player.getMoney());
     std::string ener = "Energy:   " + std::to_string(player.getEnergy());
@@ -74,11 +74,13 @@ void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera,
         return;
 
     // TODO: Add all other item types in here
-    auto [l1, l2, l3] = sq.item->getDescription();
+    auto [l1, l2, l3, l4] = sq.item->getDescription();
 
     mvaddstr(1, xOffset, l1.c_str());
     mvaddstr(2, xOffset, l2.c_str());
     mvaddstr(3, xOffset, l3.c_str());
+    mvaddstr(4, xOffset, l4.c_str());
+
     curs_set(0);
 }
 

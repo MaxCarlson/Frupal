@@ -92,7 +92,9 @@ Binoculars ItemLoader::getBinoculars(std::default_random_engine& re) const
 Chest ItemLoader::getChest(std::default_random_engine& re) const
 {
     static std::poisson_distribution<int> dist{4};
-    return Chest{"Chest", (dist(re) + 1) * 50};
+    int val = (dist(re) + 1) * 27;
+    Chest c{"Chest", val};
+    return c;
 }
 
 Clue ItemLoader::getClue(std::default_random_engine& re) const
