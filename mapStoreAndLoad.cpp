@@ -19,7 +19,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
       outFile << player.showPlayerDeath() << " ";
       outFile << static_cast<int>(player.getDir()) << " ";
       //Not sure if this works properly, should save all tools.
-      for(const auto &e : player.getTools()) outFile << e << " ";
+      for(const auto &e : player.getTools()) outFile << e->getName() << " ";
       outFile  << "\n";
 
       //Map info.
@@ -34,7 +34,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
           outFile << squareToSave.discovered << " ";
           outFile << static_cast<int>(squareToSave.terrain) << " ";
           if(squareToSave.item != nullptr) {
-            outFile << squareToSave.item->getCh() << " ";
+            //outFile << squareToSave.item->getCh() << " ";
             outFile << squareToSave.item->getName() << " ";
           }
           outFile  << "\n";
