@@ -9,8 +9,11 @@
 #include "items/ship.h"
 #include "items/tool.h"
 #include "items/itemloader.h"
+#include "pathing.h"
 #include <assert.h>
 #include <algorithm>
+#include <unordered_set>
+
 
 double distance(int x1, int y1, int x2, int y2)
 {
@@ -358,15 +361,15 @@ void MapGenerator::placeWallObstacles(Map& map, std::vector<bool>& isWallVerticl
         int obIdx = obSqDist(re);
         auto [x, y] = validObstacleSqs[obIdx];
 
-
         // TODO: Pick random obstacle here
-        map.sq(x, y).item = new Obstacle{"test", 10};
+        map.sq(x, y).item = new Obstacle{"test", "testType", 20}; 
         
         // Refill map terrain where obstacle was placed (and the wall terrain was removed)
         if(isWallVerticle[wallId])
             map.sq(x, y).terrain = map.sq(x+1, y).terrain;
         else
             map.sq(x, y).terrain = map.sq(x, y-1).terrain;
+
     }
 }
 
@@ -572,7 +575,7 @@ void MapGenerator::placeHouseObstacles(Map& map)
                 continue;
 
             MapSquare& sq   = map.sq(x, y);
-            sq.item         = new Obstacle{"ObstacleTest", 10};
+            sq.item         = new Obstacle{"ObstacleTest", "ObstacleType", 10};
             sq.terrain      = validSqs == 3 ? map.sq(x, y+1).terrain : map.sq(x+1, y).terrain;
             if(sq.terrain == Terrain::WALL)
                 sq.terrain  = validSqs == 3 ? map.sq(x, y-1).terrain : map.sq(x-1, y).terrain;
@@ -641,7 +644,6 @@ void scatterItems(Map& map, std::map<int, std::set<std::pair<int, int>>>& vorono
 
 void MapGenerator::placeItems(Map& map)
 {
-
     std::set<Terrain> mostItemTerrainTypes              = {Terrain::MEADOW, Terrain::SWAMP};
     std::map<Terrain, float> foodChanceInTerrain        = {{Terrain::MEADOW, 0.5f},  {Terrain::SWAMP, 1.f}}; 
     std::map<Terrain, float> toolChanceInTerrain        = {{Terrain::MEADOW, 0.2f},  {Terrain::SWAMP, 0.2f}}; 
@@ -655,14 +657,14 @@ void MapGenerator::placeItems(Map& map)
         terrainMappings, treasureChanceInTerrain, mostItemTerrainTypes, "ChestTest");
 
     scatterItems<Tool>(map, voronoiCells, voronoiCellsVec, 
-        terrainMappings, toolChanceInTerrain, mostItemTerrainTypes, "ToolTest");
+        terrainMappings, toolChanceInTerrain, mostItemTerrainTypes, "ToolTest", "ToolType", 20, 2);
 
     scatterItems<Binoculars>(map, voronoiCells, voronoiCellsVec, 
-        terrainMappings, binocularChanceInTerrain, mostItemTerrainTypes, "BinocularTest");
+        terrainMappings, binocularChanceInTerrain, mostItemTerrainTypes, "BinocularTest", 100);
 
-
-    // We never place the diamond in the same corner as the player
-    generatePlayerStart(map, placeDiamod(map));
+    std::vector<Point> reqBoats;
+    placePlayerAndDiamod(map, reqBoats);
+    placeBoats(map, reqBoats, 0.4f);
 }
 
 std::tuple<int, int, int, int, int> getRandomCornerCoords(const Map& map, int notThisCorner=-1)
@@ -721,30 +723,97 @@ void placeInCorner(Map& map, RandomEngine& re, int xMin, int xMax,
     }
 }
 
-MapGenerator::Corner MapGenerator::placeDiamod(Map& map)
+void MapGenerator::placePlayerAndDiamod(Map& map, std::vector<Point>& reqBoats)
 {
-    auto [xMin, xMax, yMin, yMax, corner] = getRandomCornerCoords(map);
-
-    placeInCorner(map, re, xMin, xMax, yMin, yMax, [&](int x, int y, MapSquare& sq)
+    Point diamondPoint;
+    Corner diamondCorner;
     {
-        sq.item = new Diamond{"Diamond"};
-        return true;
-    });
-    return static_cast<Corner>(corner);
+        auto [xMin, xMax, yMin, yMax, corner] = getRandomCornerCoords(map);
+
+        placeInCorner(map, re, xMin, xMax, yMin, yMax, [&](int x, int y, MapSquare& sq)
+        {
+            diamondPoint = Point{x, y};
+            sq.item = new Diamond{"Diamond"};
+            return true;
+        });
+        diamondCorner = static_cast<Corner>(corner);
+
+    }
+
+    {
+        // We never place the diamond in the same corner as the player
+        auto [xMin, xMax, yMin, yMax, corner] = getRandomCornerCoords(map, diamondCorner);
+        Pathing pathing;
+
+        placeInCorner(map, re, xMin, xMax, yMin, yMax, [&](int x, int y, MapSquare& sq)
+        {
+            // TODO: Need to check if game is completeable
+
+            bool success = pathing.playerToDiamond(map, Point{x, y}, diamondPoint, reqBoats);
+            playerCoords = std::pair{x, y};
+            if(success)
+                return true;
+            return false;
+        });
+    }
 }
 
-void MapGenerator::generatePlayerStart(Map& map, Corner diamondCorner) 
+void MapGenerator::placeBoats(Map& map, 
+    const std::vector<Point>& reqBoats, float chancePerCell)
 {
-    auto [xMin, xMax, yMin, yMax, corner] = getRandomCornerCoords(map, diamondCorner);
-
-    placeInCorner(map, re, xMin, xMax, yMin, yMax, [&](int x, int y, MapSquare& sq)
+    // Place boats that might be required
+    std::set<int> shipCells;
+    for(Point p : reqBoats)
     {
-        // TODO: Need to check if game is completeable
+        // Add ships
+        MapSquare& sq = map.sq(p);
+        assert(sq.terrain == Terrain::WATER);
+        sq.item = new Ship{"Ship"};
 
+        // Add the cell the ship occupies to the set of ship cells
+        shipCells.emplace(mapCells.find(std::pair{p.x, p.y})->second);
+    }
 
-        playerCoords = std::pair{x, y};
-        return true;
-    });
+    // Place boats randomly
+    //
+    // TODO: Create a map opposite of terrainMappings, 
+    // map terrain types to a vector of cells of that terrain type
+    // 
+    std::uniform_real_distribution<float> dist;
+    for(auto [cellId, terrain] : terrainMappings)
+    {
+        if(terrain != Terrain::WATER)
+            continue;
 
-    
+        float r = dist(re);
+        if(r < chancePerCell)
+            continue;
+
+        // Don't place boats it cells that already contain them
+        auto [it, done] = shipCells.emplace(cellId);
+        if(!done)
+            continue;
+
+        // Find squares ships can be placed on in the cell
+        std::vector<Point> validShipSqs;
+        auto mapSqs = voronoiCells.find(cellId)->second;
+
+        for(auto [x, y] : mapSqs)
+        {
+            map.loopNeighbors(Point{x, y}, [&](Point np, bool& stop)
+            {
+                const MapSquare& sq = map.sq(np);
+                if(!(sq.terrain == Terrain::MEADOW || sq.terrain == Terrain::SWAMP)
+                    && !sq.item)
+                    return;
+
+                stop = true;
+                validShipSqs.emplace_back(Point{x, y});
+            });
+        }
+
+        std::uniform_int_distribution<int> distSq{0, static_cast<int>(validShipSqs.size()) - 1};
+        int sqIdx = distSq(re);
+        map.sq(validShipSqs[sqIdx]).item = new Ship{"Ship"};
+    }
 }

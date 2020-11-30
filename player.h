@@ -26,12 +26,9 @@ class Player
 
     
 public:
-    Player() :
-        energy{100}, money{1000}, x{0}, y{0}, hasBinoculars{false}, onShip{false}, playerDeath{false}, dir{SOUTH}, tools{}
-    {} 
 
     Player(std::pair<int, int> xy) :
-        energy{100}, money{1000}, x{xy.first}, y{xy.second}, hasBinoculars{false}, onShip{false}, playerDeath{false}, dir{SOUTH}, tools{}
+        energy{100}, money{1000}, x{xy.first}, y{xy.second}, hasBinoculars{false}, onShip{false}, playerDeath{true}, dir{SOUTH}, tools{}
     {} 
 
     int getX() const { return x; }
@@ -53,4 +50,7 @@ public:
     std::pair<int, int> getXY() const { return {x, y}; }
     void discoverTerrrain(Map& map);
 
+    void addTool(Tool *&tool);
+    void boughtBinoculars() { hasBinoculars = true; }
+    
 };
