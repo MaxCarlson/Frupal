@@ -40,7 +40,7 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
                 player.modifyEnergy(-1);
 
             // If the player is already on a ship, move the ship with the player if we''re still on water
-            if(dynamic_cast<Ship*>(startSq.item))
+            if(dynamic_cast<Ship*>(startSq.item) && !sq.item)
             {
                 sq.item = startSq.item;
                 startSq.item = nullptr;
