@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <cstdint>
 
 class Map;
 class Camera;
@@ -16,4 +17,5 @@ public:
     void printUI(const Camera& camera, UI& ui, const Player& player, Map& map);
     void printCenteredText(int x1, int x2, int y, std::string text);
     int deathScreen();
+    uint32_t seedSelection(uint32_t currentSeed); 
 };

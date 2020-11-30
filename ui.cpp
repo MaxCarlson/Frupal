@@ -35,16 +35,76 @@ void UI::mainMenu(Display& display, bool& gameRunning, uint32_t& seed)
             return;
 
             case 50: // 2
+            seed = seedSelection(display, seed);
             break;
 
             case 51: // 3
             gameRunning = false;
             return;
+
+            default:
+            display.printCenteredText(0, COLS, 16, "Not a supported option, try a one of the number keys!");
         }
-        break;
     }
+}
+
+uint32_t UI::seedSelection(Display& display, uint32_t currentSeed)
+{
     clear();
-    //nodelay(stdscr, true);
+    std::string seedText = "Current Seed: ";
+    std::string seedStr;
+    const int blen = 80;
+    char buffer[blen];
+    //int seedTextAdj;
+    int curx = 0;
+
+
+    bool exit = false;
+    while(!exit)
+    {
+        refresh();
+
+        display.printCenteredText(0, COLS, 8,  seedText + std::to_string(currentSeed));
+        display.printCenteredText(0, COLS, 10, "1). Set Seed");
+        display.printCenteredText(0, COLS, 12, "2). Exit to Main Menu: ");
+
+        int ch = getch();
+
+        switch(ch)
+        {
+            case 49: // 1 
+            echo();
+            display.printCenteredText(0, COLS, 8,  seedText + std::to_string(currentSeed));
+            curx = getcurx(stdscr);
+            move(8,  curx - seedStr.length()-1);
+            clrtoeol(); // clear to end of line
+            getstr(buffer);
+            seedStr = std::string{buffer};
+            for(int i = 0; i < static_cast<int>(seedStr.length()); ++i)
+                if(!std::isdigit(seedStr[i]))
+                {
+                    display.printCenteredText(0, COLS, 14, "Non-numeric entry! Try Again!");
+                    goto Done;
+                }
+
+            currentSeed = std::stoi(seedStr);
+            Done:
+            noecho();
+            clear();
+            break;
+
+            case 50: // 2
+            exit = true;
+            break;
+
+            default:
+            display.printCenteredText(0, COLS, 14, "Not a supported option, try a one of the number keys!");
+        }
+
+    }
+
+    clear();
+    return currentSeed;
 }
 
 void UI::print(Display& display, const Player& player, const Camera& camera, Map& map)
@@ -116,4 +176,5 @@ void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera,
 
     curs_set(0);
 }
+
 
