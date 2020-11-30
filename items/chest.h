@@ -10,4 +10,9 @@ public:
     Chest(std::string name, int value) 
         : Item{'$', name}
     {}
+
+    Item::StringTuple getDescription() const 
+    {
+        return {"Treasure", "$" + std::to_string(value), ""};
+    }
 };

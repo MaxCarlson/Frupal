@@ -36,8 +36,15 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
         case Terrain::WATER: // TODO: Handle ship and remove drop-through
 
             // Moving onto a ship costs energy
-            if(dynamic_cast<Ship*>(sq.item))
+            if(dynamic_cast<Ship*>(sq.item) && startSq.terrain != Terrain::WATER)
                 player.modifyEnergy(-1);
+            else if(dynamic_cast<Ship*>(startSq.item))
+            {}
+            else
+            {
+                player.modifyEnergy(-1);
+                return;
+            }
 
             // If the player is already on a ship, move the ship with the player if we''re still on water
             if(dynamic_cast<Ship*>(startSq.item) && !sq.item)
@@ -45,6 +52,7 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
                 sq.item = startSq.item;
                 startSq.item = nullptr;
             }
+ 
             break;
         case Terrain::WALL:
             player.modifyEnergy(-1);

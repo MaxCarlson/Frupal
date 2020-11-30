@@ -74,26 +74,11 @@ void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera,
         return;
 
     // TODO: Add all other item types in here
-    std::string l1, l2, l3;
+    auto [l1, l2, l3] = sq.item->getDescription();
 
-    if(dynamic_cast<const Food*>(sq.item))
-    {
-        auto [ll1, ll2, ll3] = sq.item->getDescription();
-        l1 = ll1; 
-        l2 = ll2; 
-        l3 = ll3;
-    }
-
-   /* if(dynamic_cast<const Binoculors*>(sq.item))
-    {
-        auto [ll1, ll2, ll3] = sq.item->getDescription();
-        l1 = ll1; 
-        l2 = ll2; 
-        l3 = ll3;
-    }*/
-    
     mvaddstr(1, xOffset, l1.c_str());
     mvaddstr(2, xOffset, l2.c_str());
     mvaddstr(3, xOffset, l3.c_str());
+    curs_set(0);
 }
 
