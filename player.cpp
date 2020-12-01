@@ -61,7 +61,10 @@ bool Player::hasTools()
 void Player::toggleTool()
 {
     if(tools.empty())
+    {
         currentTool = NULL;
+        return;
+    }
 
     if(!currentTool && !tools.empty())
     {

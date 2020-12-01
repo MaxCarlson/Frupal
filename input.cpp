@@ -40,7 +40,7 @@ bool Input::input(Player& player, Map& map)
             break;
 
         case 't':
-            // Change active tool
+            player.toggleTool();
             break;
 
         // TODO: Apparently these are supposed to be arrow keys, and number keys are used for movement?
