@@ -71,6 +71,7 @@ void Player::toggleTool()
         currentTool = tools[0];
         return;
     }
+    
 
     int count = 0;
 
@@ -92,4 +93,13 @@ void Player::toggleTool()
         }
         ++count;
     }
+}
+    
+std::string Player::playerToolName() const
+{
+    std::string noTool = "None";
+
+    if(!currentTool)
+        return noTool;
+    return currentTool->getName();
 }
