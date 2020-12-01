@@ -1,4 +1,5 @@
 #include "mapStoreAndLoad.h"
+#include "items/chest.h"
 #include <fstream>
 #include <iostream>
 
@@ -34,8 +35,14 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
           outFile << squareToSave.discovered << " ";
           outFile << static_cast<int>(squareToSave.terrain) << " ";
           if(squareToSave.item != nullptr) {
+            if(squareToSave.item->getName().compare("Chest") == true) {
+              outFile << squareToSave.item->getName() << " ";
+
+            }
+            else {
             //outFile << squareToSave.item->getCh() << " ";
             outFile << squareToSave.item->getName() << " ";
+           }
           }
           outFile  << "\n";
         }
