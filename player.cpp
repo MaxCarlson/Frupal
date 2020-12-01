@@ -50,3 +50,43 @@ void Player::addTool(Tool *&tool)
 {
     tools.push_back(tool);
 }
+    
+bool Player::hasTools()
+{
+    if(tools.empty())
+        return false;
+    return true;
+}
+
+void Player::toggleTool()
+{
+    if(tools.empty())
+        currentTool = NULL;
+
+    if(!currentTool && !tools.empty())
+    {
+        currentTool = tools[0];
+        return;
+    }
+
+    int count = 0;
+
+    // set currentTool to next tool in tools vector
+    while(tools[count])
+    {
+        if(currentTool == tools[count])
+        {
+            if(tools[count + 1])
+            {
+                currentTool = tools[count+1];
+                return;
+            }
+            else
+            {
+                currentTool = tools[0];
+                return;
+            }
+        }
+        ++count;
+    }
+}

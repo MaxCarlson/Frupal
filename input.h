@@ -1,4 +1,5 @@
 #pragma once
+#include "items/obstacle.h"
 
 class Player;
 class Map;
@@ -11,5 +12,5 @@ public:
 
     bool input(Player& player, Map& map);
     bool buyItem();
-    bool canBreakObstacle(Player& player, int obstacleCost);
+    bool canBreakObstacle(Player& player, Obstacle *obstacle, int obstacleCost);
 };
