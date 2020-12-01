@@ -55,7 +55,8 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
                 delete sq.item;
                 sq.item = nullptr;
             }
-            return;
+            else
+              return;
 
             // if player doesn't have enough money, maybe inform the player?
         }
