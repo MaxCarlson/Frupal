@@ -76,7 +76,8 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
                 delete sq.item;
                 sq.item = nullptr;
             }
-            return;
+            else
+              return;
 
             // if player doesn't have enough money, maybe inform the player?
         }
@@ -84,7 +85,7 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
         if(dynamic_cast<Obstacle*>(sq.item))
         {
             Obstacle *obstacle = dynamic_cast<Obstacle*>(sq.item);
-            if(input.canBreakObstacle(player, obstacle->getEnergy()))
+            if(input.canBreakObstacle(player, obstacle, obstacle->getEnergy()))
             {
                 obstacle = nullptr;
                 delete sq.item;
@@ -118,7 +119,8 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
                 delete sq.item;
                 sq.item = nullptr;
             }
-            return;
+            else
+              return;
         }
 
         if(dynamic_cast<Binoculars*>(sq.item))
