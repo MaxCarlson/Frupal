@@ -7,4 +7,9 @@ public:
     Ship(std::string name) 
         : Item{'S', name}
     {}
+
+    Item::StringTuple getDescription() const
+    {
+        return {"Ship", "", "", ""};
+    }
 };
