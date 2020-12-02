@@ -2,8 +2,10 @@
 #include "items/chest.h"
 #include <fstream>
 #include <iostream>
+#include <tuple>
 
 bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName) {
+  //using StringTuple = std::tuple<std::string,std::string,std::string,std::string>;
   std::ofstream outFile;
   outFile.exceptions ( std::ofstream::failbit | std::ofstream::badbit );
   try {
@@ -35,14 +37,15 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
           outFile << squareToSave.discovered << " ";
           outFile << static_cast<int>(squareToSave.terrain) << " ";
           if(squareToSave.item != nullptr) {
-            if(squareToSave.item->getName().compare("Chest") == true) {
-              outFile << squareToSave.item->getName() << " ";
-
-            }
-            else {
-            //outFile << squareToSave.item->getCh() << " ";
             outFile << squareToSave.item->getName() << " ";
-           }
+            //if(squareToSave.item->getName().compare("Chest") == true) {
+            //If the item is a chest, save description.
+            if(dynamic_cast<Chest*>(squareToSave.item)) {
+              Chest* chestToSave = dynamic_cast<Chest*>(squareToSave.item);
+              outFile << chestToSave->getValue() << " ";
+              //StringTuple descriptionToSave = squareToSave.item->getDescription();
+            }
+            //outFile << squareToSave.item->getCh() << " ";
           }
           outFile  << "\n";
         }
