@@ -2,6 +2,7 @@
 #include "map.h"
 #include <ncurses.h>
 #include "items/tool.h"
+#include "items/obstacle.h"
 
 std::pair<int, int> Player::selectedSquare() const
 {
@@ -59,14 +60,16 @@ bool Player::hasTools()
     return true;
 }
 
-void Player::toggleTool()
+int Player::toggleTool()
 {
     if(tools.empty())
-        return;
+        return toolIDX;
 
     ++toolIDX;
     if(toolIDX >= static_cast<int>(tools.size()))
         toolIDX = 0;
+
+    return toolIDX; 
 }
     
 std::string Player::playerToolName() const
@@ -77,4 +80,20 @@ std::string Player::playerToolName() const
         return noTool;
     return tools[toolIDX]->getName();
 }
+
+int Player::useTool(Obstacle *obstacle)
+{
+    int toolRating = 0;
+    if(obstacle->match(tools[toolIDX]->getType()))
+    {
+        toolRating = tools[toolIDX]->getRating();
+        tools.erase(tools.begin() + toolIDX);
+        toolIDX = 0;
+        return toolRating;
+    }
+    
+    return -1;
+}
+
+
 

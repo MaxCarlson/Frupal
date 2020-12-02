@@ -4,6 +4,7 @@
 
 class Map;
 class Tool;
+class Obstacle;
 enum Direction
 {
     NORTH,
@@ -55,7 +56,7 @@ public:
 
     void addTool(Tool *tool);
     void boughtBinoculars() { hasBinoculars = true; }
-    void toggleTool();
-    std::string playerToolName() const;
-    
+    int toggleTool();
+    int useTool(Obstacle * obstacle);
+    std::string playerToolName() const; 
 };
