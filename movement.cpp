@@ -145,6 +145,13 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
             delete sq.item;
             sq.item = nullptr;
         }
+        
+        if(dynamic_cast<Diamond*>(sq.item))
+        {
+            player.modifyMoney(1000000);
+            delete sq.item;
+            sq.item = nullptr;
+        }
 
 
     }
