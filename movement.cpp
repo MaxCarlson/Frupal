@@ -72,7 +72,6 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
                 player.modifyMoney(-food->getCost());
                 player.modifyEnergy(food->getEnergy());
 
-                food = nullptr;
                 delete sq.item;
                 sq.item = nullptr;
             }
@@ -87,7 +86,7 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
             Obstacle *obstacle = dynamic_cast<Obstacle*>(sq.item);
             if(input.canBreakObstacle(player, obstacle, obstacle->getEnergy()))
             {
-                obstacle = nullptr;
+
                 delete sq.item;
                 sq.item = nullptr;
             }
@@ -116,7 +115,6 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
                 player.modifyMoney(-tool->getCost());
                 player.addTool(tool);
                 
-                tool = nullptr;
                 delete sq.item;
                 sq.item = nullptr;
             }

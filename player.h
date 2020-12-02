@@ -1,9 +1,9 @@
 #pragma once
-#include "items/tool.h"
 #include <vector>
+#include <string>
 
 class Map;
-
+class Tool;
 enum Direction
 {
     NORTH,
@@ -18,18 +18,19 @@ class Player
     int energy;
     int money;
     int x, y;
+    int toolIDX;
     bool hasBinoculars;
     bool onShip;
     bool playerDeath;
     Direction dir; // TODO: Remove this and make it an xy coordinate pair for cursor location
     std::vector<Tool*> tools;
-    Tool *currentTool;
+
 
     
 public:
 
     Player(std::pair<int, int> xy) :
-        energy{100}, money{1000}, x{xy.first}, y{xy.second}, hasBinoculars{false}, onShip{false}, playerDeath{true}, dir{SOUTH}, tools{}, currentTool{NULL}
+        energy{100}, money{1000}, x{xy.first}, y{xy.second}, toolIDX{0}, hasBinoculars{false}, onShip{false}, playerDeath{true}, dir{SOUTH}, tools{}
     {} 
 
     int getX() const { return x; }
@@ -52,7 +53,7 @@ public:
     std::pair<int, int> getXY() const { return {x, y}; }
     void discoverTerrrain(Map& map);
 
-    void addTool(Tool *&tool);
+    void addTool(Tool *tool);
     void boughtBinoculars() { hasBinoculars = true; }
     void toggleTool();
     std::string playerToolName() const;

@@ -113,7 +113,6 @@ void UI::print(Display& display, const Player& player, const Camera& camera, Map
     printOutline(display, camera);
     auto [cx, cy] = camera.getDims();
 
-
     // Offset for all printed text in UI
     int xOffset = cx - cols + 2;
 

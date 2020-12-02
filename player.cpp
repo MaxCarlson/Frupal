@@ -1,6 +1,7 @@
 #include "player.h"
 #include "map.h"
 #include <ncurses.h>
+#include "items/tool.h"
 
 std::pair<int, int> Player::selectedSquare() const
 {
@@ -46,7 +47,7 @@ void Player::discoverTerrrain(Map& map)
     // TODO: Finish out binocular squares here
 }
 
-void Player::addTool(Tool *&tool)
+void Player::addTool(Tool *tool)
 {
     tools.push_back(tool);
 }
@@ -61,48 +62,19 @@ bool Player::hasTools()
 void Player::toggleTool()
 {
     if(tools.empty())
-    {
-        currentTool = NULL;
         return;
-    }
 
-    if(!currentTool && !tools.empty())
-    {
-        currentTool = tools[0];
-        return;
-    }
-    
-
-    int count = 0;
-
-    // set currentTool to next tool in tools vector
-    while(tools[count])
-    {
-        if(currentTool == tools[count])
-        {
-            
-            if(tools[count + 1])
-            {
-                currentTool = tools[count+1];
-                return;
-            }
-            else
-            {
-                currentTool = tools[0];
-                return;
-            }
-            
-        }
-        ++count;
-    }
+    ++toolIDX;
+    if(toolIDX >= static_cast<int>(tools.size()))
+        toolIDX = 0;
 }
     
 std::string Player::playerToolName() const
 {
     std::string noTool = "None";
 
-    if(!currentTool)
+    if(tools.empty())
         return noTool;
-    return currentTool->getName();
+    return tools[toolIDX]->getName();
 }
 
