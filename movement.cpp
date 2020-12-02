@@ -19,7 +19,8 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
     int yf = player.getY() + y; 
     Input input;
 
-    MapSquare& sq = map.sq(xf, yf);
+    MapSquare& sq       = map.sq(xf, yf);
+    MapSquare& startSq  = map.sq(player.getX(), player.getY());
 
     switch(sq.terrain)
     {
@@ -32,7 +33,27 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
             player.modifyEnergy(-2);
             break;
 
-        case Terrain::WATER: // TODO: Handle ship and remove drop-through
+        case Terrain::WATER:
+
+            // Moving onto a ship costs energy
+            if(dynamic_cast<Ship*>(sq.item) && startSq.terrain != Terrain::WATER)
+                player.modifyEnergy(-1);
+            else if(dynamic_cast<Ship*>(startSq.item))
+            {}
+            else
+            {
+                player.modifyEnergy(-1);
+                return;
+            }
+
+            // If the player is already on a ship, move the ship with the player if we''re still on water
+            if(dynamic_cast<Ship*>(startSq.item) && !sq.item)
+            {
+                sq.item = startSq.item;
+                startSq.item = nullptr;
+            }
+ 
+            break;
         case Terrain::WALL:
             player.modifyEnergy(-1);
             return;
