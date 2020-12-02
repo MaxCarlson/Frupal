@@ -80,6 +80,7 @@ void Player::toggleTool()
     {
         if(currentTool == tools[count])
         {
+            
             if(tools[count + 1])
             {
                 currentTool = tools[count+1];
@@ -90,6 +91,7 @@ void Player::toggleTool()
                 currentTool = tools[0];
                 return;
             }
+            
         }
         ++count;
     }
@@ -103,3 +105,4 @@ std::string Player::playerToolName() const
         return noTool;
     return currentTool->getName();
 }
+

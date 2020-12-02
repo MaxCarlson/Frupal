@@ -103,6 +103,7 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
             //
             // If the player can't afford it...kill player
             // If the player can affor it, remove obstacle
+            
 
         }
 

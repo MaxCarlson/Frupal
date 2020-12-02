@@ -99,4 +99,5 @@ bool Input::canBreakObstacle(Player& player, Obstacle *obstacle, int obstacleCos
     return false;
 
 }
+
     

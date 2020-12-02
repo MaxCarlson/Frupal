@@ -12,11 +12,6 @@ public:
 
     bool input(Player& player, Map& map);
     bool buyItem();
-
-  
-private:
-   
-
     bool canBreakObstacle(Player& player, Obstacle *obstacle, int obstacleCost);
 
 };
