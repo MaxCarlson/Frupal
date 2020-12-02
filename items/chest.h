@@ -4,8 +4,15 @@
 
 class Chest : public Item
 {
+    int value;
 public:
-    Chest(std::string name) 
-        : Item{'$', name}
+    Chest() = default;
+    Chest(std::string name, int value) 
+        : Item{'$', name}, value{value}
     {}
+
+    Item::StringTuple getDescription() const 
+    {
+        return {"Treasure", "$" + std::to_string(value), "", ""};
+    }
 };
