@@ -134,8 +134,19 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
                 sq.item = nullptr;
 
             }
-            return;
+            else
+              return;
         }
+
+        if(dynamic_cast<Chest*>(sq.item))
+        {
+            Chest *chest = dynamic_cast<Chest*>(sq.item);
+            player.modifyMoney(chest->getValue());
+            delete sq.item;
+            sq.item = nullptr;
+        }
+
+
     }
     
     player.setX(xf);

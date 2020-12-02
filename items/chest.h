@@ -11,6 +11,8 @@ public:
         : Item{'$', name}, value{value}
     {}
 
+    int getValue() const { return value; }
+
     Item::StringTuple getDescription() const 
     {
         return {"Treasure", "$" + std::to_string(value), "", ""};
