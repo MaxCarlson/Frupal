@@ -96,6 +96,20 @@ int Player::useTool(Obstacle *obstacle)
     
     return -1;
 }
+    
+std::string Player::compatibleTools(Obstacle * obstacle)
+{
+    std::string noTool = "No Tools!";
+    std::string notComp = "Not Compatible!";
 
+    if(tools.empty())
+        return noTool;
+
+    if(obstacle->getType() == tools[toolIDX]->getType())
+        return tools[toolIDX]->getName();
+    
+    return notComp;
+
+}
 
 

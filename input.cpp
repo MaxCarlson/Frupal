@@ -84,32 +84,32 @@ bool Input::buyItem()
 
 bool Input::canBreakObstacle(Player& player, Obstacle *obstacle, int obstacleCost)
 {
-    if(player.hasTools())
-    {
-        // Allow player to use tools
-        // Each time a tool is used, change obstacleCost according to tool modifier.
-        // Delete tool after usage.
-    }
      
     int ch = 0;
     int rating;
     int toolHelp = 0;
-    // Show player options in UI:
-    // "T": Toggle Tool
-    // "U": Use Tool
-    // "D": Done/Break Obstacle
+
+    move(LINES - 4,  COLS - 21);
+    clrtoeol(); // clear to end of line
+    std::string tool = player.compatibleTools(obstacle);
+    mvaddstr(LINES - 4, COLS - 21, tool.c_str());
+
     while(ch != 'd' || obstacleCost <= toolHelp)
     {
-        // print obstacleCost to UI, so player knows
-        // how much energy they need to spend
         ch = getch();
+
         switch(ch)
         {
             case 't':
-                // Need to show tool names as they are being toggled through
-                // just like in ui.cpp.
-                player.toggleTool();
-                break;
+                {
+                    player.toggleTool();
+                    move(LINES - 4,  COLS - 21);
+                    clrtoeol(); // clear to end of line
+                    //tool = player.playerToolName();
+                    tool = player.compatibleTools(obstacle);
+                    mvaddstr(LINES - 4, COLS - 21, tool.c_str());
+                    break;
+                }
 
             case 'u':
                 rating = player.useTool(obstacle);
@@ -133,10 +133,9 @@ bool Input::canBreakObstacle(Player& player, Obstacle *obstacle, int obstacleCos
         player.modifyEnergy(-obstacleCost);
         return true;
     }
+                
+    player.modifyEnergy(-obstacleCost);
     return false;
-
-    
-
 }
     
 

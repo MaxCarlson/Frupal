@@ -59,4 +59,5 @@ public:
     int toggleTool();
     int useTool(Obstacle * obstacle);
     std::string playerToolName() const; 
+    std::string compatibleTools(Obstacle * obstacle);
 };
