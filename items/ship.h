@@ -7,7 +7,7 @@ class Ship : public Item
 
 public:
     Ship(std::string name) 
-        : Item{'S', name, 50}               // Default cost
+        : Item{'S', name}, cost{50}         // Default cost
     {}
 
     Ship(std::string name, int cost) 
@@ -16,11 +16,12 @@ public:
 
     Item::StringTuple getDescription() const
     {
-        std::string l1;
-        static const std::string cost - "> Cost: ";
-        l1 = cost + std::to_string(getCost());
+        std::string l1, l2;
+        static const std::string cstr = "> Cost: ";
+        l1 = "> " + getName();
+        l2 = cstr + std::to_string(getCost());
         
-        return StringTuple{l1, "", "", ""};
+        return StringTuple{l1, l2, "", ""};
     }
 
     int getCost() const { return cost; }
