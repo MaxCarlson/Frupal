@@ -102,12 +102,15 @@ bool Input::canBreakObstacle(Player& player, Obstacle *obstacle, int obstacleCos
         {
             case 't':
                 {
+                    // update current tool
                     player.toggleTool();
                     move(LINES - 4,  COLS - 21);
                     clrtoeol(); // clear to end of line
                     //tool = player.playerToolName();
                     tool = player.compatibleTools(obstacle);
                     mvaddstr(LINES - 4, COLS - 21, tool.c_str());
+
+                    // update current toolIDX (for testing only)
                     move(LINES - 5,  COLS - 21);
                     clrtoeol(); // clear to end of line
                     tool = player.curToolIDX();
