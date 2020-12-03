@@ -66,13 +66,15 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
   }
 
   bool mapStoreAndLoad::load(Map& map, Player& player, const std::string fileName) {
+    //Player variables.
+    int energy = 0;
     std::ifstream inFile;
     inFile.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
     try {
       inFile.open(fileName);
       if(inFile.is_open()) {
         //Player info.
-        //player.modifyEnergy(inFile >> 
+        inFile >> energy;
       }
     }
     catch(std::ifstream::failure &e) {

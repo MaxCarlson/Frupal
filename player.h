@@ -27,6 +27,8 @@ class Player
     
 public:
 
+    Player() = default;
+
     Player(std::pair<int, int> xy) :
         energy{100}, money{1000}, x{xy.first}, y{xy.second}, hasBinoculars{false}, onShip{false}, playerDeath{true}, dir{SOUTH}, tools{}
     {} 
