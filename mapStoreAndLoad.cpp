@@ -22,7 +22,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
       outFile << player.showPlayerDeath() << " ";
       outFile << static_cast<int>(player.getDir()) << " ";
       //Not sure if this works properly, should save all tools.
-      for(const auto &e : player.getTools()) outFile << e->getName() << " ";
+      for(const auto &e : player.getTools()) outFile << e->getName() << " " << e->getType() << " " << e->getCost() << " " << e->getRating();
       outFile  << "\n";
 
       //Map info.
@@ -77,8 +77,13 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
     bool playerDeath = false;
     Direction dir = NORTH;
     int dirInt = 0;
+    //Tool variables.
     std::vector<Tool*> tools;
     std::string toolName;
+    std::string toolType;
+    int toolCost = 0;
+    int toolRating = 0;
+
     std::ifstream inFile;
     inFile.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
     try {
@@ -93,10 +98,12 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
         inFile >> onShip;
         inFile >> playerDeath;
         inFile >> dirInt;
-        inFile >> toolName;
+        //Save tools.
+        inFile >> toolName >> toolType >> toolCost >> toolRating;
         //Load player info.
         dir = static_cast<Direction>(dirInt);
-        //tool.emplace_back(new Tool, 
+        //Load tools.
+        tools.emplace_back(new Tool(toolName, toolType, toolCost, toolRating));
         player = Player(energy, money, x, y, hasBinoculars, onShip, playerDeath, dir, tools);
       }
     }
