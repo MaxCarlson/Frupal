@@ -72,11 +72,11 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
                 player.modifyMoney(-food->getCost());
                 player.modifyEnergy(food->getEnergy());
 
-                food = nullptr;
                 delete sq.item;
                 sq.item = nullptr;
             }
-            return;
+            else
+              return;
 
             // if player doesn't have enough money, maybe inform the player?
         }
@@ -84,9 +84,9 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
         if(dynamic_cast<Obstacle*>(sq.item))
         {
             Obstacle *obstacle = dynamic_cast<Obstacle*>(sq.item);
-            if(input.canBreakObstacle(player, obstacle->getEnergy()))
+            if(input.canBreakObstacle(player, obstacle, obstacle->getEnergy()))
             {
-                obstacle = nullptr;
+
                 delete sq.item;
                 sq.item = nullptr;
             }
@@ -102,6 +102,7 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
             //
             // If the player can't afford it...kill player
             // If the player can affor it, remove obstacle
+            
 
         }
 
@@ -114,11 +115,11 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
                 player.modifyMoney(-tool->getCost());
                 player.addTool(tool);
                 
-                tool = nullptr;
                 delete sq.item;
                 sq.item = nullptr;
             }
-            return;
+            else
+              return;
         }
 
         if(dynamic_cast<Binoculars*>(sq.item))
@@ -133,8 +134,26 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
                 sq.item = nullptr;
 
             }
-            return;
+            else
+              return;
         }
+
+        if(dynamic_cast<Chest*>(sq.item))
+        {
+            Chest *chest = dynamic_cast<Chest*>(sq.item);
+            player.modifyMoney(chest->getValue());
+            delete sq.item;
+            sq.item = nullptr;
+        }
+        
+        if(dynamic_cast<Diamond*>(sq.item))
+        {
+            player.modifyMoney(1000000);
+            delete sq.item;
+            sq.item = nullptr;
+        }
+
+
     }
     
     player.setX(xf);

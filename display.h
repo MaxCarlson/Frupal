@@ -17,5 +17,6 @@ public:
     void printUI(const Camera& camera, UI& ui, const Player& player, Map& map);
     void printCenteredText(int x1, int x2, int y, std::string text);
     int deathScreen();
+    int winScreen();
     uint32_t seedSelection(uint32_t currentSeed); 
 };

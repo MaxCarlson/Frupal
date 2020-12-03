@@ -1,6 +1,8 @@
 #include "player.h"
 #include "map.h"
 #include <ncurses.h>
+#include "items/tool.h"
+#include "items/obstacle.h"
 
 std::pair<int, int> Player::selectedSquare() const
 {
@@ -46,7 +48,54 @@ void Player::discoverTerrrain(Map& map)
     // TODO: Finish out binocular squares here
 }
 
-void Player::addTool(Tool *&tool)
+void Player::addTool(Tool *tool)
 {
     tools.push_back(tool);
 }
+    
+bool Player::hasTools()
+{
+    if(tools.empty())
+        return false;
+    return true;
+}
+
+int Player::toggleTool()
+{
+    if(tools.empty())
+        return toolIDX;
+
+    ++toolIDX;
+    if(toolIDX >= static_cast<int>(tools.size()))
+        toolIDX = 0;
+
+    return toolIDX; 
+}
+    
+std::string Player::playerToolName() const
+{
+    std::string noTool = "None";
+
+    if(tools.empty())
+        return noTool;
+    return tools[toolIDX]->getName();
+}
+
+int Player::useTool(Obstacle *obstacle)
+{
+    if(tools.empty())
+        return -1;
+    int toolRating = 0;
+    if(obstacle->match(tools[toolIDX]->getType()))
+    {
+        toolRating = tools[toolIDX]->getRating();
+        tools.erase(tools.begin() + toolIDX);
+        toolIDX = 0;
+        return toolRating;
+    }
+    
+    return -1;
+}
+
+
+

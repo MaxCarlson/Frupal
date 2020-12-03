@@ -67,6 +67,19 @@ int main()
                 break;
             }
 
+            if(player.getMoney() >= 1000000)
+            {
+                // Player has chosen to start a new game
+                if(display.winScreen() == 1)
+                    break;
+                // Player has chosen to quit the program
+                else
+                {
+                    gameRunning = false;
+                    break;
+                }
+            }
+
             // Toggle playerDeath on and off in player.h
             if(player.showPlayerDeath() && player.getEnergy() <= 0)
             {

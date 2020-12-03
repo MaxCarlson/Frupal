@@ -113,7 +113,6 @@ void UI::print(Display& display, const Player& player, const Camera& camera, Map
     printOutline(display, camera);
     auto [cx, cy] = camera.getDims();
 
-
     // Offset for all printed text in UI
     int xOffset = cx - cols + 2;
 
@@ -123,9 +122,13 @@ void UI::print(Display& display, const Player& player, const Camera& camera, Map
     mvaddstr(8, xOffset, "3) South");
     mvaddstr(9, xOffset, "4) West");
 
+    std::string curTool = "Current Tool:";
+    std::string tool = player.playerToolName();
     std::string wifs = "Whiffles: " + std::to_string(player.getMoney());
     std::string ener = "Energy:   " + std::to_string(player.getEnergy());
 
+    mvaddstr(cy-5, xOffset, curTool.c_str());
+    mvaddstr(cy-4, xOffset, tool.c_str());
     mvaddstr(cy-3, xOffset, wifs.c_str());
     mvaddstr(cy-2, xOffset, ener.c_str());
 

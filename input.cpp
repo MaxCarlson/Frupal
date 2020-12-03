@@ -40,7 +40,7 @@ bool Input::input(Player& player, Map& map)
             break;
 
         case 't':
-            // Change active tool
+            player.toggleTool();
             break;
 
         // TODO: Apparently these are supposed to be arrow keys, and number keys are used for movement?
@@ -82,20 +82,62 @@ bool Input::buyItem()
     return false;
 }
 
-bool Input::canBreakObstacle(Player& player, int obstacleCost)
+bool Input::canBreakObstacle(Player& player, Obstacle *obstacle, int obstacleCost)
 {
+    if(player.hasTools())
+    {
+        // Allow player to use tools
+        // Each time a tool is used, change obstacleCost according to tool modifier.
+        // Delete tool after usage.
+    }
+     
+    int ch = 0;
+    int rating;
+    int toolHelp = 0;
+    // Show player options in UI:
+    // "T": Toggle Tool
+    // "U": Use Tool
+    // "D": Done/Break Obstacle
+    while(ch != 'd' || obstacleCost <= toolHelp)
+    {
+        // print obstacleCost to UI, so player knows
+        // how much energy they need to spend
+        ch = getch();
+        switch(ch)
+        {
+            case 't':
+                // Need to show tool names as they are being toggled through
+                // just like in ui.cpp.
+                player.toggleTool();
+                break;
+
+            case 'u':
+                rating = player.useTool(obstacle);
+                // tool is not compatible. Inform Player in UI
+                if(rating < 0)
+                {
+                    rating = 0;
+                    break;
+                }
+                toolHelp = toolHelp + (rating * 10);
+                break;
+        }
+        obstacleCost = obstacleCost - toolHelp;
+    }
+
+    if(obstacleCost <= toolHelp)
+        return true;
+
     if(player.getEnergy() >= obstacleCost)
     {
         player.modifyEnergy(-obstacleCost);
         return true;
     }
     return false;
-    // Check if player has a tool compatible with obstacle
-    // If no - If player cannot afford to remove obstacle, return false
-    // otherwise, return true.
-    //
-    // If yes, ask if player would like to use the tool
-    // If no, If player can destroy obstacle using current energy, return true. Else, return false
-    // If yes, check if player can destroy obstacle using tool
-    // benefits combined with current energy. If yes, return true. Else, return false.
+
+    
+
 }
+    
+
+    
