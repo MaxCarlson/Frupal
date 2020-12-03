@@ -592,7 +592,6 @@ void MapGenerator::placeHouseObstacles(Map& map)
 
             MapSquare& sq   = map.sq(x, y);
             sq.item         = new Obstacle{"ObstacleTest", "ObstacleType", 10};
-            //sq.item = new Obstacle{itemLoader.getObstacle(re)};
             sq.terrain      = validSqs == 3 ? map.sq(x, y+1).terrain : map.sq(x+1, y).terrain;
             if(sq.terrain == Terrain::WALL)
                 sq.terrain  = validSqs == 3 ? map.sq(x, y-1).terrain : map.sq(x-1, y).terrain;
