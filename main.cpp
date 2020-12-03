@@ -23,6 +23,7 @@ int main()
   MapGenerator mgen{128, 13, itemLoader};
   mapStoreAndLoad saveLoad;
 
+/*
   //Save testing.
   std::minstd_rand0 generator (2);
   Map map = mgen.generate(400, 100);
@@ -31,15 +32,14 @@ int main()
   player.addTool(tool);
   player.addTool(tool);
   saveLoad.save(map, player, "mapSave.txt");
+  */
 
-  /*
   //Load testing.
   Map map(400, 100);
   Player player;
   saveLoad.load(map, player, "mapSave.txt");
   std::cout << player.getEnergy() << " ";
-  std::cout << player.getDir() << " ";
-   */
+  std::cout << player.getMoney() << " ";
 
 
 
