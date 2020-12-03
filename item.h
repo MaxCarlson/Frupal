@@ -9,6 +9,7 @@ protected:
     std::string name;
 
     using StringTuple = std::tuple<std::string,std::string,std::string>; 
+    using StringTuple = std::tuple<std::string,std::string,std::string,std::string>; 
 
 public:
     Item() = default;    
@@ -22,4 +23,5 @@ public:
     std::string getName() const { return name; }
 
     virtual std::tuple<std::string,std::string,std::string> getDescription() const{return std::tuple<std::string,std::string,std::string>{};}
+    virtual StringTuple getDescription() const { return StringTuple{}; }
 };

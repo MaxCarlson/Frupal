@@ -1,12 +1,14 @@
 #include <ncurses.h>
 #include <iostream>
 #include <thread>
+#include <cstdint>
 #include "map.h"
 #include "input.h"
 #include "display.h"
 #include "player.h"
 #include "camera.h"
 #include "ui.h"
+#include "items/itemloader.h"
 #include "mapgenerator.h"
 
 constexpr int FPS = 25;
@@ -34,23 +36,32 @@ int main()
     // Run any other systems
 
     bool gameRunning = true;
+    ItemLoader itemLoader;
+    itemLoader.loadItems();
+    
     while(gameRunning)
     {
         timeout(0);
-        
-        UI      ui{COLS};
-        MapGenerator mgen{128, 13};
+        UI ui{COLS};
+        Display display;
+        uint32_t seed = 1;
+
+        ui.mainMenu(display, gameRunning, seed);
+        if(!gameRunning)
+            break;
+
+        MapGenerator mgen{128, seed, itemLoader};
         Map map = mgen.generate(400, 100);
         Input   input;
         Player  player{mgen.getPlayerCoords()};
         Camera  camera{COLS, LINES};
-        Display display;
 
+        bool first = true;
         for(;;)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds{SleepTime});
 
-            if(!input.input(player, map, ui, camera))
+            if(!first && !input.input(player, map))
             {
                 gameRunning = false;
                 break;
@@ -77,9 +88,11 @@ int main()
             display.printMap(camera, map, ui);
             display.printCharacter(camera, player);
             display.printUI(camera, ui, player, map);
+            first = false;
         }
     }
 
+    clear();
     endwin();
     return 0;
 }
