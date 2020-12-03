@@ -16,7 +16,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
     if(outFile.is_open()) {
       //Will use a title and delimiter | to specify blocks of variables.
       //Player info.
-      outFile << "PLAYERINFO|";
+      outFile << "PLAYERDATA|";
       outFile << player.getEnergy() << " ";
       outFile << player.getMoney() << " ";
       outFile << player.getX() << " ";
@@ -24,9 +24,11 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
       outFile << player.getHasBinoculars() << " ";
       outFile << player.getOnShip() << " ";
       outFile << player.showPlayerDeath() << " ";
-      outFile << static_cast<int>(player.getDir()) << " ";
+      outFile << static_cast<int>(player.getDir());
+      outFile << "|";
       //Not sure if this works properly, should save all tools.
-      for(const auto &e : player.getTools()) outFile << e->getName() << " " << e->getType() << " " << e->getCost() << " " << e->getRating();
+      outFile << "TOOLDATA|";
+      for(const auto &e : player.getTools()) outFile << e->getName() << " " << e->getType() << " " << e->getCost() << " " << e->getRating() << "|";
       outFile  << "\n";
 
       //Map info.

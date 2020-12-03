@@ -24,8 +24,12 @@ int main()
   mapStoreAndLoad saveLoad;
 
   //Save testing.
+  std::minstd_rand0 generator (2);
   Map map = mgen.generate(400, 100);
   Player  player{mgen.getPlayerCoords()};
+  Tool* tool = new Tool(itemLoader.getTool(generator));
+  player.addTool(tool);
+  player.addTool(tool);
   saveLoad.save(map, player, "mapSave.txt");
 
   /*
