@@ -71,6 +71,8 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
     try {
       inFile.open(fileName);
       if(inFile.is_open()) {
+        //Player info.
+        //player.modifyEnergy(inFile >> 
       }
     }
     catch(std::ifstream::failure &e) {
