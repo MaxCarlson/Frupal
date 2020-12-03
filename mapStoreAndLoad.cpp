@@ -3,16 +3,20 @@
 #include "items/chest.h"
 #include <fstream>
 #include <iostream>
-#include <tuple>
+#include <sstream>
+//#include <tuple>
 
 bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName) {
   //using StringTuple = std::tuple<std::string,std::string,std::string,std::string>;
+  //File variables
   std::ofstream outFile;
   outFile.exceptions ( std::ofstream::failbit | std::ofstream::badbit );
   try {
     outFile.open(fileName);
     if(outFile.is_open()) {
+      //Will use a title and delimiter | to specify blocks of variables.
       //Player info.
+      outFile << "PLAYERINFO|";
       outFile << player.getEnergy() << " ";
       outFile << player.getMoney() << " ";
       outFile << player.getX() << " ";
@@ -67,6 +71,11 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
   }
 
   bool mapStoreAndLoad::load(Map& map, Player& player, const std::string fileName) {
+    //File variables
+    char Delimiter = '|';
+    std::ifstream inFile;
+    std::stringstream parsedLine;
+
     //Player variables.
     int energy = 0;
     int money = 0;
@@ -84,7 +93,6 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
     int toolCost = 0;
     int toolRating = 0;
 
-    std::ifstream inFile;
     inFile.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
     try {
       inFile.open(fileName);

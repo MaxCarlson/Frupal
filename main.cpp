@@ -23,20 +23,19 @@ int main()
   MapGenerator mgen{128, 13, itemLoader};
   mapStoreAndLoad saveLoad;
 
-  /*
   //Save testing.
   Map map = mgen.generate(400, 100);
   Player  player{mgen.getPlayerCoords()};
   saveLoad.save(map, player, "mapSave.txt");
-   */
 
-
+  /*
   //Load testing.
   Map map(400, 100);
   Player player;
   saveLoad.load(map, player, "mapSave.txt");
   std::cout << player.getEnergy() << " ";
   std::cout << player.getDir() << " ";
+   */
 
 
 
