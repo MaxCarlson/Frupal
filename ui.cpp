@@ -23,8 +23,9 @@ void UI::mainMenu(Display& display, bool& gameRunning, uint32_t& seed)
     {
         display.printCenteredText(0, COLS, 8 , "Press number to select option");
         display.printCenteredText(0, COLS, 10, "1). Start Game");
-        display.printCenteredText(0, COLS, 12, "2). Select Map Seed");
-        display.printCenteredText(0, COLS, 14, "3). Quit Game");
+        display.printCenteredText(0, COLS, 12, "2). Load Map");
+        display.printCenteredText(0, COLS, 14, "3). Select Map Seed");
+        display.printCenteredText(0, COLS, 16, "4). Quit Game");
 
         refresh();
         int input = getch();
@@ -35,10 +36,14 @@ void UI::mainMenu(Display& display, bool& gameRunning, uint32_t& seed)
             return;
 
             case 50: // 2
-            seed = seedSelection(display, seed);
+            
             break;
 
             case 51: // 3
+            seed = seedSelection(display, seed);
+            break;
+
+            case 52: // 4
             gameRunning = false;
             return;
 

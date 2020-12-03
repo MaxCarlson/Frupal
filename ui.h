@@ -11,14 +11,6 @@ class UI
     int cols;
 public:
 
-    enum MenuItem
-    {
-        Start,
-        Quit,
-        ChangeSeed,
-        LoadMap
-    };
-
     UI(int tcols)
         : cols{tcols % 2 ? 23 : 22} // This handles the rounding issues that arise from the camera
     {}
