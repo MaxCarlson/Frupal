@@ -10,7 +10,6 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
   outFile.exceptions ( std::ofstream::failbit | std::ofstream::badbit );
   try {
     outFile.open(fileName);
-
     if(outFile.is_open()) {
       //Player info.
       outFile << player.getEnergy() << " ";
@@ -29,13 +28,16 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
       outFile << map.getWidth() << " ";
       outFile << map.getHeight() << "\n";
       MapSquare squareToSave;
+      //Nested loop to iterate through every map square.
       for(int i = 0; i < map.getHeight(); ++i)
       {
         for(int j = 0; j < map.getWidth(); ++j) {
+          //Save square info.
           squareToSave = map.sq(j, i);
           outFile << j << " " << i << " ";
           outFile << squareToSave.discovered << " ";
           outFile << static_cast<int>(squareToSave.terrain) << " ";
+          //If there is an item on the square.
           if(squareToSave.item != nullptr) {
             outFile << squareToSave.item->getName() << " ";
             //if(squareToSave.item->getName().compare("Chest") == true) {
@@ -48,23 +50,21 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
             //outFile << squareToSave.item->getCh() << " ";
           }
           outFile  << "\n";
+          }
         }
       }
+      else {
+        std::cerr << "ERROR:" << fileName << " did not open.";
+      }
+      outFile.close();
     }
-    else {
-      std::cerr << "ERROR:" << fileName << " did not open.";
+    catch(std::ofstream::failure &e) {
+      std::cerr << "Exception opening/reading/closing file\n";
+      return false;
     }
-
-    outFile.close();
-  }
-  catch(std::ofstream::failure &e) {
-    std::cerr << "Exception opening/reading/closing file\n";
-    return false;
+    return true;
   }
 
-  return true;
-}
-
-bool mapStoreAndLoad::load(Map& map, const std::string fileName) {
-  return true;
-}
+  bool mapStoreAndLoad::load(Map& map, const std::string fileName) {
+    return true;
+  }
