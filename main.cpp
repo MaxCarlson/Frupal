@@ -31,5 +31,6 @@ int main()
   saveLoad.load(map, player, "mapSave.txt");
 
   std::cout << player.getEnergy() << " ";
+  std::cout << player.getDir() << " ";
   return 0;
 }

@@ -1,4 +1,5 @@
 #include "mapStoreAndLoad.h"
+#include "items/itemloader.h"
 #include "items/chest.h"
 #include <fstream>
 #include <iostream>
@@ -75,14 +76,27 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
     bool onShip = false;
     bool playerDeath = false;
     Direction dir = NORTH;
+    int dirInt = 0;
     std::vector<Tool*> tools;
+    std::string toolName;
     std::ifstream inFile;
     inFile.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
     try {
       inFile.open(fileName);
       if(inFile.is_open()) {
-        //Player info.
+        //Save Player info.
         inFile >> energy;
+        inFile >> money;
+        inFile >> x;
+        inFile >> y;
+        inFile >> hasBinoculars;
+        inFile >> onShip;
+        inFile >> playerDeath;
+        inFile >> dirInt;
+        inFile >> toolName;
+        //Load player info.
+        dir = static_cast<Direction>(dirInt);
+        //tool.emplace_back(new Tool, 
         player = Player(energy, money, x, y, hasBinoculars, onShip, playerDeath, dir, tools);
       }
     }

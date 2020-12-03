@@ -60,5 +60,4 @@ public:
     bool getHasBinoculars() const { return hasBinoculars; }
     bool getOnShip() const { return onShip; }
     std::vector<Tool*> getTools() const { return tools; }
-    
 };
