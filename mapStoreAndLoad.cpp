@@ -10,13 +10,14 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
   //using StringTuple = std::tuple<std::string,std::string,std::string,std::string>;
   //File variables
   std::ofstream outFile;
+  char Delimiter = '|';
   outFile.exceptions ( std::ofstream::failbit | std::ofstream::badbit );
   try {
     outFile.open(fileName);
     if(outFile.is_open()) {
       //Will use a title and delimiter | to specify blocks of variables.
       //Player info.
-      outFile << "PLAYERDATA|";
+      outFile << "PLAYERDATA" << Delimiter;
       outFile << player.getEnergy() << " ";
       outFile << player.getMoney() << " ";
       outFile << player.getX() << " ";
@@ -25,10 +26,10 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
       outFile << player.getOnShip() << " ";
       outFile << player.showPlayerDeath() << " ";
       outFile << static_cast<int>(player.getDir());
-      outFile << "|";
+      outFile << Delimiter;
       //Not sure if this works properly, should save all tools.
-      outFile << "TOOLDATA|";
-      for(const auto &e : player.getTools()) outFile << e->getName() << " " << e->getType() << " " << e->getCost() << " " << e->getRating() << "|";
+      outFile << "TOOLDATA" << Delimiter;
+      for(const auto &e : player.getTools()) outFile << e->getName() << " " << e->getType() << " " << e->getCost() << " " << e->getRating() << Delimiter;
       outFile  << "\n";
 
       //Map info.
@@ -76,7 +77,8 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
     //File variables
     char Delimiter = '|';
     std::ifstream inFile;
-    std::stringstream parsedLine;
+    std::stringstream ss;
+    std::string parsedLine;
 
     //Player variables.
     int energy = 0;
@@ -99,7 +101,9 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
     try {
       inFile.open(fileName);
       if(inFile.is_open()) {
+        getline(inFile, parsedLine, Delimiter);
         //Save Player info.
+        //if(
         inFile >> energy;
         inFile >> money;
         inFile >> x;
