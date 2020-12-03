@@ -31,6 +31,9 @@ public:
         energy{100}, money{1000}, x{xy.first}, y{xy.second}, hasBinoculars{false}, onShip{false}, playerDeath{true}, dir{SOUTH}, tools{}
     {} 
 
+//Constructor for map loading.
+    Player(int energy, int money, int x, int y, bool hasBinoculars, bool onShip, bool playerDeath, Direction dir, std::vector<Tool*> tools);
+
     int getX() const { return x; }
     int getY() const { return y; }
     void setX(int v) { x = v; }
@@ -52,5 +55,8 @@ public:
 
     void addTool(Tool *&tool);
     void boughtBinoculars() { hasBinoculars = true; }
+    bool getHasBinoculars() const { return hasBinoculars; }
+    bool getOnShip() const { return onShip; }
+    std::vector<Tool*> getTools() const { return tools; }
     
 };

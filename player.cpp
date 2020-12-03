@@ -18,6 +18,10 @@ std::pair<int, int> Player::selectedSquare() const
     return {-1, -1};
 }
 
+Player::Player(int energy, int money, int x, int y, bool hasBinoculars, bool onShip, bool playerDeath, Direction dir, std::vector<Tool*> tools) {
+  return;
+}
+
 void Player::discoverTerrrain(Map& map)
 {
     constexpr std::pair<int, int> dirs[] = 
