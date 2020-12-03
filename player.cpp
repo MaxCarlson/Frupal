@@ -83,6 +83,8 @@ std::string Player::playerToolName() const
 
 int Player::useTool(Obstacle *obstacle)
 {
+    if(tools.empty())
+        return -1;
     int toolRating = 0;
     if(obstacle->match(tools[toolIDX]->getType()))
     {
