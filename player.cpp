@@ -111,5 +111,12 @@ std::string Player::compatibleTools(Obstacle * obstacle)
     return notComp;
 
 }
+    
+std::string Player::curToolIDX()
+{
+    std::string curToolIDX = "toolIDX: " + std::to_string(toolIDX); // just for testing
+    return curToolIDX;
+
+}
 
 

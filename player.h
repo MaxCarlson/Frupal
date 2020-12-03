@@ -36,6 +36,7 @@ public:
 
     int getX() const { return x; }
     int getY() const { return y; }
+    int getToolIDX() const { return toolIDX; }
     void setX(int v) { x = v; }
     void setY(int v) { y = v; }
     
@@ -60,4 +61,5 @@ public:
     int useTool(Obstacle * obstacle);
     std::string playerToolName() const; 
     std::string compatibleTools(Obstacle * obstacle);
+    std::string curToolIDX();
 };
