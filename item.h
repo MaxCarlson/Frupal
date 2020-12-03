@@ -8,7 +8,6 @@ protected:
     char ch;
     std::string name;
 
-    using StringTuple = std::tuple<std::string,std::string,std::string>; 
     using StringTuple = std::tuple<std::string,std::string,std::string,std::string>; 
 
 public:
@@ -22,6 +21,5 @@ public:
     char getCh() const { return ch; }
     std::string getName() const { return name; }
 
-    virtual std::tuple<std::string,std::string,std::string> getDescription() const{return std::tuple<std::string,std::string,std::string>{};}
-    virtual StringTuple getDescription() const { return StringTuple{}; }
+    virtual StringTuple getDescription() const{return StringTuple{};}
 };

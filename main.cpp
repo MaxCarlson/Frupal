@@ -60,8 +60,8 @@ int main()
         for(;;)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds{SleepTime});
-
-            if(!first && !input.input(player, map))
+            
+            if(!first && !input.input(player, map, ui, camera))
             {
                 gameRunning = false;
                 break;
