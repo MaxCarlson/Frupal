@@ -1,6 +1,8 @@
 #include "player.h"
 #include "map.h"
 #include <ncurses.h>
+#include "items/tool.h"
+#include "items/obstacle.h"
 
 void Player::discoverTerrrain(Map& map)
 {
@@ -30,7 +32,59 @@ void Player::discoverTerrrain(Map& map)
     // TODO: Finish out binocular squares here
 }
 
-void Player::addTool(Tool *&tool)
+void Player::addTool(Tool *tool)
 {
     tools.push_back(tool);
+}
+    
+bool Player::hasTools()
+{
+    if(tools.empty())
+        return false;
+    return true;
+}
+
+int Player::toggleTool()
+{
+    if(tools.empty())
+        return toolIDX;
+
+    ++toolIDX;
+    if(toolIDX >= static_cast<int>(tools.size()))
+        toolIDX = 0;
+
+    return toolIDX; 
+}
+    
+std::string Player::playerToolName() const
+{
+    std::string noTool = "None";
+
+    if(tools.empty())
+        return noTool;
+    return tools[toolIDX]->getName();
+}
+
+int Player::useTool(Obstacle *obstacle)
+{
+    if(tools.empty())
+        return -1;
+    int toolRating = 0;
+    if(obstacle->match(tools[toolIDX]->getType()))
+    {
+        toolRating = tools[toolIDX]->getRating();
+        tools.erase(tools.begin() + toolIDX);
+        toolIDX = 0;
+        return toolRating;
+    }
+    
+    return -1;
+}
+
+void Player::setCursor(const Map& map, int tpx, int tpy) 
+{
+    px = px >= map.getWidth() ? map.getWidth() - 1 : tpx; 
+    px = px <  0 ? 0 : tpx; 
+    py = py >= map.getHeight() ? map.getHeight() - 1 : tpy; 
+    py = py < 0 ? 0 : tpy; 
 }
