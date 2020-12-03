@@ -65,6 +65,17 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
     return true;
   }
 
-  bool mapStoreAndLoad::load(Map& map, const std::string fileName) {
+  bool mapStoreAndLoad::load(Map& map, Player& player, const std::string fileName) {
+    std::ifstream inFile;
+    inFile.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
+    try {
+      inFile.open(fileName);
+      if(inFile.is_open()) {
+      }
+    }
+    catch(std::ifstream::failure &e) {
+      std::cerr << "Exception opening/reading/closing file\n";
+      return false;
+    }
     return true;
   }
