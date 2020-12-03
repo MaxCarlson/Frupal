@@ -40,6 +40,10 @@ int main()
   saveLoad.load(map, player, "mapSave.txt");
   std::cout << player.getEnergy() << " ";
   std::cout << player.getMoney() << " ";
+  std::cout << "\n ";
+  for(const auto &e : player.tools) {
+    std::cout << e->getName() << " ";
+  }
 
 
 

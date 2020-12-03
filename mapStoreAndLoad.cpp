@@ -103,21 +103,12 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
       if(inFile.is_open()) {
         getline(inFile, parsedLine, Delimiter);
         ss.str(parsedLine);
-        //Save Player info.
-        std::cout << parsedLine << "\n";
-        if(parsedLine.compare("PLAYERINFO")) {
+        //std::cout << parsedLine << "\n";
+        if(!parsedLine.compare("PLAYERDATA")) {
+          //Set up stringstream.
           getline(inFile, parsedLine, Delimiter);
-          std::cout << parsedLine << "\n";
           ss.str(parsedLine);
-          //ss.ignore(1, ' ');
-          //inFile >> energy;
-          //inFile >> money;
-          //inFile >> x;
-          //inFile >> y;
-          //inFile >> hasBinoculars;
-          //inFile >> onShip;
-          //inFile >> playerDeath;
-          //inFile >> dirInt;
+          //Save Player info.
           ss >> energy;
           ss >> money;
           ss >> x;
@@ -126,15 +117,40 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
           ss >> onShip;
           ss >> playerDeath;
           ss >> dirInt;
+          //std::cout << parsedLine << "\n";
+          //inFile >> energy;
+          //inFile >> money;
+          //inFile >> x;
+          //inFile >> y;
+          //inFile >> hasBinoculars;
+          //inFile >> onShip;
+          //inFile >> playerDeath;
+          //inFile >> dirInt;
+
+          //Set up next line.
+          std::cout << parsedLine << "\n";
+          getline(inFile, parsedLine, Delimiter);
+          std::cout << parsedLine << "\n";
         }
-        /*
-        //Save tools.
-        inFile >> toolName >> toolType >> toolCost >> toolRating;
-        //Load player info.
-        dir = static_cast<Direction>(dirInt);
-        //Load tools.
-        tools.emplace_back(new Tool(toolName, toolType, toolCost, toolRating));
-        */
+        if(!parsedLine.compare("TOOLDATA")) {
+          do {
+            //Set up stringstream.
+            getline(inFile, parsedLine, Delimiter);
+            ss.str(parsedLine);
+            std::cout << parsedLine << "\n";
+            //Save tools.
+            ss >> toolName >> toolType >> toolCost >> toolRating;
+          }
+          //Continue until we hit the end of the line.
+          while(inFile.peek() != '\n');
+
+          //inFile >> toolName >> toolType >> toolCost >> toolRating;
+          //Save tools.
+          //Load player info.
+          dir = static_cast<Direction>(dirInt);
+          //Load tools.
+          tools.emplace_back(new Tool(toolName, toolType, toolCost, toolRating));
+        }
         player = Player(energy, money, x, y, hasBinoculars, onShip, playerDeath, dir, tools);
       }
     }
