@@ -104,6 +104,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
         getline(inFile, parsedLine, Delimiter);
         ss.str(parsedLine);
         //std::cout << parsedLine << "\n";
+        //If we are at this line.
         if(!parsedLine.compare("PLAYERDATA")) {
           //Set up stringstream.
           getline(inFile, parsedLine, Delimiter);
@@ -117,6 +118,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
           ss >> onShip;
           ss >> playerDeath;
           ss >> dirInt;
+          dir = static_cast<Direction>(dirInt);
           //std::cout << parsedLine << "\n";
           //inFile >> energy;
           //inFile >> money;
@@ -131,7 +133,10 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
           std::cout << parsedLine << "\n";
           getline(inFile, parsedLine, Delimiter);
           std::cout << parsedLine << "\n";
+          ss.str("");
+          ss.clear();
         }
+        //If we are at this line.
         if(!parsedLine.compare("TOOLDATA")) {
           do {
             //Set up stringstream.
@@ -140,16 +145,15 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
             std::cout << parsedLine << "\n";
             //Save tools.
             ss >> toolName >> toolType >> toolCost >> toolRating;
+            //Load tools.
+            tools.emplace_back(new Tool(toolName, toolType, toolCost, toolRating));
           }
           //Continue until we hit the end of the line.
           while(inFile.peek() != '\n');
-
           //inFile >> toolName >> toolType >> toolCost >> toolRating;
           //Save tools.
           //Load player info.
-          dir = static_cast<Direction>(dirInt);
-          //Load tools.
-          tools.emplace_back(new Tool(toolName, toolType, toolCost, toolRating));
+          //std::cout << tools[0]->getName() << "\n";
         }
         player = Player(energy, money, x, y, hasBinoculars, onShip, playerDeath, dir, tools);
       }

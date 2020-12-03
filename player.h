@@ -22,10 +22,9 @@ class Player
     bool onShip;
     bool playerDeath;
     Direction dir; // TODO: Remove this and make it an xy coordinate pair for cursor location
-
-    
-public:
     std::vector<Tool*> tools;
+
+public:
 
     Player() = default;
 

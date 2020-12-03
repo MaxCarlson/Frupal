@@ -28,9 +28,12 @@ Player::Player(int energy, int money, int x, int y, bool hasBinoculars, bool onS
   this->playerDeath = playerDeath;
   this->dir = dir;
   //May not be what I need to do.
+  this->tools = tools;
+  /*
   for(const auto &e : tools) {
     this->tools.push_back(e);
   }
+  */
   return;
 }
 

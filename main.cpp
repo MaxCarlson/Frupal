@@ -41,12 +41,11 @@ int main()
   std::cout << player.getEnergy() << " ";
   std::cout << player.getMoney() << " ";
   std::cout << "\n ";
-  for(const auto &e : player.tools) {
-    std::cout << e->getName() << " ";
+  std::cout << player.getTools().size();
+  std::cout << "\n ";
+  for(const auto e : player.getTools()) {
+    std::cout << e->getType() << " ";
   }
-
-
-
-
+  
   return 0;
 }
