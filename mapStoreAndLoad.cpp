@@ -68,6 +68,14 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
   bool mapStoreAndLoad::load(Map& map, Player& player, const std::string fileName) {
     //Player variables.
     int energy = 0;
+    int money = 0;
+    int x = 0;
+    int y = 0;
+    bool hasBinoculars = false;
+    bool onShip = false;
+    bool playerDeath = false;
+    Direction dir = NORTH;
+    std::vector<Tool*> tools;
     std::ifstream inFile;
     inFile.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
     try {
@@ -75,6 +83,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
       if(inFile.is_open()) {
         //Player info.
         inFile >> energy;
+        player = Player(energy, money, x, y, hasBinoculars, onShip, playerDeath, dir, tools);
       }
     }
     catch(std::ifstream::failure &e) {
