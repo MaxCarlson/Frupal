@@ -58,7 +58,6 @@ uint32_t UI::seedSelection(Display& display, uint32_t currentSeed)
     //int seedTextAdj;
     int curx = 0;
 
-
     bool exit = false;
     while(!exit)
     {
@@ -93,7 +92,7 @@ uint32_t UI::seedSelection(Display& display, uint32_t currentSeed)
             noecho();
             clear();
             break;
-
+            
             case 50: // 2
             exit = true;
             break;
@@ -101,9 +100,7 @@ uint32_t UI::seedSelection(Display& display, uint32_t currentSeed)
             default:
             display.printCenteredText(0, COLS, 14, "Not a supported option, try a one of the number keys!");
         }
-
     }
-
     clear();
     return currentSeed;
 }
@@ -151,11 +148,8 @@ void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera,
 {
     auto [cx, cy]   = player.getCursor();
     auto [cxo, cyo] = camera.getOffsets();
-
     curs_set(1);
 
-    // TODO: This is non-functional right now for the right half of the map
-    // Set the cursor to its given pos
     move(cy - cyo, cx - cxo);
     const MapSquare& sq =  map.sq(cx, cy);
 
@@ -169,8 +163,6 @@ void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera,
     mvaddstr(2, xOffset, l2.c_str());
     mvaddstr(3, xOffset, l3.c_str());
     mvaddstr(4, xOffset, l4.c_str());
-
     curs_set(0);
 }
-
 

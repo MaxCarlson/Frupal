@@ -139,11 +139,7 @@ void Movement::movePlayer(Player& player, Map& map, UI& ui, Camera& camera, int 
             delete sq.item;
             sq.item = nullptr;
         }
-
-
     }
-    
     player.setX(xf);
     player.setY(yf);
-            
 }

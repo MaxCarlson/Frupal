@@ -16,5 +16,4 @@ public:
     bool buyItem(const Camera& camera, const UI& ui); 
     bool canBreakObstacle(Player& player, Obstacle *obstacle, int obstacleCost);
 
-
 };
