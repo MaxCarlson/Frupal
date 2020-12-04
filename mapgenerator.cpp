@@ -14,7 +14,7 @@
 #include <algorithm>
 #include <unordered_set>
 
-MapGenerator::MapGenerator(int size, uint_fast32_t seed, const ItemLoader& itemLoader) 
+MapGenerator::MapGenerator(int size, uint_fast32_t seed, ItemLoader& itemLoader) 
         : size{size}, seed{seed}, itemLoader{itemLoader}, re{seed}, px{}, py{}, 
         leaders{}, notFilled{}, mapCells{}, voronoiCells{}, 
         voronoiCellsVec{}, lMembers{}
@@ -226,6 +226,8 @@ Map MapGenerator::buildMap()
     buildWalls(map, 20);
     placeHouseObstacles(map); // Must come after building walls
     placeItems(map);
+
+    itemLoader.setMapGen(this);
 
     return map;
 }
@@ -622,6 +624,7 @@ void scatterItems(Map& map, std::map<int, std::set<std::pair<int, int>>>& vorono
 
             // TODO: We're going to have to grab the Items arguments randomly from a loaded text file
             sq.item = new ItemType{itemLoader.getItem<ItemType>(re)};
+
             return true;
         }
         return false;

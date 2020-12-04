@@ -17,7 +17,7 @@ private:
 
     int size;
     uint_fast32_t seed;
-    const ItemLoader& itemLoader;
+    /*const*/ ItemLoader& itemLoader;
     int diamondX, diamondY;
     std::default_random_engine re;
 
@@ -38,7 +38,7 @@ private:
 
 
 public:
-    MapGenerator(int size, uint_fast32_t seed, const ItemLoader& itemLoader);
+    MapGenerator(int size, uint_fast32_t seed, ItemLoader& itemLoader);
 
     Map generate(int cells, int numLeaders);
     std::pair<int, int> getPlayerCoords() const { return playerCoords; }

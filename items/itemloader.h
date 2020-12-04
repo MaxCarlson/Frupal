@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <random>
+#include "../mapgenerator.h"
 
 class Binoculars;
 class Chest;
@@ -14,12 +15,17 @@ class ItemLoader
     std::vector<Food*>       foods;
     std::vector<Tool*>       tools;
     std::vector<Obstacle*>   obstacles;
+    MapGenerator* mg;
+
 public:
 
     ~ItemLoader();
 
     // Load all items from text file
     void loadItems();
+
+    // Get a pointer to mapgenerator
+    void setMapGen(MapGenerator*);
 
     // Generate a random item of each type
     Chest getChest(std::default_random_engine& re) const;

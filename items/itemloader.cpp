@@ -96,7 +96,8 @@ Chest ItemLoader::getChest(std::default_random_engine& re) const
 
 Clue ItemLoader::getClue(std::default_random_engine& re) const
 {
-    return Clue{};
+    std::uniform_int_distribution<int> dist{0,1};   // Generate true or false
+    return Clue{static_cast<bool>(dist(re))};
 }
 
 Food ItemLoader::getFood(std::default_random_engine& re) const
@@ -113,4 +114,9 @@ Tool ItemLoader::getTool(std::default_random_engine& re) const
 {
     std::uniform_int_distribution<int> dist{0, static_cast<int>(tools.size()) - 1};
     return Tool{*tools[dist(re)]};
+}
+
+void ItemLoader::setMapGen(MapGenerator* mapgen)
+{
+    mg = mapgen;
 }
