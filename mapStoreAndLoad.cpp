@@ -270,6 +270,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                 //Get the square data.
                 std::cout << parsedLine << " ";
                 getline(inFile, parsedLine, Delimiter); 
+                ss.clear();
                 ss.str(parsedLine);
                 std::cout << parsedLine << " ";
                 //Load square data into current map tile.
@@ -288,9 +289,11 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                 //Get the item type.
                 std::cout << parsedLine << " ";
                 getline(inFile, parsedLine, Delimiter); 
+                ss.clear();
                 ss.str(parsedLine);
                 ss >> itemClassType;
-                std::cout << parsedLine << " ";
+                //std::cout << parsedLine << " ";
+                std::cout << itemClassType << " ";
                 //Load item variables in.
                 if(parsedLine.compare("TOOL") == 0) {
                   getline(inFile, parsedLine, Delimiter); 
@@ -300,6 +303,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                   //Get the item type.
                   //std::cout << parsedLine << " ";
                   //getline(inFile, parsedLine, Delimiter); 
+                  ss.clear();
                   ss.str(parsedLine);
                   ss >> itemName;
                   std::cout << itemName << " ";
