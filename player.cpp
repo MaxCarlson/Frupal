@@ -78,7 +78,7 @@ std::string Player::playerToolName() const
 
     if(tools.empty())
         return noTool;
-    return tools[toolIDX]->getName();
+    return tools[toolIDX]->getName() + " (x" + std::to_string(tools[toolIDX]->getRating()) + ")";
 }
 
 int Player::useTool(Obstacle *obstacle)
