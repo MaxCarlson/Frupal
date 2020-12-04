@@ -76,13 +76,12 @@ public:
 
     MapSquare& sq(int x, int y) { return map[x][y]; }
     MapSquare& sq(const Point& p) { return map[p.x][p.y]; }
-    /**
-     * Resets the map by deleting all map tiles and calling the constructor on the new specified height and width. 
+
+  /**
+    * Resets the map by deleting all map tiles setting a new width and height, and allocating new tiles. 
     * This function is mostly used to load a new map.
-    * @param map Address of the map to save.
-    * @param player Address of the player to save.
-    * @param fileName Name of the file to load from.
-    * @return Returns true if the map saves succesfully, false otherwise.
+    * @param widthToLoad The new width to set for the map.
+    * @param heightToLoad The new height to set for the map.
     */
     void resetMap(int widthToLoad, int heightToLoad);
 
