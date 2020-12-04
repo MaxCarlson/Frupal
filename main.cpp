@@ -23,8 +23,8 @@ int main()
   MapGenerator mgen{128, 13, itemLoader};
   mapStoreAndLoad saveLoad;
 
+/*
   //Save testing.
-  /*
   std::minstd_rand0 generator (2);
   Map map = mgen.generate(400, 100);
   Player  player{mgen.getPlayerCoords()};

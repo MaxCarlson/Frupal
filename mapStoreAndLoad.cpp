@@ -33,8 +33,8 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
       outFile  << "\n";
 
       //Map info.
-      outFile << map.getWidth() << " ";
-      outFile << map.getHeight() << "\n";
+      outFile << map.getHeight() << " ";
+      outFile << map.getWidth() << "\n";
       MapSquare squareToSave;
       //Nested loop to iterate through every map square.
       for(int i = 0; i < map.getHeight(); ++i) {
@@ -42,7 +42,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
           //Save square info.
           outFile << "SQUAREDATA" << Delimiter;
           squareToSave = map.sq(i, j);
-          //outFile << j << " " << i << " ";
+          outFile << i << " " << j << " ";
           outFile << squareToSave.discovered << " ";
           outFile << static_cast<int>(squareToSave.terrain);
           outFile << Delimiter;
@@ -111,6 +111,8 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
     int mapHeight = 0;
     int mapDiscovered = 0;
     int mapTerrainInt = 0;
+    int mapX = 0;
+    int mapY = 0;
 
     inFile.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
     try {
@@ -182,8 +184,8 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
         ss.str(parsedLine);
         //std::cout << parsedLine << "\n";
         //std::cout << parsedLine << "\n";
-        ss >> mapWidth;
         ss >> mapHeight;
+        ss >> mapWidth;
         //std::cout << mapWidth;
         //getline(inFile, wholeLine); 
         //std::cout << wholeLine << "\n";
@@ -211,6 +213,8 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                 ss.str(parsedLine);
                 std::cout << parsedLine << " ";
                 //Load square data into current map tile.
+                ss >> mapY;
+                ss >> mapX;
                 ss >> mapDiscovered;
                 ss >> mapTerrainInt;
                 //Load map variables in.
