@@ -4,6 +4,7 @@
 #include "items/tool.h"
 #include "items/food.h"
 #include "items/obstacle.h"
+#include "items/binoculars.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -246,6 +247,10 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                 else if(dynamic_cast<Obstacle*>(mapItem)) {
                   Obstacle* obstacleToSave = dynamic_cast<Obstacle*>(mapItem);
                   map.sq(i, j).item = new Obstacle(obstacleToSave->getName(), obstacleToSave->getType(), obstacleToSave->getEnergy());
+                }
+                else if(dynamic_cast<Binoculars*>(mapItem)) {
+                  Binoculars* binocularsToSave = dynamic_cast<Binoculars*>(mapItem);
+                  map.sq(i, j).item = new Binoculars(binocularsToSave->getName(), binocularsToSave->getCost());
                 }
 
               }
