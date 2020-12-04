@@ -103,6 +103,10 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
     int toolCost = 0;
     int toolRating = 0;
 
+    //Map variables
+    int mapWidth;
+    int mapHeight;
+
     inFile.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
     try {
       inFile.open(fileName);
@@ -156,12 +160,25 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
           }
           //Continue until we hit the end of the line.
           while(inFile.peek() != '\n');
+          //Go to next line.
+          getline(inFile, parsedLine);
           //inFile >> toolName >> toolType >> toolCost >> toolRating;
           //Save tools.
           //Load player info.
           //std::cout << tools[0]->getName() << "\n";
         }
+        //Initialize player with data.
         player = Player(energy, money, x, y, hasBinoculars, onShip, playerDeath, dir, tools);
+
+        //Save map width and height.
+        getline(inFile, parsedLine);
+        ss.str(parsedLine);
+        //std::cout << parsedLine << "\n";
+        ss >> mapWidth;
+        ss >> mapHeight;
+
+        //Save map tiles.
+
       }
     }
     catch(std::ifstream::failure &e) {
