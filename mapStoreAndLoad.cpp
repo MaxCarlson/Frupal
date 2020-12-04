@@ -107,8 +107,10 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
     int toolRating = 0;
 
     //Map variables
-    int mapWidth;
-    int mapHeight;
+    int mapWidth = 0;
+    int mapHeight = 0;
+    int mapDiscovered = 0;
+    int mapTerrainInt = 0;
 
     inFile.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
     try {
@@ -198,18 +200,26 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
               //std::cout << parsedLine << "\n";
               //std::cout << "Beginning :" << parsedLine << "\n";
               if(!parsedLine.compare("SQUAREDATA")) {
+                //Get the square data.
                 std::cout << parsedLine << " ";
                 getline(inFile, parsedLine, Delimiter); 
                 ss.str(parsedLine);
                 std::cout << parsedLine << " ";
+                //Load square data into current map tile.
+                ss >> mapDiscovered;
+                map.sq(j, i).discovered = mapDiscovered;
+                std::cout << map.sq(j, i).discovered << " ";
               }
               else if(parsedLine.compare("ITEMDATA") == 0) {
+                //Get the item data.
+                std::cout << parsedLine << " ";
                 std::cout << parsedLine << " ";
                 getline(inFile, parsedLine, Delimiter); 
                 ss.str(parsedLine);
                 std::cout << parsedLine << " ";
               }
               else if(parsedLine.compare("CHESTDATA") == 0) {
+                //Get the chest data.
                 std::cout << parsedLine << " ";
                 getline(inFile, parsedLine, Delimiter); 
                 ss.str(parsedLine);
@@ -220,7 +230,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
             while(inFile.peek() != '\n');
             std::cout << "\n";
             getline(inFile, parsedLine, '\n'); 
-            //break;
+            break;
           }
           //Move to next line.
           //std::cout << "End: " << parsedLine << "\n";
