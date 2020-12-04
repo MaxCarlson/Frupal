@@ -21,6 +21,5 @@ public:
     char getCh() const { return ch; }
     std::string getName() const { return name; }
 
-    virtual StringTuple getDescription() const { return StringTuple{}; }
-
+    virtual StringTuple getDescription() const{return StringTuple{};}
 };

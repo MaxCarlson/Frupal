@@ -13,7 +13,6 @@ enum Direction
     WEST
 };
 
-
 class Player
 {
     int energy;
@@ -23,31 +22,29 @@ class Player
     bool hasBinoculars;
     bool onShip;
     bool playerDeath;
-    Direction dir; // TODO: Remove this and make it an xy coordinate pair for cursor location
+    int px, py;
     std::vector<Tool*> tools;
 
-
-    
 public:
 
     Player(std::pair<int, int> xy) :
-        energy{100}, money{1000}, x{xy.first}, y{xy.second}, toolIDX{0}, hasBinoculars{false}, onShip{false}, playerDeath{true}, dir{SOUTH}, tools{}
+        energy{100}, money{1000}, x{xy.first}, y{xy.second}, toolIDX{0}, hasBinoculars{false}, onShip{false}, playerDeath{true}, px{xy.first}, py{xy.second}, tools{}
     {} 
-
     int getX() const { return x; }
     int getY() const { return y; }
     int getToolIDX() const { return toolIDX; }
     void setX(int v) { x = v; }
     void setY(int v) { y = v; }
+    int getPX() const { return px; }
+    int getPY() const { return py; }
     
     void modifyMoney(int v)     { money     += v; }
     void modifyEnergy(int v)    { energy    += v; }
 
     int getMoney()  const { return money; }
     int getEnergy() const { return energy; }
-    Direction getDir() const { return dir; }
-    void setDir(Direction dr) { dir = dr; }
-
+    std::pair<int, int> getCursor() const { return std::pair{px, py}; }
+    void setCursor(const Map& map, int tpx, int tpy); 
     bool showPlayerDeath() const { return playerDeath; }
     bool hasTools();
     bool toolTypeMatch(Obstacle * obstacle);
@@ -62,3 +59,4 @@ public:
     int useTool(Obstacle * obstacle);
     std::string playerToolName() const; 
 };
+

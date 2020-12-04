@@ -149,23 +149,16 @@ void UI::printOutline(Display& display, const Camera& camera)
 
 void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera, int xOffset)
 {
-    auto [cx, cy]   = camera.getDims();
-    auto [cxo, cyo] = camera.getOffsets();
-    auto [sx, sy]   = player.selectedSquare();
 
-    if(sx < 0 || sy < 0 || sx > cx - 1 || sy > cy - 1)
-    {
-        curs_set(0);
-        return;
-    }
-    else
-        curs_set(1);
+    auto [cx, cy]   = player.getCursor();
+    auto [cxo, cyo] = camera.getOffsets();
+
+    curs_set(1);
 
     // TODO: This is non-functional right now for the right half of the map
     // Set the cursor to its given pos
-    move(sy - cyo, sx - cxo);
-
-    const MapSquare& sq =  map.sq(sx, sy);
+    move(cy - cyo, cx - cxo);
+    const MapSquare& sq =  map.sq(cx, cy);
 
     if(!sq.item)
         return;
@@ -173,12 +166,15 @@ void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera,
     // TODO: Add all other item types in here
     auto [l1, l2, l3, l4] = sq.item->getDescription();
 
+
     mvaddstr(1, xOffset, l1.c_str());
     mvaddstr(2, xOffset, l2.c_str());
     mvaddstr(3, xOffset, l3.c_str());
     mvaddstr(4, xOffset, l4.c_str());
 
     curs_set(0);
+    return;
+
 }
 
 
