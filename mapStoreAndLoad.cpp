@@ -305,25 +305,34 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                 ss >> itemClassType;
                 //std::cout << parsedLine << " ";
                 std::cout << itemClassType << " ";
-                //Load item variables in.
-                if(parsedLine.compare("TOOL") == 0) {
+                getline(inFile, parsedLine, Delimiter); 
+                std::cout << parsedLine << " ";
+                if(parsedLine.compare("ITEMNAME") == 0)  {
                   getline(inFile, parsedLine, Delimiter); 
+                  itemName = parsedLine;
+                  std::cout << itemName << " ";
                   getline(inFile, parsedLine, Delimiter); 
                   std::cout << parsedLine << " ";
-                  //getline(inFile, parsedLine, Delimiter); 
-                  //Get the item type.
-                  //std::cout << parsedLine << " ";
-                  //getline(inFile, parsedLine, Delimiter); 
-                  ss.clear();
-                  ss.str(parsedLine);
-                  ss >> itemName;
-                  std::cout << itemName << " ";
-                  ss >> itemType;
-                  ss >> itemCost;
-                  ss >> itemRating;
-                  Tool* toolToSave = dynamic_cast<Tool*>(mapItem);
-                  map.sq(i, j).item = new Tool(itemName, itemType, itemCost, itemRating);
-                  //map.sq(i, j).item = new Tool(toolToSave->getName(), toolToSave->getType(), toolToSave->getCost(), toolToSave->getRating());
+                  if(itemClassType.compare("TOOL") == 0) {
+                    //getline(inFile, parsedLine, Delimiter); 
+                    getline(inFile, parsedLine, Delimiter); 
+                    std::cout << parsedLine << " ";
+                    //getline(inFile, parsedLine, Delimiter); 
+                    //Get the item type.
+                    //std::cout << parsedLine << " ";
+                    //getline(inFile, parsedLine, Delimiter); 
+                    ss.clear();
+                    ss.str(parsedLine);
+                    ss >> itemType;
+                    //std::cout << itemType << " ";
+                    ss >> itemCost;
+                    //std::cout << itemCost << " ";
+                    ss >> itemRating;
+                    //std::cout << itemRating << " ";
+                    Tool* toolToSave = dynamic_cast<Tool*>(mapItem);
+                    map.sq(i, j).item = new Tool(itemName, itemType, itemCost, itemRating);
+                    //map.sq(i, j).item = new Tool(toolToSave->getName(), toolToSave->getType(), toolToSave->getCost(), toolToSave->getRating());
+                  }
                 }
                 /*
                    else if(parsedLine.compare("FOOD") == 0) {
