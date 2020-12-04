@@ -195,20 +195,35 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
           for(int j = 0; j < mapWidth; ++j) {
             do {
               getline(inFile, parsedLine, Delimiter); 
-              std::cout << parsedLine << "\n";
-              ss.str(parsedLine);
-              if(parsedLine.compare("SQUAREDATA")) {
-                std::cout << parsedLine << "\n";
+              //std::cout << parsedLine << "\n";
+              //std::cout << "Beginning :" << parsedLine << "\n";
+              if(!parsedLine.compare("SQUAREDATA")) {
+                std::cout << parsedLine << " ";
+                getline(inFile, parsedLine, Delimiter); 
+                ss.str(parsedLine);
+                std::cout << parsedLine << " ";
               }
-              else if(!parsedLine.compare("ITEMDATA")) {
-                std::cout << parsedLine << "\n";
+              else if(parsedLine.compare("ITEMDATA") == 0) {
+                std::cout << parsedLine << " ";
+                getline(inFile, parsedLine, Delimiter); 
+                ss.str(parsedLine);
+                std::cout << parsedLine << " ";
               }
-              else if(!parsedLine.compare("CHESTDATA")) {
-                std::cout << parsedLine << "\n";
+              else if(parsedLine.compare("CHESTDATA") == 0) {
+                std::cout << parsedLine << " ";
+                getline(inFile, parsedLine, Delimiter); 
+                ss.str(parsedLine);
+                std::cout << parsedLine << " ";
               }
+              ss.clear();
             }
             while(inFile.peek() != '\n');
+            std::cout << "\n";
+            getline(inFile, parsedLine, '\n'); 
+            //break;
           }
+          //Move to next line.
+          //std::cout << "End: " << parsedLine << "\n";
           ss.str("");
           ss.clear();
         }
