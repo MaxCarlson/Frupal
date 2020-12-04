@@ -193,7 +193,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
         std::cout << parsedLine << "\n";
         */
         //Construct new map.
-        //map.resetMap(mapWidth, mapHeight);
+        map.resetMap(mapWidth, mapHeight);
         //Save map tiles.
         for(int i = 0; i < mapHeight; ++i) {
           for(int j = 0; j < mapWidth; ++j) {
