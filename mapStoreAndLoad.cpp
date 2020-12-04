@@ -2,6 +2,8 @@
 #include "items/itemloader.h"
 #include "items/chest.h"
 #include "items/tool.h"
+#include "items/food.h"
+#include "items/obstacle.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -236,6 +238,14 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                 if(dynamic_cast<Tool*>(mapItem)) {
                   Tool* toolToSave = dynamic_cast<Tool*>(mapItem);
                   map.sq(i, j).item = new Tool(toolToSave->getName(), toolToSave->getType(), toolToSave->getCost(), toolToSave->getRating());
+                }
+                else if(dynamic_cast<Food*>(mapItem)) {
+                  Food* foodToSave = dynamic_cast<Food*>(mapItem);
+                  map.sq(i, j).item = new Food(foodToSave->getName(), foodToSave->getCost(), foodToSave->getEnergy());
+                }
+                else if(dynamic_cast<Obstacle*>(mapItem)) {
+                  Obstacle* obstacleToSave = dynamic_cast<Obstacle*>(mapItem);
+                  map.sq(i, j).item = new Obstacle(obstacleToSave->getName(), obstacleToSave->getType(), obstacleToSave->getEnergy());
                 }
 
               }

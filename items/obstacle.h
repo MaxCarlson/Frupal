@@ -12,6 +12,7 @@ public:
         Item{'!', name}, type{type}, energy{energy}
     {}
 
+    std::string getType() const { return type; }
     int getEnergy() const { return energy; }
     
     int match(std::string toolType)
