@@ -5,6 +5,9 @@
 #include "items/food.h"
 #include "items/obstacle.h"
 #include "items/binoculars.h"
+#include "items/ship.h"
+#include "items/diamond.h"
+#include "items/clue.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -329,7 +332,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                     //std::cout << itemCost << " ";
                     ss >> itemRating;
                     //std::cout << itemRating << " ";
-                    Tool* toolToSave = dynamic_cast<Tool*>(mapItem);
+                    //Tool* toolToSave = dynamic_cast<Tool*>(mapItem);
                     map.sq(i, j).item = new Tool(itemName, itemType, itemCost, itemRating);
                     //map.sq(i, j).item = new Tool(toolToSave->getName(), toolToSave->getType(), toolToSave->getCost(), toolToSave->getRating());
                   }
@@ -356,16 +359,16 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                     map.sq(i, j).item = new Obstacle(itemName, itemType, itemEnergy);
                     //map.sq(i, j).item = new Obstacle(obstacleToSave->getName(), obstacleToSave->getType(), obstacleToSave->getEnergy());
                   }
-                  else if(itemClassType.compare("BINOCULARS") == 0) {
-                    getline(inFile, parsedLine, Delimiter); 
-                    std::cout << parsedLine << " ";
-                    ss.clear();
-                    ss.str(parsedLine);
-                    ss >> itemCost;
-                    //Binoculars* binocularsToSave = dynamic_cast<Binoculars*>(mapItem);
-                    map.sq(i, j).item = new Binoculars(itemName, itemCost);
-                    //map.sq(i, j).item = new Binoculars(binocularsToSave->getName(), binocularsToSave->getCost());
-                  }
+                }
+                else if(itemClassType.compare("BINOCULARS") == 0) {
+                  getline(inFile, parsedLine, Delimiter); 
+                  std::cout << parsedLine << " ";
+                  ss.clear();
+                  ss.str(parsedLine);
+                  ss >> itemCost;
+                  //Binoculars* binocularsToSave = dynamic_cast<Binoculars*>(mapItem);
+                  map.sq(i, j).item = new Binoculars(itemName, itemCost);
+                  //map.sq(i, j).item = new Binoculars(binocularsToSave->getName(), binocularsToSave->getCost());
                 }
                 else if(itemClassType.compare("CHEST") == 0) {
                   getline(inFile, parsedLine, Delimiter); 
@@ -378,16 +381,25 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                   map.sq(i, j).item = new Chest(itemName, itemValue);
                 }
               }
-              //map.sq(i, j).item = mapItem;
+              else if (parsedLine.compare("ITEMNAME") == 0) {
+                //Get the item type.
+                std::cout << parsedLine << " ";
+                getline(inFile, parsedLine, Delimiter); 
+                ss.clear();
+                ss.str(parsedLine);
+                ss >> itemName;
+                std::cout << itemName;
 
-              //else if(parsedLine.compare("CHESTDATA") == 0) {
-              //  //Get the chest data.
-              //  std::cout << parsedLine << " ";
-              //  getline(inFile, parsedLine, Delimiter); 
-              //  ss.str(parsedLine);
-              //  std::cout << parsedLine << " ";
-              //  //Load item data into current map tile.
-              //}
+                if(itemName.compare("Ship") == 0) {
+                  map.sq(i, j).item = new Ship(itemName);
+                }
+                else if(itemName.compare("Diamond") == 0) {
+                  map.sq(i, j).item = new Diamond(itemName);
+                }
+                else if(itemName.compare("Clue") == 0) {
+                  map.sq(i, j).item = new Clue(itemName);
+                }
+              }
             }
             while(inFile.peek() != '\n');
             std::cout << "\n";
