@@ -58,13 +58,29 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
             mapItem = squareToSave.item;
             //if(squareToSave.item->getName().compare("Chest") == true) {
             //If the item is a chest, save description.
-            if(dynamic_cast<Chest*>(squareToSave.item)) {
-              outFile << "CHESTDATA" << Delimiter;
-              Chest* chestToSave = dynamic_cast<Chest*>(squareToSave.item);
-              outFile << chestToSave->getValue();
-              outFile << Delimiter;
-              //StringTuple descriptionToSave = squareToSave.item->getDescription();
+            outFile << "ITEMDATA" << Delimiter;
+            if(dynamic_cast<Tool*>(mapItem)) {
+              Tool* toolToSave = dynamic_cast<Tool*>(mapItem);
+              //map.sq(i, j).item = new Tool(toolToSave->getName(), toolToSave->getType(), toolToSave->getCost(), toolToSave->getRating());
             }
+            else if(dynamic_cast<Food*>(mapItem)) {
+              Food* foodToSave = dynamic_cast<Food*>(mapItem);
+              //map.sq(i, j).item = new Food(foodToSave->getName(), foodToSave->getCost(), foodToSave->getEnergy());
+            }
+            else if(dynamic_cast<Obstacle*>(mapItem)) {
+              Obstacle* obstacleToSave = dynamic_cast<Obstacle*>(mapItem);
+              //map.sq(i, j).item = new Obstacle(obstacleToSave->getName(), obstacleToSave->getType(), obstacleToSave->getEnergy());
+            }
+            else if(dynamic_cast<Binoculars*>(mapItem)) {
+              Binoculars* binocularsToSave = dynamic_cast<Binoculars*>(mapItem);
+              //map.sq(i, j).item = new Binoculars(binocularsToSave->getName(), binocularsToSave->getCost());
+            }
+            else if(dynamic_cast<Chest*>(mapItem)) {
+              Chest* chestToSave = dynamic_cast<Chest*>(mapItem);
+              outFile << chestToSave->getValue();
+            }
+            outFile << Delimiter;
+            //StringTuple descriptionToSave = squareToSave.item->getDescription();
             //outFile << squareToSave.item->getCh() << " ";
           }
           outFile  << "\n";
@@ -196,9 +212,9 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
         //std::cout << wholeLine << "\n";
         //getline(inFile, parsedLine, Delimiter); 
         /*
-        getline(inFile, parsedLine, Delimiter); 
-        std::cout << parsedLine << "\n";
-        */
+           getline(inFile, parsedLine, Delimiter); 
+           std::cout << parsedLine << "\n";
+         */
         //Reset stringstream.
         ss.str("");
         ss.clear();
@@ -255,6 +271,10 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                 else if(dynamic_cast<Chest*>(mapItem)) {
                   Chest* chestToSave = dynamic_cast<Chest*>(mapItem);
                   map.sq(i, j).item = new Chest(chestToSave->getName(), chestToSave->getValue());
+                  std::cout << map.sq(i, j).item->getName() << "\n";
+                }
+                else {
+                  map.sq(i, j).item = mapItem;
                 }
 
               }
