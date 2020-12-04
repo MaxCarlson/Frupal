@@ -41,18 +41,24 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
       {
         for(int j = 0; j < map.getWidth(); ++j) {
           //Save square info.
+          outFile << "SQUAREDATA" << Delimiter;
           squareToSave = map.sq(j, i);
           outFile << j << " " << i << " ";
           outFile << squareToSave.discovered << " ";
-          outFile << static_cast<int>(squareToSave.terrain) << " ";
+          outFile << static_cast<int>(squareToSave.terrain);
+          outFile << Delimiter;
           //If there is an item on the square.
           if(squareToSave.item != nullptr) {
-            outFile << squareToSave.item->getName() << " ";
+            outFile << "ITEMDATA" << Delimiter;
+            outFile << squareToSave.item->getName();
+            outFile << Delimiter;
             //if(squareToSave.item->getName().compare("Chest") == true) {
             //If the item is a chest, save description.
             if(dynamic_cast<Chest*>(squareToSave.item)) {
+              outFile << "CHESTDATA" << Delimiter;
               Chest* chestToSave = dynamic_cast<Chest*>(squareToSave.item);
-              outFile << chestToSave->getValue() << " ";
+              outFile << chestToSave->getValue();
+              outFile << Delimiter;
               //StringTuple descriptionToSave = squareToSave.item->getDescription();
             }
             //outFile << squareToSave.item->getCh() << " ";
@@ -130,9 +136,9 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
           //inFile >> dirInt;
 
           //Set up next line.
-          std::cout << parsedLine << "\n";
+          //std::cout << parsedLine << "\n";
           getline(inFile, parsedLine, Delimiter);
-          std::cout << parsedLine << "\n";
+          //std::cout << parsedLine << "\n";
           ss.str("");
           ss.clear();
         }
@@ -142,7 +148,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
             //Set up stringstream.
             getline(inFile, parsedLine, Delimiter);
             ss.str(parsedLine);
-            std::cout << parsedLine << "\n";
+            //std::cout << parsedLine << "\n";
             //Save tools.
             ss >> toolName >> toolType >> toolCost >> toolRating;
             //Load tools.
