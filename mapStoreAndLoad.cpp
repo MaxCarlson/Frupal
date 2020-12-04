@@ -52,7 +52,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
           outFile << Delimiter;
           //If there is an item on the square.
           if(squareToSave.item != nullptr) {
-            outFile << "ITEMDATA" << Delimiter;
+            outFile << "ITEMNAME" << Delimiter;
             outFile << squareToSave.item->getName();
             outFile << Delimiter;
             mapItem = squareToSave.item;
@@ -62,18 +62,26 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
             if(dynamic_cast<Tool*>(mapItem)) {
               Tool* toolToSave = dynamic_cast<Tool*>(mapItem);
               //map.sq(i, j).item = new Tool(toolToSave->getName(), toolToSave->getType(), toolToSave->getCost(), toolToSave->getRating());
+              outFile << toolToSave->getType() << " ";
+              outFile << toolToSave->getCost() << " ";
+              outFile << toolToSave->getRating();
             }
             else if(dynamic_cast<Food*>(mapItem)) {
               Food* foodToSave = dynamic_cast<Food*>(mapItem);
               //map.sq(i, j).item = new Food(foodToSave->getName(), foodToSave->getCost(), foodToSave->getEnergy());
+              outFile << foodToSave->getCost() << " ";
+              outFile << foodToSave->getEnergy();
             }
             else if(dynamic_cast<Obstacle*>(mapItem)) {
               Obstacle* obstacleToSave = dynamic_cast<Obstacle*>(mapItem);
               //map.sq(i, j).item = new Obstacle(obstacleToSave->getName(), obstacleToSave->getType(), obstacleToSave->getEnergy());
+              outFile << obstacleToSave->getType() << " ";
+              outFile << obstacleToSave->getEnergy();
             }
             else if(dynamic_cast<Binoculars*>(mapItem)) {
               Binoculars* binocularsToSave = dynamic_cast<Binoculars*>(mapItem);
               //map.sq(i, j).item = new Binoculars(binocularsToSave->getName(), binocularsToSave->getCost());
+              outFile << binocularsToSave->getCost();
             }
             else if(dynamic_cast<Chest*>(mapItem)) {
               Chest* chestToSave = dynamic_cast<Chest*>(mapItem);
