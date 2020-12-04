@@ -40,12 +40,13 @@ void Player::discoverTerrrain(Map& map)
 
         discoverSq(ox+x, oy+y);
 
-        // TODO: Is this what is meant by 2 squares? Probably not?
-        if(hasBinoculars)
+        if(hasBinoculars) 
+        {
             discoverSq(x+ox*2, y+oy*2);
+            discoverSq(x+ox, y+oy*2);
+            discoverSq(x+ox*2, y+oy);
+        }    
     }
-
-    // TODO: Finish out binocular squares here
 }
 
 void Player::addTool(Tool *tool)
