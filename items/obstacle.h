@@ -13,7 +13,6 @@ public:
     {}
 
     int getEnergy() const { return energy; }
-    
     int match(std::string toolType)
     {
         return !type.compare(toolType);

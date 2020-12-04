@@ -4,22 +4,6 @@
 #include "items/tool.h"
 #include "items/obstacle.h"
 
-std::pair<int, int> Player::selectedSquare() const
-{
-    switch(dir)
-    {
-        case NORTH:
-            return {x, y-1};
-        case EAST:
-            return {x+1, y};
-        case SOUTH:
-            return {x, y+1};
-        case WEST:
-            return {x-1, y};
-    }
-    return {-1, -1};
-}
-
 void Player::discoverTerrrain(Map& map)
 {
     constexpr std::pair<int, int> dirs[] = 
@@ -33,7 +17,6 @@ void Player::discoverTerrrain(Map& map)
         {
             if(xf < 0 || yf < 0 || xf > xMax - 1 || yf > yMax - 1)
                 return;
-
             MapSquare& sq = map.sq(xf, yf);
             sq.discovered = true;
         };
@@ -93,9 +76,13 @@ int Player::useTool(Obstacle *obstacle)
         toolIDX = 0;
         return toolRating;
     }
-    
     return -1;
 }
 
-
-
+void Player::setCursor(const Map& map, int tpx, int tpy) 
+{
+    px = px >= map.getWidth() ? map.getWidth() - 1 : tpx; 
+    px = px <  0 ? 0 : tpx; 
+    py = py >= map.getHeight() ? map.getHeight() - 1 : tpy; 
+    py = py < 0 ? 0 : tpy; 
+}

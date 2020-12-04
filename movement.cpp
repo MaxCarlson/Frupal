@@ -13,7 +13,7 @@
 #include "items/itemloader.h"
 
 
-void Movement::movePlayer(Player& player, Map& map, int x, int y)
+void Movement::movePlayer(Player& player, Map& map, UI& ui, Camera& camera, int x, int y)
 {
     int xf = player.getX() + x;
     int yf = player.getY() + y; 
@@ -65,9 +65,8 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
         if(dynamic_cast<Food*>(sq.item))
         {
             Food *food = dynamic_cast<Food*>(sq.item);
-
             // player chooses to buy food and can afford to do so
-            if(input.buyItem() && player.getMoney() >= food->getCost())
+            if(input.buyItem(camera, ui) && player.getMoney() >= food->getCost())
             {
                 player.modifyMoney(-food->getCost());
                 player.modifyEnergy(food->getEnergy());
@@ -76,9 +75,7 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
                 sq.item = nullptr;
             }
             else
-              return;
-
-            // if player doesn't have enough money, maybe inform the player?
+              return; // if player doesn't have enough money, maybe inform the player?
         }
 
         if(dynamic_cast<Obstacle*>(sq.item))
@@ -86,30 +83,20 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
             Obstacle *obstacle = dynamic_cast<Obstacle*>(sq.item);
             if(input.canBreakObstacle(player, obstacle, obstacle->getEnergy()))
             {
-
                 delete sq.item;
                 sq.item = nullptr;
             }
-
             else
             {
                 player.modifyEnergy(-obstacle->getEnergy());
                 return;
             }
-                
-            // Check if player can afford to remove obstacle
-            // either with current energy or energy combined with tool
-            //
-            // If the player can't afford it...kill player
-            // If the player can affor it, remove obstacle
-            
-
         }
 
         if(dynamic_cast<Tool*>(sq.item))
         {
             Tool *tool = dynamic_cast<Tool*>(sq.item);
-            if(input.buyItem() && player.getMoney() >= tool->getCost())
+            if(input.buyItem(camera, ui) && player.getMoney() >= tool->getCost())
             {
                 // put tool in player's tool belt
                 player.modifyMoney(-tool->getCost());
@@ -125,7 +112,7 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
         if(dynamic_cast<Binoculars*>(sq.item))
         {
             Binoculars *binoculars = dynamic_cast<Binoculars*>(sq.item);
-            if(input.buyItem() && player.getMoney() >= binoculars->getCost())
+            if(input.buyItem(camera, ui) && player.getMoney() >= binoculars->getCost())
             {
                 player.modifyMoney(-binoculars->getCost());
                 player.boughtBinoculars();
@@ -152,11 +139,7 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
             delete sq.item;
             sq.item = nullptr;
         }
-
-
     }
-    
     player.setX(xf);
     player.setY(yf);
-            
 }
