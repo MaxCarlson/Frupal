@@ -87,53 +87,71 @@ bool Input::canBreakObstacle(Player& player, Obstacle *obstacle, int obstacleCos
      
     int ch = 0;
     int rating;
-    int toolHelp = 0;
+    bool toolUsed = false;
+    std::string match = "Use Tool? (U)";
+    std::string notMatch = "Not Compatible!";
+    std::string fist = "Break with fist? (F)";
 
-    move(LINES - 4,  COLS - 21);
-    clrtoeol(); // clear to end of line
-    std::string tool = player.compatibleTools(obstacle);
-    mvaddstr(LINES - 4, COLS - 21, tool.c_str());
-
-    while(ch != 'd' || obstacleCost <= toolHelp)
+    while(!toolUsed)
     {
+        // ui stuff is a bit hacky but worked for all
+        // screen sized that I tried
+        move(LINES - 6,  COLS - 21);
+        clrtoeol(); 
+        mvaddstr(LINES - 6, COLS - 21, fist.c_str());
+        if(player.toolTypeMatch(obstacle))
+        {
+            move(LINES - 5,  COLS - 21);
+            clrtoeol(); 
+            mvaddstr(LINES - 5, COLS - 21, match.c_str());
+
+            move(LINES - 4,  COLS - 21);
+            clrtoeol(); 
+            mvaddstr(LINES - 4, COLS - 21, player.playerToolName().c_str());
+
+        }
+        else
+        {
+            move(LINES - 4,  COLS - 21);
+            clrtoeol();
+            mvaddstr(LINES - 4, COLS - 21, player.playerToolName().c_str());
+
+            if(player.hasTools())
+            {
+                move(LINES - 5,  COLS - 21);
+                clrtoeol();
+                mvaddstr(LINES - 5, COLS - 21, notMatch.c_str());
+            }
+        }
+
         ch = getch();
 
         switch(ch)
         {
             case 't':
                 {
-                    // update current tool
                     player.toggleTool();
-                    move(LINES - 4,  COLS - 21);
-                    clrtoeol(); // clear to end of line
-                    //tool = player.playerToolName();
-                    tool = player.compatibleTools(obstacle);
-                    mvaddstr(LINES - 4, COLS - 21, tool.c_str());
-
-                    // update current toolIDX (for testing only)
-                    move(LINES - 5,  COLS - 21);
-                    clrtoeol(); // clear to end of line
-                    tool = player.curToolIDX();
-                    mvaddstr(LINES - 5, COLS - 21, tool.c_str());
                     break;
                 }
 
             case 'u':
                 rating = player.useTool(obstacle);
-                // tool is not compatible. Inform Player in UI
+
                 if(rating < 0)
                 {
                     rating = 0;
                     break;
                 }
-                toolHelp = toolHelp + (rating * 10);
+                // update obstacle cost after using tool
+                obstacleCost = obstacleCost / rating;
+                toolUsed = true;
                 break;
-        }
-        obstacleCost = obstacleCost - toolHelp;
-    }
 
-    if(obstacleCost <= toolHelp)
-        return true;
+            case 'f':
+                toolUsed = true; // a tool actually isn't being used here but player
+                break;           // chose not to use a tool and this will exit the loop
+        }
+    }
 
     if(player.getEnergy() >= obstacleCost)
     {

@@ -86,37 +86,25 @@ int Player::useTool(Obstacle *obstacle)
     if(tools.empty())
         return -1;
     int toolRating = 0;
-    if(obstacle->match(tools[toolIDX]->getType()))
+
+    if(obstacle->getType() == tools[toolIDX]->getType())
     {
         toolRating = tools[toolIDX]->getRating();
         tools.erase(tools.begin() + toolIDX);
         toolIDX = 0;
         return toolRating;
     }
-    
+
     return -1;
 }
     
-std::string Player::compatibleTools(Obstacle * obstacle)
+bool Player::toolTypeMatch(Obstacle * obstacle)
 {
-    std::string noTool = "No Tools!";
-    std::string notComp = "Not Compatible!";
-
     if(tools.empty())
-        return noTool;
-
+        return false;
     if(obstacle->getType() == tools[toolIDX]->getType())
-        return tools[toolIDX]->getName();
-    
-    return notComp;
-
-}
-    
-std::string Player::curToolIDX()
-{
-    std::string curToolIDX = "toolIDX: " + std::to_string(toolIDX); // just for testing
-    return curToolIDX;
-
+        return true;
+    return false;  
 }
 
 

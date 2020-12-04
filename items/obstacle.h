@@ -24,7 +24,7 @@ public:
     {
         std::string l1, l2;
         static const std::string type   = "> Type: ";
-        static const std::string energy = "> Energy Required: ";
+        static const std::string energy = "> Energy Cost: ";
         l1 = type   + getType();
         l2 = energy + std::to_string(getEnergy());
 

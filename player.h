@@ -50,6 +50,7 @@ public:
 
     bool showPlayerDeath() const { return playerDeath; }
     bool hasTools();
+    bool toolTypeMatch(Obstacle * obstacle);
 
     std::pair<int, int> selectedSquare() const;
     std::pair<int, int> getXY() const { return {x, y}; }
@@ -60,6 +61,4 @@ public:
     int toggleTool();
     int useTool(Obstacle * obstacle);
     std::string playerToolName() const; 
-    std::string compatibleTools(Obstacle * obstacle);
-    std::string curToolIDX();
 };
