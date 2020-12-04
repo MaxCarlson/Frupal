@@ -8,6 +8,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <typeinfo>
 //#include <tuple>
 
 bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName) {
@@ -52,40 +53,61 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
           outFile << Delimiter;
           //If there is an item on the square.
           if(squareToSave.item != nullptr) {
-            outFile << "ITEMNAME" << Delimiter;
-            outFile << squareToSave.item->getName();
-            outFile << Delimiter;
             mapItem = squareToSave.item;
             //if(squareToSave.item->getName().compare("Chest") == true) {
             //If the item is a chest, save description.
-            outFile << "ITEMDATA" << Delimiter;
             if(dynamic_cast<Tool*>(mapItem)) {
               Tool* toolToSave = dynamic_cast<Tool*>(mapItem);
               //map.sq(i, j).item = new Tool(toolToSave->getName(), toolToSave->getType(), toolToSave->getCost(), toolToSave->getRating());
+              outFile << "ITEMTYPE" << Delimiter;
+              outFile << "TOOL";
+              outFile << Delimiter;
+              outFile << "ITEMDATA" << Delimiter;
+              outFile << toolToSave->getName() << " ";
               outFile << toolToSave->getType() << " ";
               outFile << toolToSave->getCost() << " ";
               outFile << toolToSave->getRating();
             }
             else if(dynamic_cast<Food*>(mapItem)) {
+              outFile << "ITEMTYPE" << Delimiter;
+              outFile << "FOOD";
+              outFile << Delimiter;
+              outFile << "ITEMDATA" << Delimiter;
               Food* foodToSave = dynamic_cast<Food*>(mapItem);
               //map.sq(i, j).item = new Food(foodToSave->getName(), foodToSave->getCost(), foodToSave->getEnergy());
               outFile << foodToSave->getCost() << " ";
               outFile << foodToSave->getEnergy();
             }
             else if(dynamic_cast<Obstacle*>(mapItem)) {
+              outFile << "ITEMTYPE" << Delimiter;
+              outFile << "OBSTACLE";
+              outFile << Delimiter;
+              outFile << "ITEMDATA" << Delimiter;
               Obstacle* obstacleToSave = dynamic_cast<Obstacle*>(mapItem);
               //map.sq(i, j).item = new Obstacle(obstacleToSave->getName(), obstacleToSave->getType(), obstacleToSave->getEnergy());
               outFile << obstacleToSave->getType() << " ";
               outFile << obstacleToSave->getEnergy();
             }
             else if(dynamic_cast<Binoculars*>(mapItem)) {
+              outFile << "ITEMTYPE" << Delimiter;
+              outFile << "BINOCULARS";
+              outFile << Delimiter;
+              outFile << "ITEMDATA" << Delimiter;
               Binoculars* binocularsToSave = dynamic_cast<Binoculars*>(mapItem);
               //map.sq(i, j).item = new Binoculars(binocularsToSave->getName(), binocularsToSave->getCost());
               outFile << binocularsToSave->getCost();
             }
             else if(dynamic_cast<Chest*>(mapItem)) {
+              outFile << "ITEMTYPE" << Delimiter;
+              outFile << "CHEST";
+              outFile << Delimiter;
+              outFile << "ITEMDATA" << Delimiter;
               Chest* chestToSave = dynamic_cast<Chest*>(mapItem);
               outFile << chestToSave->getValue();
+            }
+            else {
+              outFile << "ITEMNAME" << Delimiter;
+              outFile << squareToSave.item->getName();
             }
             outFile << Delimiter;
             //StringTuple descriptionToSave = squareToSave.item->getDescription();
@@ -253,14 +275,14 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                 Terrain tempTerrain = map.sq(i, j).terrain;
                 std::cout << static_cast<int>(tempTerrain) << " ";
               }
-              else if(parsedLine.compare("ITEMDATA") == 0) {
-                //Get the item data.
+              else if(parsedLine.compare("ITEMNAME") == 0) {
+                //Get the item name.
                 std::cout << parsedLine << " ";
                 getline(inFile, parsedLine, Delimiter); 
                 ss.str(parsedLine);
                 std::cout << parsedLine << " ";
                 //Load item variables in.
-                if(dynamic_cast<Tool*>(mapItem)) {
+                if(parsedLine.compare("ITEMNAME") == 0) {
                   Tool* toolToSave = dynamic_cast<Tool*>(mapItem);
                   map.sq(i, j).item = new Tool(toolToSave->getName(), toolToSave->getType(), toolToSave->getCost(), toolToSave->getRating());
                 }
