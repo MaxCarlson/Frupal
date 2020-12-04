@@ -1,6 +1,7 @@
 #include "mapStoreAndLoad.h"
 #include "items/itemloader.h"
 #include "items/chest.h"
+#include "items/tool.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -51,6 +52,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
             outFile << "ITEMDATA" << Delimiter;
             outFile << squareToSave.item->getName();
             outFile << Delimiter;
+            mapItem = squareToSave.item;
             //if(squareToSave.item->getName().compare("Chest") == true) {
             //If the item is a chest, save description.
             if(dynamic_cast<Chest*>(squareToSave.item)) {
@@ -220,10 +222,9 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                 //Load map variables in.
                 map.sq(i, j).discovered = mapDiscovered;
                 map.sq(i, j).terrain = static_cast<Terrain>(mapTerrainInt);
-                //std::cout << map.sq(j, i).discovered << " ";
-                //Terrain tempTerrain = map.sq(j ,i).terrain;
-                //std::cout << static_cast<int>(tempTerrain) << " ";
-                //std::cout << map.sq(j, i).discovered << " ";
+                std::cout << map.sq(i, j).discovered << " ";
+                Terrain tempTerrain = map.sq(i, j).terrain;
+                std::cout << static_cast<int>(tempTerrain) << " ";
               }
               else if(parsedLine.compare("ITEMDATA") == 0) {
                 //Get the item data.
@@ -231,6 +232,12 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                 getline(inFile, parsedLine, Delimiter); 
                 ss.str(parsedLine);
                 std::cout << parsedLine << " ";
+                //Load item variables in.
+                if(dynamic_cast<Tool*>(mapItem)) {
+                  Tool* toolToSave = dynamic_cast<Tool*>(mapItem);
+                  map.sq(i, j).item = new Tool(toolToSave->getName(), toolToSave->getType(), toolToSave->getCost(), toolToSave->getRating());
+                }
+
               }
               else if(parsedLine.compare("CHESTDATA") == 0) {
                 //Get the chest data.
@@ -238,14 +245,16 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                 getline(inFile, parsedLine, Delimiter); 
                 ss.str(parsedLine);
                 std::cout << parsedLine << " ";
+                //Load item data into current map tile.
+
               }
             }
             while(inFile.peek() != '\n');
-            ss.clear();
             std::cout << "\n";
             getline(inFile, parsedLine, '\n'); 
             ss.str("");
             ss.clear();
+            //break;
           }
           //Move to next line.
           //std::cout << "End: " << parsedLine << "\n";

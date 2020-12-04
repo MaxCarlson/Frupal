@@ -1,12 +1,15 @@
 #pragma once
 #include "map.h"
 #include "player.h"
+#include "item.h"
 #include <string>
 
 class mapStoreAndLoad 
 {
   public:
   //Variables
+  Item* mapItem;
+
 
   //Constructor
   //mapStoreAndLoad(Map& map);
