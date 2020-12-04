@@ -37,8 +37,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
       outFile << map.getHeight() << "\n";
       MapSquare squareToSave;
       //Nested loop to iterate through every map square.
-      for(int i = 0; i < map.getHeight(); ++i)
-      {
+      for(int i = 0; i < map.getHeight(); ++i) {
         for(int j = 0; j < map.getWidth(); ++j) {
           //Save square info.
           outFile << "SQUAREDATA" << Delimiter;
@@ -82,8 +81,11 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
   bool mapStoreAndLoad::load(Map& map, Player& player, const std::string fileName) {
     //File variables
     char Delimiter = '|';
+    //std::string filePosition;
+    //char filePosition[256];
     std::ifstream inFile;
     std::stringstream ss;
+    //std::string wholeLine;
     std::string parsedLine;
 
     //Player variables.
@@ -96,6 +98,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
     bool playerDeath = false;
     Direction dir = NORTH;
     int dirInt = 0;
+
     //Tool variables.
     std::vector<Tool*> tools;
     std::string toolName;
@@ -169,16 +172,46 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
         }
         //Initialize player with data.
         player = Player(energy, money, x, y, hasBinoculars, onShip, playerDeath, dir, tools);
-
+        //Reset stringstream.
+        ss.str("");
+        ss.clear();
         //Save map width and height.
         getline(inFile, parsedLine);
         ss.str(parsedLine);
         //std::cout << parsedLine << "\n";
+        //std::cout << parsedLine << "\n";
         ss >> mapWidth;
         ss >> mapHeight;
-
+        //std::cout << mapWidth;
+        //getline(inFile, wholeLine); 
+        //std::cout << wholeLine << "\n";
+        //getline(inFile, parsedLine, Delimiter); 
+        /*
+        getline(inFile, parsedLine, Delimiter); 
+        std::cout << parsedLine << "\n";
+        */
         //Save map tiles.
-
+        for(int i = 0; i < mapHeight; ++i) {
+          for(int j = 0; j < mapWidth; ++j) {
+            do {
+              getline(inFile, parsedLine, Delimiter); 
+              std::cout << parsedLine << "\n";
+              ss.str(parsedLine);
+              if(parsedLine.compare("SQUAREDATA")) {
+                std::cout << parsedLine << "\n";
+              }
+              else if(!parsedLine.compare("ITEMDATA")) {
+                std::cout << parsedLine << "\n";
+              }
+              else if(!parsedLine.compare("CHESTDATA")) {
+                std::cout << parsedLine << "\n";
+              }
+            }
+            while(inFile.peek() != '\n');
+          }
+          ss.str("");
+          ss.clear();
+        }
       }
     }
     catch(std::ifstream::failure &e) {
