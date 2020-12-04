@@ -23,3 +23,7 @@ Map::~Map()
     }
     delete[] map;
 }
+
+void Map::loadMap(int widthToLoad, int heightToLoad) {
+  return;
+}

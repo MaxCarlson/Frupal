@@ -192,6 +192,8 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
         getline(inFile, parsedLine, Delimiter); 
         std::cout << parsedLine << "\n";
         */
+        //Construct new map.
+        //map = new Map(mapWidth, mapHeight);
         //Save map tiles.
         for(int i = 0; i < mapHeight; ++i) {
           for(int j = 0; j < mapWidth; ++j) {

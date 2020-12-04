@@ -77,6 +77,9 @@ public:
     MapSquare& sq(int x, int y) { return map[x][y]; }
     MapSquare& sq(const Point& p) { return map[p.x][p.y]; }
 
+    void loadMap(int widthToLoad, int heightToLoad);
+
+
     // Func is a lambda/function which takes (int, int, const MapSquare&)
     template<class Func>
     void loopMap(const Func& func) const
