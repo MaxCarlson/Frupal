@@ -192,6 +192,9 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
         getline(inFile, parsedLine, Delimiter); 
         std::cout << parsedLine << "\n";
         */
+        //Reset stringstream.
+        ss.str("");
+        ss.clear();
         //Construct new map.
         map.resetMap(mapWidth, mapHeight);
         //Save map tiles.
@@ -210,7 +213,13 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                 //Load square data into current map tile.
                 ss >> mapDiscovered;
                 ss >> mapTerrainInt;
-                std::cout << map.sq(j, i).discovered << " ";
+                //Load map variables in.
+                map.sq(j, i).discovered = mapDiscovered;
+                map.sq(j, i).terrain = static_cast<Terrain>(mapTerrainInt);
+                //std::cout << map.sq(j, i).discovered << " ";
+                //Terrain tempTerrain = map.sq(j ,i).terrain;
+                //std::cout << static_cast<int>(tempTerrain) << " ";
+                //std::cout << map.sq(j, i).discovered << " ";
               }
               else if(parsedLine.compare("ITEMDATA") == 0) {
                 //Get the item data.
@@ -227,10 +236,9 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                 ss.str(parsedLine);
                 std::cout << parsedLine << " ";
               }
-              map.sq(j, i).discovered = mapDiscovered;
-              ss.clear();
             }
             while(inFile.peek() != '\n');
+            ss.clear();
             std::cout << "\n";
             getline(inFile, parsedLine, '\n'); 
             break;
