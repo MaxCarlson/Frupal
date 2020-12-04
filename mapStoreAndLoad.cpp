@@ -62,47 +62,58 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
               outFile << "ITEMTYPE" << Delimiter;
               outFile << "TOOL";
               outFile << Delimiter;
+              outFile << "ITEMNAME";
+              outFile << Delimiter;
+              outFile << toolToSave->getName();
+              outFile << Delimiter;
               outFile << "ITEMDATA" << Delimiter;
-              outFile << toolToSave->getName() << " ";
               outFile << toolToSave->getType() << " ";
               outFile << toolToSave->getCost() << " ";
               outFile << toolToSave->getRating();
             }
             else if(dynamic_cast<Food*>(mapItem)) {
+              Food* foodToSave = dynamic_cast<Food*>(mapItem);
               outFile << "ITEMTYPE" << Delimiter;
               outFile << "FOOD";
               outFile << Delimiter;
+              outFile << "ITEMNAME";
+              outFile << Delimiter;
+              outFile << foodToSave->getName();
+              outFile << Delimiter;
               outFile << "ITEMDATA" << Delimiter;
-              Food* foodToSave = dynamic_cast<Food*>(mapItem);
               //map.sq(i, j).item = new Food(foodToSave->getName(), foodToSave->getCost(), foodToSave->getEnergy());
               outFile << foodToSave->getCost() << " ";
               outFile << foodToSave->getEnergy();
             }
             else if(dynamic_cast<Obstacle*>(mapItem)) {
+              Obstacle* obstacleToSave = dynamic_cast<Obstacle*>(mapItem);
               outFile << "ITEMTYPE" << Delimiter;
               outFile << "OBSTACLE";
               outFile << Delimiter;
+              outFile << "ITEMNAME";
+              outFile << Delimiter;
+              outFile << obstacleToSave->getName();
+              outFile << Delimiter;
               outFile << "ITEMDATA" << Delimiter;
-              Obstacle* obstacleToSave = dynamic_cast<Obstacle*>(mapItem);
               //map.sq(i, j).item = new Obstacle(obstacleToSave->getName(), obstacleToSave->getType(), obstacleToSave->getEnergy());
               outFile << obstacleToSave->getType() << " ";
               outFile << obstacleToSave->getEnergy();
             }
             else if(dynamic_cast<Binoculars*>(mapItem)) {
+              Binoculars* binocularsToSave = dynamic_cast<Binoculars*>(mapItem);
               outFile << "ITEMTYPE" << Delimiter;
               outFile << "BINOCULARS";
               outFile << Delimiter;
               outFile << "ITEMDATA" << Delimiter;
-              Binoculars* binocularsToSave = dynamic_cast<Binoculars*>(mapItem);
               //map.sq(i, j).item = new Binoculars(binocularsToSave->getName(), binocularsToSave->getCost());
               outFile << binocularsToSave->getCost();
             }
             else if(dynamic_cast<Chest*>(mapItem)) {
+              Chest* chestToSave = dynamic_cast<Chest*>(mapItem);
               outFile << "ITEMTYPE" << Delimiter;
               outFile << "CHEST";
               outFile << Delimiter;
               outFile << "ITEMDATA" << Delimiter;
-              Chest* chestToSave = dynamic_cast<Chest*>(mapItem);
               outFile << chestToSave->getValue();
             }
             else {
