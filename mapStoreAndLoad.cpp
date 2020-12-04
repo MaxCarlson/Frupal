@@ -42,7 +42,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
           //Save square info.
           outFile << "SQUAREDATA" << Delimiter;
           squareToSave = map.sq(j, i);
-          outFile << j << " " << i << " ";
+          //outFile << j << " " << i << " ";
           outFile << squareToSave.discovered << " ";
           outFile << static_cast<int>(squareToSave.terrain);
           outFile << Delimiter;
@@ -193,7 +193,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
         std::cout << parsedLine << "\n";
         */
         //Construct new map.
-        //map = new Map(mapWidth, mapHeight);
+        //map.resetMap(mapWidth, mapHeight);
         //Save map tiles.
         for(int i = 0; i < mapHeight; ++i) {
           for(int j = 0; j < mapWidth; ++j) {
@@ -209,7 +209,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                 std::cout << parsedLine << " ";
                 //Load square data into current map tile.
                 ss >> mapDiscovered;
-                map.sq(j, i).discovered = mapDiscovered;
+                ss >> mapTerrainInt;
                 std::cout << map.sq(j, i).discovered << " ";
               }
               else if(parsedLine.compare("ITEMDATA") == 0) {
@@ -227,6 +227,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                 ss.str(parsedLine);
                 std::cout << parsedLine << " ";
               }
+              map.sq(j, i).discovered = mapDiscovered;
               ss.clear();
             }
             while(inFile.peek() != '\n');

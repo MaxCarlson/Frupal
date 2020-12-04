@@ -24,6 +24,14 @@ Map::~Map()
     delete[] map;
 }
 
-void Map::loadMap(int widthToLoad, int heightToLoad) {
+void Map::resetMap(int widthToLoad, int heightToLoad) {
+    if(!map)
+        return;
+    for(int i = 0; i < height; ++i)
+    {
+        for(int j = 0; j < width; ++j)
+            delete map[i][j].item;
+    }
+    Map(widthToLoad, heightToLoad);
   return;
 }
