@@ -333,40 +333,46 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                     map.sq(i, j).item = new Tool(itemName, itemType, itemCost, itemRating);
                     //map.sq(i, j).item = new Tool(toolToSave->getName(), toolToSave->getType(), toolToSave->getCost(), toolToSave->getRating());
                   }
+                  else if(itemClassType.compare("FOOD") == 0) {
+                    getline(inFile, parsedLine, Delimiter); 
+                    std::cout << parsedLine << " ";
+                    ss.clear();
+                    ss.str(parsedLine);
+                    ss >> itemCost;
+                    //std::cout << itemCost << " ";
+                    ss >> itemEnergy;
+                    Food* foodToSave = dynamic_cast<Food*>(mapItem);
+                    map.sq(i, j).item = new Food(itemName, itemCost, itemEnergy);
+                    //map.sq(i, j).item = new Food(foodToSave->getName(), foodToSave->getCost(), foodToSave->getEnergy());
+                  }
                 }
-                /*
-                   else if(parsedLine.compare("FOOD") == 0) {
-                   Food* foodToSave = dynamic_cast<Food*>(mapItem);
-                   map.sq(i, j).item = new Food(foodToSave->getName(), foodToSave->getCost(), foodToSave->getEnergy());
-                   }
-                   else if(parsedLine.compare("OBSTACLE") == 0) {
-                   Obstacle* obstacleToSave = dynamic_cast<Obstacle*>(mapItem);
-                   map.sq(i, j).item = new Obstacle(obstacleToSave->getName(), obstacleToSave->getType(), obstacleToSave->getEnergy());
-                   }
-                   else if(parsedLine.compare("BINOCULARS") == 0) {
-                   Binoculars* binocularsToSave = dynamic_cast<Binoculars*>(mapItem);
-                   map.sq(i, j).item = new Binoculars(binocularsToSave->getName(), binocularsToSave->getCost());
-                   }
-                   else if(parsedLine.compare("BINOCULARS") == 0) {
-                   Chest* chestToSave = dynamic_cast<Chest*>(mapItem);
-                   map.sq(i, j).item = new Chest(chestToSave->getName(), chestToSave->getValue());
-                   std::cout << map.sq(i, j).item->getName() << "\n";
-                   }
-                   else {
-                //map.sq(i, j).item = mapItem;
-                }
-                 */
-
               }
-              else if(parsedLine.compare("CHESTDATA") == 0) {
-                //Get the chest data.
-                std::cout << parsedLine << " ";
-                getline(inFile, parsedLine, Delimiter); 
-                ss.str(parsedLine);
-                std::cout << parsedLine << " ";
-                //Load item data into current map tile.
-
+              /*
+                 else if(parsedLine.compare("OBSTACLE") == 0) {
+                 Obstacle* obstacleToSave = dynamic_cast<Obstacle*>(mapItem);
+                 map.sq(i, j).item = new Obstacle(obstacleToSave->getName(), obstacleToSave->getType(), obstacleToSave->getEnergy());
+                 }
+                 else if(parsedLine.compare("BINOCULARS") == 0) {
+                 Binoculars* binocularsToSave = dynamic_cast<Binoculars*>(mapItem);
+                 map.sq(i, j).item = new Binoculars(binocularsToSave->getName(), binocularsToSave->getCost());
+                 }
+                 else if(parsedLine.compare("BINOCULARS") == 0) {
+                 Chest* chestToSave = dynamic_cast<Chest*>(mapItem);
+                 map.sq(i, j).item = new Chest(chestToSave->getName(), chestToSave->getValue());
+                 std::cout << map.sq(i, j).item->getName() << "\n";
+                 }
+                 else {
+              //map.sq(i, j).item = mapItem;
               }
+               */
+              //else if(parsedLine.compare("CHESTDATA") == 0) {
+              //  //Get the chest data.
+              //  std::cout << parsedLine << " ";
+              //  getline(inFile, parsedLine, Delimiter); 
+              //  ss.str(parsedLine);
+              //  std::cout << parsedLine << " ";
+              //  //Load item data into current map tile.
+              //}
             }
             while(inFile.peek() != '\n');
             std::cout << "\n";
