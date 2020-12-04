@@ -41,7 +41,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
         for(int j = 0; j < map.getWidth(); ++j) {
           //Save square info.
           outFile << "SQUAREDATA" << Delimiter;
-          squareToSave = map.sq(j, i);
+          squareToSave = map.sq(i, j);
           //outFile << j << " " << i << " ";
           outFile << squareToSave.discovered << " ";
           outFile << static_cast<int>(squareToSave.terrain);
@@ -204,7 +204,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
               getline(inFile, parsedLine, Delimiter); 
               //std::cout << parsedLine << "\n";
               //std::cout << "Beginning :" << parsedLine << "\n";
-              if(!parsedLine.compare("SQUAREDATA")) {
+              if(parsedLine.compare("SQUAREDATA") == 0) {
                 //Get the square data.
                 std::cout << parsedLine << " ";
                 getline(inFile, parsedLine, Delimiter); 
@@ -214,8 +214,8 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                 ss >> mapDiscovered;
                 ss >> mapTerrainInt;
                 //Load map variables in.
-                map.sq(j, i).discovered = mapDiscovered;
-                map.sq(j, i).terrain = static_cast<Terrain>(mapTerrainInt);
+                map.sq(i, j).discovered = mapDiscovered;
+                map.sq(i, j).terrain = static_cast<Terrain>(mapTerrainInt);
                 //std::cout << map.sq(j, i).discovered << " ";
                 //Terrain tempTerrain = map.sq(j ,i).terrain;
                 //std::cout << static_cast<int>(tempTerrain) << " ";
@@ -223,7 +223,6 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
               }
               else if(parsedLine.compare("ITEMDATA") == 0) {
                 //Get the item data.
-                std::cout << parsedLine << " ";
                 std::cout << parsedLine << " ";
                 getline(inFile, parsedLine, Delimiter); 
                 ss.str(parsedLine);
@@ -241,12 +240,11 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
             ss.clear();
             std::cout << "\n";
             getline(inFile, parsedLine, '\n'); 
-            break;
+            ss.str("");
+            ss.clear();
           }
           //Move to next line.
           //std::cout << "End: " << parsedLine << "\n";
-          ss.str("");
-          ss.clear();
         }
       }
     }
