@@ -252,6 +252,10 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                   Binoculars* binocularsToSave = dynamic_cast<Binoculars*>(mapItem);
                   map.sq(i, j).item = new Binoculars(binocularsToSave->getName(), binocularsToSave->getCost());
                 }
+                else if(dynamic_cast<Chest*>(mapItem)) {
+                  Chest* chestToSave = dynamic_cast<Chest*>(mapItem);
+                  map.sq(i, j).item = new Chest(chestToSave->getName(), chestToSave->getValue());
+                }
 
               }
               else if(parsedLine.compare("CHESTDATA") == 0) {
