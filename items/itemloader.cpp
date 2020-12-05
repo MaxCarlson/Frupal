@@ -72,6 +72,7 @@ void ItemLoader::loadItems()
                 getline(file, sname, del);
                 getline(file, stype, del);
                 file >> energy;
+                // This comment is to fix a weird compiler problem
                 obstacles.emplace_back(new Obstacle(sname,stype,energy));
             }
         }

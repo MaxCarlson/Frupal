@@ -32,6 +32,7 @@ public:
     {} 
     int getX() const { return x; }
     int getY() const { return y; }
+    int getToolIDX() const { return toolIDX; }
     void setX(int v) { x = v; }
     void setY(int v) { y = v; }
     int getPX() const { return px; }
@@ -46,6 +47,7 @@ public:
     void setCursor(const Map& map, int tpx, int tpy); 
     bool showPlayerDeath() const { return playerDeath; }
     bool hasTools();
+    bool toolTypeMatch(Obstacle * obstacle);
 
     std::pair<int, int> selectedSquare() const;
     std::pair<int, int> getXY() const { return {x, y}; }

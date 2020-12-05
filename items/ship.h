@@ -3,26 +3,25 @@
 
 class Ship : public Item
 {
-    int cost;
+    //int cost; 
 
 public:
-    Ship(std::string name) 
-        : Item{'S', name}, cost{50}         // Default cost
+    
+    Ship(std::string name):
+         Item{'S', name}
     {}
+    
+    //int getCost()   const { return cost; }
 
-    Ship(std::string name, int cost) 
-        : Item{'S', name}, cost{cost}       // Option for custom cost
-    {}
-
-    Item::StringTuple getDescription() const
+    StringTuple getDescription() const
     {
-        std::string l1, l2;
-        static const std::string cstr = "> Cost: ";
-        l1 = "> " + getName();
-        l2 = cstr + std::to_string(getCost());
+        std::string l1;   
+        static const std::string ship   = "> Ship: ";
+        //static const std::string cost   = "> Cost: ";
         
-        return StringTuple{l1, l2, "", ""};
-    }
+        l1 = ship + getName(); 
+        //l2 = cost + std::to_string(getCost()); 
 
-    int getCost() const { return cost; }
+        return StringTuple{l1, "", "", ""}; 
+    }
 };

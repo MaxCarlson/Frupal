@@ -23,12 +23,13 @@ void Player::discoverTerrrain(Map& map)
 
         discoverSq(ox+x, oy+y);
 
-        // TODO: Is this what is meant by 2 squares? Probably not?
-        if(hasBinoculars)
+        if(hasBinoculars) 
+        {
             discoverSq(x+ox*2, y+oy*2);
+            discoverSq(x+ox, y+oy*2);
+            discoverSq(x+ox*2, y+oy);
+        }    
     }
-
-    // TODO: Finish out binocular squares here
 }
 
 void Player::addTool(Tool *tool)
@@ -61,7 +62,7 @@ std::string Player::playerToolName() const
 
     if(tools.empty())
         return noTool;
-    return tools[toolIDX]->getName();
+    return tools[toolIDX]->getName() + " (x" + std::to_string(tools[toolIDX]->getRating()) + ")";
 }
 
 int Player::useTool(Obstacle *obstacle)
@@ -69,7 +70,8 @@ int Player::useTool(Obstacle *obstacle)
     if(tools.empty())
         return -1;
     int toolRating = 0;
-    if(obstacle->match(tools[toolIDX]->getType()))
+
+    if(obstacle->getType() == tools[toolIDX]->getType())
     {
         toolRating = tools[toolIDX]->getRating();
         tools.erase(tools.begin() + toolIDX);
@@ -78,6 +80,15 @@ int Player::useTool(Obstacle *obstacle)
     }
     return -1;
 }
+    
+bool Player::toolTypeMatch(Obstacle * obstacle)
+{
+    if(tools.empty())
+        return false;
+    if(obstacle->getType() == tools[toolIDX]->getType())
+        return true;
+    return false;  
+}
 
 void Player::setCursor(const Map& map, int tpx, int tpy) 
 {
@@ -85,4 +96,6 @@ void Player::setCursor(const Map& map, int tpx, int tpy)
     px = px <  0 ? 0 : tpx; 
     py = py >= map.getHeight() ? map.getHeight() - 1 : tpy; 
     py = py < 0 ? 0 : tpy; 
+   
 }
+

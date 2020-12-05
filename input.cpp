@@ -11,7 +11,6 @@
 bool Input::input(Player& player, Map& map, UI& ui, Camera& camera)
 {
     int ch = getch();
-    //std::cout << ch;
 
     // Remove excess input, make character easier to control
     flushinp();
@@ -45,22 +44,24 @@ bool Input::input(Player& player, Map& map, UI& ui, Camera& camera)
             player.toggleTool();
             break;
 
-        // TODO: Apparently these are supposed to be arrow keys, and number keys are used for movement?
-        // TODO: Also, these should move the cursor in that dir, not set the cursor next to the player in that dir
-        case 49: // 1
-            player.setCursor(map, player.getPX(), player.getPY() - 1);  //move cursor to Direction::SOUTH
+        case 49: // 1 (DOWN)
+            if(player.getPY() < map.getHeight() - 1)
+                player.setCursor(map, player.getPX(), player.getPY() - 1);  //move cursor to Direction::SOUTH
             break;
 
-        case 50: // 2
-            player.setCursor(map, player.getPX() + 1, player.getPY()); //Direction::EAST);
+        case 50: // 2 (RIGHT)
+            if(player.getPX() < map.getWidth() - 1)
+                player.setCursor(map, player.getPX() + 1, player.getPY()); //Direction::EAST);
             break;
 
-        case 51: // 3
-            player.setCursor(map, player.getPX(), player.getPY() + 1); //Direction::NORTH; 
+        case 51: // 3 (UP)
+            if(player.getPY() > 0)
+                player.setCursor(map, player.getPX(), player.getPY() + 1); //Direction::NORTH; 
             break;
 
-        case 52: // 4
-            player.setCursor(map, player.getPX() - 1, player.getPY()); //Direction::WEST);
+        case 52: // 4 (LEFT)
+            if(player.getPX() > 0)
+                player.setCursor(map, player.getPX() - 1, player.getPY()); //Direction::WEST);
             break;
 
         case -1: // Default ERR input, just here for debugging so we can catch unknown key cods in defualt
@@ -68,7 +69,6 @@ bool Input::input(Player& player, Map& map, UI& ui, Camera& camera)
         default:
             break;
     }
-
     return true;
 }
 
@@ -92,60 +92,80 @@ bool Input::buyItem(const Camera & camera, const UI& ui)
 
 bool Input::canBreakObstacle(Player& player, Obstacle *obstacle, int obstacleCost)
 {
-    if(player.hasTools())
-    {
-        // Allow player to use tools
-        // Each time a tool is used, change obstacleCost according to tool modifier.
-        // Delete tool after usage.
-    }
-     
     int ch = 0;
     int rating;
-    int toolHelp = 0;
-    // Show player options in UI:
-    // "T": Toggle Tool
-    // "U": Use Tool
-    // "D": Done/Break Obstacle
-    while(ch != 'd' || obstacleCost <= toolHelp)
+    bool toolUsed = false;
+    std::string match = "Use Tool? (U)";
+    std::string notMatch = "Not Compatible!";
+    std::string fist = "Break with fist? (F)";
+
+    while(!toolUsed)
     {
-        // print obstacleCost to UI, so player knows
-        // how much energy they need to spend
+        // ui stuff is a bit hacky but worked for all
+        // screen sized that I tried
+        move(LINES - 6,  COLS - 21);
+        clrtoeol(); 
+        mvaddstr(LINES - 6, COLS - 21, fist.c_str());
+        if(player.toolTypeMatch(obstacle))
+        {
+            move(LINES - 5,  COLS - 21);
+            clrtoeol(); 
+            mvaddstr(LINES - 5, COLS - 21, match.c_str());
+
+            move(LINES - 4,  COLS - 21);
+            clrtoeol(); 
+            mvaddstr(LINES - 4, COLS - 21, player.playerToolName().c_str());
+
+        }
+        else
+        {
+            move(LINES - 4,  COLS - 21);
+            clrtoeol();
+            mvaddstr(LINES - 4, COLS - 21, player.playerToolName().c_str());
+
+            if(player.hasTools())
+            {
+                move(LINES - 5,  COLS - 21);
+                clrtoeol();
+                mvaddstr(LINES - 5, COLS - 21, notMatch.c_str());
+            }
+        }
+
         ch = getch();
+
         switch(ch)
         {
             case 't':
-                // Need to show tool names as they are being toggled through
-                // just like in ui.cpp.
-                player.toggleTool();
-                break;
+                {
+                    player.toggleTool();
+                    break;
+                }
 
             case 'u':
                 rating = player.useTool(obstacle);
-                // tool is not compatible. Inform Player in UI
+
                 if(rating < 0)
                 {
                     rating = 0;
                     break;
                 }
-                toolHelp = toolHelp + (rating * 10);
+                // update obstacle cost after using tool
+                obstacleCost = obstacleCost / rating;
+                toolUsed = true;
                 break;
-        }
-        obstacleCost = obstacleCost - toolHelp;
-    }
 
-    if(obstacleCost <= toolHelp)
-        return true;
+            case 'f':
+                toolUsed = true; // a tool actually isn't being used here but player
+                break;           // chose not to use a tool and this will exit the loop
+        }
+    }
 
     if(player.getEnergy() >= obstacleCost)
     {
         player.modifyEnergy(-obstacleCost);
         return true;
     }
+                
+    player.modifyEnergy(-obstacleCost);
     return false;
-
-    
-
 }
-    
-
-    

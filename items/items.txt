@@ -7,10 +7,10 @@
 #TOOL|Jackhammer|ROCK|100|4
 #TOOL|Pickaxe|ROCK|30|2
 
-TOOL|Chainsaw|TREE|20|1
+TOOL|Chainsaw|TREE|20|2
 TOOL|Bargain Saw|TREE|50|3
 TOOL|Axe|TREE|30|2
-TOOL|Hammer|ROCK|10|1
+TOOL|Hammer|ROCK|10|2
 TOOL|Jackhammer|ROCK|100|4
 TOOL|Pickaxe|ROCK|30|2
 

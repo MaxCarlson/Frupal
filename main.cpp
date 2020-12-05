@@ -107,7 +107,6 @@ int main()
             first = false;
         }
     }
-
     clear();
     endwin();
     return 0;
