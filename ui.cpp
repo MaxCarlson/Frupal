@@ -37,7 +37,7 @@ void UI::mainMenu(Display& display, bool& gameRunning, bool& loadMap, uint32_t& 
 
             case 50: // 2
             loadMap = true;
-            break;
+            return;
 
             case 51: // 3
             seed = seedSelection(display, seed);
