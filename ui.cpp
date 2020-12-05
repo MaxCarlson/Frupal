@@ -122,7 +122,7 @@ void UI::print(Display& display, const Player& player, const Camera& camera, Map
     mvaddstr(8, xOffset, "3) South");
     mvaddstr(9, xOffset, "4) West");
 
-    std::string curTool = "Current Tool:";
+    std::string curTool = "Current Tool (T):";
     std::string tool = player.playerToolName();
     std::string wifs = "Whiffles: " + std::to_string(player.getMoney());
     std::string ener = "Energy:   " + std::to_string(player.getEnergy());
