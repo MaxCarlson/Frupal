@@ -52,31 +52,10 @@ int main()
     if(!gameRunning)
       break;
 
-    //Save testing.
-    //Map map = mgen.generate(400, 100);
-    std::minstd_rand0 generator (2);
     MapGenerator mgen{128, seed, itemLoader};
-    mapStoreAndLoad saveLoad;
     Map map = mgen.generate(400, 100);
-    Player  player{mgen.getPlayerCoords()};
-    Tool* tool = new Tool(itemLoader.getTool(generator));
-    player.addTool(tool);
-    player.addTool(tool);
-    if(saveLoad.save(map, player, "mapSave.txt") == false) {
-      endwin();
-      std::exit(-1);
-    }
-    /*
-    //Load testing.
-    mapStoreAndLoad saveLoad;
-    Map map(400, 100);
-    Player  player;
-    saveLoad.load(map, player, "mapSave.txt");
-     */
-    saveLoad.load(map, player, "mapSave.txt");
-
     Input   input;
-    //Player  player{mgen.getPlayerCoords()};
+    Player  player{mgen.getPlayerCoords()};
     Camera  camera{COLS, LINES};
 
     bool first = true;

@@ -22,6 +22,7 @@
 @return    true if the file exists, else false
 
 */
+
 bool fileExists(const std::string& filename)
 {
     struct stat buf;
@@ -32,35 +33,71 @@ bool fileExists(const std::string& filename)
     return false;
 }
 
-bool appendFileName(std::string filename) {
+/*
+bool fileExists(std::string fileName)
+{
+    std::ifstream infile(fileName);
+    //std::cout << fileName << "\n";
+    //std::cout << infile.good() << "\n";
+    return infile.good();
+}
+*/
+
+/*
+bool appendFileName(std::string filename, std::string filenameToReplace) {
+      std::string temp;
       //Find the '_' character, if there is not one, filename invalid.
       if(filename.find('_') == false) {
         return false;     
       }
-      int toReplace = filename.find('_');
-      char numberIncrement = filename.at(toReplace - 1);
-      numberIncrement++ ;
-      filename += '_';
-      filename += numberIncrement;
+      //Get the position of the number to replace.
+      int toReplace = filename.find('_') + 1;
+      //Increment number ascii.
+      char numberIncrement = filename.at(toReplace) + 1;
+      //Replace doesn't like characters so add to temp string.
+      temp.push_back(numberIncrement);
+      //Replace number.
+      filenameToReplace = filename.replace(toReplace, 1, temp);
+      //std::cout << filename << "\n";
+      //numberIncrement++ ;
+      //filename += '_';
+      //filename += numberIncrement;
+      std::cout << filename << "\n";
       return true;
 }
+*/
 
 bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
   //using StringTuple = std::tuple<std::string,std::string,std::string,std::string>;
+  //bool whileEnd = false;
+  //std::string modifiedFileName = fileName;
+  //std::string appendedFileName;
   //File variables
   std::ofstream outFile;
   char Delimiter = '|';
   outFile.exceptions ( std::ofstream::failbit | std::ofstream::badbit );
   try {
 
+/*
+    while(whileEnd == false) {
+      appendFileName(modifiedFileName, appendedFileName);
+      std::cout << appendedFileName << "\n";
+      if(fileExists(appendedFileName) == false) {
+        whileEnd = true; 
+      }
+    }
+    */
+    
+    /*
     if(fileExists(fileName)) {
       char numberIncrement = fileName.back();
       numberIncrement++ ;
       fileName += '_';
       fileName += numberIncrement;
     }
+    */
 
-    outFile.open("mapSaves/" + fileName);
+    outFile.open(fileName);
     if(outFile.is_open()) {
       //Will use a title and delimiter | to specify blocks of variables.
       //Player info.
