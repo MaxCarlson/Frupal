@@ -4,6 +4,7 @@
 #include "movement.h"
 #include <ncurses.h>
 #include <iostream>
+#include "mapStoreAndLoad.h"
 
 // Returns false if exit key is pressed. Handles all input
 bool Input::input(Player& player, Map& map)
@@ -19,6 +20,11 @@ bool Input::input(Player& player, Map& map)
         case 'q':
             return false;
 
+        case 's':
+            mapStoreAndLoad saveLoad;
+            saveLoad.save(map, player, "mapSaves/mapSave_1.txt");
+            break;
+            
         case KEY_LEFT:
             if(player.getX() > 0)
                 Movement::movePlayer(player, map, -1, 0);
