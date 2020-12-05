@@ -46,20 +46,24 @@ bool Input::input(Player& player, Map& map, UI& ui, Camera& camera)
 
         // TODO: Apparently these are supposed to be arrow keys, and number keys are used for movement?
         // TODO: Also, these should move the cursor in that dir, not set the cursor next to the player in that dir
-        case 49: // 1
-            player.setCursor(map, player.getPX(), player.getPY() - 1);  //move cursor to Direction::SOUTH
+        case 49: // 1 (DOWN)
+            if(player.getPY() < map.getHeight() - 1)
+                player.setCursor(map, player.getPX(), player.getPY() - 1);  //move cursor to Direction::SOUTH
             break;
 
-        case 50: // 2
-            player.setCursor(map, player.getPX() + 1, player.getPY()); //Direction::EAST);
+        case 50: // 2 (RIGHT)
+            if(player.getPX() < map.getWidth() - 1)
+                player.setCursor(map, player.getPX() + 1, player.getPY()); //Direction::EAST);
             break;
 
-        case 51: // 3
-            player.setCursor(map, player.getPX(), player.getPY() + 1); //Direction::NORTH; 
+        case 51: // 3 (UP)
+            if(player.getPY() > 0)
+                player.setCursor(map, player.getPX(), player.getPY() + 1); //Direction::NORTH; 
             break;
 
-        case 52: // 4
-            player.setCursor(map, player.getPX() - 1, player.getPY()); //Direction::WEST);
+        case 52: // 4 (LEFT)
+            if(player.getPX() > 0)
+                player.setCursor(map, player.getPX() - 1, player.getPY()); //Direction::WEST);
             break;
 
         case -1: // Default ERR input, just here for debugging so we can catch unknown key cods in defualt
