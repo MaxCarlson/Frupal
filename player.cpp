@@ -86,3 +86,4 @@ void Player::setCursor(const Map& map, int tpx, int tpy)
     py = py >= map.getHeight() ? map.getHeight() - 1 : tpy; 
     py = py < 0 ? 0 : tpy; 
 }
+

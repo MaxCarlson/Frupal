@@ -11,7 +11,6 @@
 bool Input::input(Player& player, Map& map, UI& ui, Camera& camera)
 {
     int ch = getch();
-    //std::cout << ch;
 
     // Remove excess input, make character easier to control
     flushinp();
@@ -142,9 +141,6 @@ bool Input::canBreakObstacle(Player& player, Obstacle *obstacle, int obstacleCos
         return true;
     }
     return false;
-
-    
-
 }
     
 

@@ -48,6 +48,19 @@ void UI::mainMenu(Display& display, bool& gameRunning, uint32_t& seed)
     }
 }
 
+
+/*void UI::printMapSave(Display& display, const Player& player, const Camera& camera, Map& map)
+{
+    printOutline(display, camera);
+    auto [cx, cy] = camera.getDims();
+
+    // Offset for all printed text in UI
+    int xOffset = cx - cols + 2;
+
+    std::string saveMap = "To Save Map: 'S'"; //should return user input back to saveMap
+    mvaddstr(cy-8, xOffset, saveMap.c_str()); //map save 
+}*/
+
 uint32_t UI::seedSelection(Display& display, uint32_t currentSeed)
 {
     clear();
@@ -118,11 +131,13 @@ void UI::print(Display& display, const Player& player, const Camera& camera, Map
     mvaddstr(7, xOffset, "2) East");
     mvaddstr(8, xOffset, "3) South");
     mvaddstr(9, xOffset, "4) West");
+    
 
     std::string curTool = "Current Tool:";
     std::string tool = player.playerToolName();
     std::string wifs = "Whiffles: " + std::to_string(player.getMoney());
     std::string ener = "Energy:   " + std::to_string(player.getEnergy());
+    
 
     mvaddstr(cy-5, xOffset, curTool.c_str());
     mvaddstr(cy-4, xOffset, tool.c_str());
@@ -165,4 +180,3 @@ void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera,
     mvaddstr(4, xOffset, l4.c_str());
     curs_set(0);
 }
-
