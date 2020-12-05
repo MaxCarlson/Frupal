@@ -48,6 +48,18 @@ void UI::mainMenu(Display& display, bool& gameRunning, uint32_t& seed)
     }
 }
 
+/*void UI::printMapSave(Display& display, const Player& player, const Camera& camera, Map& map)
+{
+    printOutline(display, camera);
+    auto [cx, cy] = camera.getDims();
+
+    // Offset for all printed text in UI
+    int xOffset = cx - cols + 2;
+
+    std::string saveMap = "To Save Map: 'S'"; //should return user input back to saveMap
+    mvaddstr(cy-8, xOffset, saveMap.c_str()); //map save 
+}*/
+
 uint32_t UI::seedSelection(Display& display, uint32_t currentSeed)
 {
     clear();
@@ -57,7 +69,6 @@ uint32_t UI::seedSelection(Display& display, uint32_t currentSeed)
     char buffer[blen];
     //int seedTextAdj;
     int curx = 0;
-
 
     bool exit = false;
     while(!exit)
@@ -93,7 +104,7 @@ uint32_t UI::seedSelection(Display& display, uint32_t currentSeed)
             noecho();
             clear();
             break;
-
+            
             case 50: // 2
             exit = true;
             break;
@@ -101,9 +112,7 @@ uint32_t UI::seedSelection(Display& display, uint32_t currentSeed)
             default:
             display.printCenteredText(0, COLS, 14, "Not a supported option, try a one of the number keys!");
         }
-
     }
-
     clear();
     return currentSeed;
 }
@@ -121,11 +130,13 @@ void UI::print(Display& display, const Player& player, const Camera& camera, Map
     mvaddstr(7, xOffset, "2) East");
     mvaddstr(8, xOffset, "3) South");
     mvaddstr(9, xOffset, "4) West");
+    
 
     std::string curTool = "Current Tool (T):";
     std::string tool = player.playerToolName();
     std::string wifs = "Whiffles: " + std::to_string(player.getMoney());
     std::string ener = "Energy:   " + std::to_string(player.getEnergy());
+    
 
     mvaddstr(cy-5, xOffset, curTool.c_str());
     mvaddstr(cy-4, xOffset, tool.c_str());
@@ -139,8 +150,6 @@ void UI::printOutline(Display& display, const Camera& camera)
 {
     auto [cx, cy] = camera.getDims();
 
-    // TODO: Eventually make this so if the terminal is larger than the map, 
-    // the UI rests at the edge of the map instead of the edge of the screen?
     int xpos = cx - cols;
 
     move(0, xpos);
@@ -152,29 +161,23 @@ void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera,
 
     auto [cx, cy]   = player.getCursor();
     auto [cxo, cyo] = camera.getOffsets();
-
     curs_set(1);
 
-    // TODO: This is non-functional right now for the right half of the map
-    // Set the cursor to its given pos
     move(cy - cyo, cx - cxo);
     const MapSquare& sq =  map.sq(cx, cy);
 
     if(!sq.item)
         return;
-
-    // TODO: Add all other item types in here
-    auto [l1, l2, l3, l4] = sq.item->getDescription();
-
-
-    mvaddstr(1, xOffset, l1.c_str());
-    mvaddstr(2, xOffset, l2.c_str());
-    mvaddstr(3, xOffset, l3.c_str());
-    mvaddstr(4, xOffset, l4.c_str());
-
-    curs_set(0);
-    return;
-
+    
+    if(sq.discovered && sq.item)
+    {
+        // TODO: Add all other item types in here
+        auto [l1, l2, l3, l4] = sq.item->getDescription();
+        mvaddstr(1, xOffset, l1.c_str());
+        mvaddstr(2, xOffset, l2.c_str());
+        mvaddstr(3, xOffset, l3.c_str());
+        mvaddstr(4, xOffset, l4.c_str());
+        curs_set(0);
+    }
+    return; 
 }
-
-

@@ -17,7 +17,6 @@ void Player::discoverTerrrain(Map& map)
         {
             if(xf < 0 || yf < 0 || xf > xMax - 1 || yf > yMax - 1)
                 return;
-
             MapSquare& sq = map.sq(xf, yf);
             sq.discovered = true;
         };
@@ -79,7 +78,6 @@ int Player::useTool(Obstacle *obstacle)
         toolIDX = 0;
         return toolRating;
     }
-
     return -1;
 }
     
