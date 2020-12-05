@@ -23,7 +23,7 @@ class mapStoreAndLoad
     * @param fileName Name of the file to load from.
     * @return Returns true if the map saves succesfully, false otherwise.
     */
-  bool save(Map& map, Player& player, const std::string fileName);
+  bool save(Map& map, Player& player, std::string fileName);
   /**
     * Loads a map from a given file.
     * @param map Address of the map to load.

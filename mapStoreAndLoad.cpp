@@ -12,16 +12,55 @@
 #include <iostream>
 #include <sstream>
 #include <typeinfo>
-//#include <tuple>
+#include <sys/stat.h>
 
-bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName) {
+// Function: fileExists
+/**
+    Check if a file exists
+@param[in] filename - the name of the file to check
+
+@return    true if the file exists, else false
+
+*/
+bool fileExists(const std::string& filename)
+{
+    struct stat buf;
+    if (stat(filename.c_str(), &buf) != -1)
+    {
+        return true;
+    }
+    return false;
+}
+
+bool appendFileName(std::string filename) {
+      //Find the '_' character, if there is not one, filename invalid.
+      if(filename.find('_') == false) {
+        return false;     
+      }
+      int toReplace = filename.find('_');
+      char numberIncrement = filename.at(toReplace - 1);
+      numberIncrement++ ;
+      filename += '_';
+      filename += numberIncrement;
+      return true;
+}
+
+bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
   //using StringTuple = std::tuple<std::string,std::string,std::string,std::string>;
   //File variables
   std::ofstream outFile;
   char Delimiter = '|';
   outFile.exceptions ( std::ofstream::failbit | std::ofstream::badbit );
   try {
-    outFile.open(fileName);
+
+    if(fileExists(fileName)) {
+      char numberIncrement = fileName.back();
+      numberIncrement++ ;
+      fileName += '_';
+      fileName += numberIncrement;
+    }
+
+    outFile.open("mapSaves/" + fileName);
     if(outFile.is_open()) {
       //Will use a title and delimiter | to specify blocks of variables.
       //Player info.
