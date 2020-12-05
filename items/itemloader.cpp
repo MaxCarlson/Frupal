@@ -94,10 +94,12 @@ Chest ItemLoader::getChest(std::default_random_engine& re) const
     return c;
 }
 
-Clue ItemLoader::getClue(std::default_random_engine& re) const
+Clue ItemLoader::getClue(std::default_random_engine& re, std::pair<int,int> clueCoords) const
 {
     std::uniform_int_distribution<int> dist{0,1};   // Generate true or false
-    return Clue{static_cast<bool>(dist(re))};
+    Clue c(static_cast<bool>(dist(re)),mg,clueCoords);
+    //c.setDescription(mg);
+    return c;
 }
 
 Food ItemLoader::getFood(std::default_random_engine& re) const

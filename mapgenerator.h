@@ -17,7 +17,7 @@ private:
 
     int size;
     uint_fast32_t seed;
-    /*const*/ ItemLoader& itemLoader;
+    ItemLoader& itemLoader;
     int diamondX, diamondY;
     std::default_random_engine re;
 
