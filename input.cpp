@@ -98,7 +98,6 @@ bool Input::canBreakObstacle(Player& player, Obstacle *obstacle, int obstacleCos
         // Each time a tool is used, change obstacleCost according to tool modifier.
         // Delete tool after usage.
     }
-     
     int ch = 0;
     int rating;
     int toolHelp = 0;
