@@ -31,13 +31,10 @@ void Map::resetMap(int widthToLoad, int heightToLoad) {
     {
         for(int j = 0; j < width; ++j) {
             delete map[i][j].item;
-            map[i][j].item = nullptr;
         }
         delete[] map[i];
-        map[i] = nullptr;
     }
     delete[] map;
-    map = nullptr;
 
     height = heightToLoad;
     width = widthToLoad; 
@@ -45,8 +42,14 @@ void Map::resetMap(int widthToLoad, int heightToLoad) {
     map = new MapSquare*[height];
 
     // Default map squares to undiscovered
-    for(int i = 0; i < height; ++i)
+    for(int i = 0; i < height; ++i) {
         map[i] = new MapSquare[width]();
+        for(int j = 0; j < width; ++j) {
+          map[i][j].item = nullptr;
+        }
+    }
+
+
 
   return;
 }
