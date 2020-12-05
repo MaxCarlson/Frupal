@@ -312,7 +312,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
         }
         //If we are at this line.
         if(!parsedLine.compare("TOOLDATA")) {
-          do {
+          while(inFile.peek() != '\n'){
             //Set up stringstream.
             ss.clear();
             getline(inFile, parsedLine, Delimiter);
@@ -326,7 +326,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
             }
           }
           //Continue until we hit the end of the line.
-          while(inFile.peek() != '\n');
+          
           //Go to next line.
           getline(inFile, parsedLine);
           //inFile >> toolName >> toolType >> toolCost >> toolRating;
