@@ -16,56 +16,65 @@
 
 // Function: fileExists
 /**
-    Check if a file exists
-@param[in] filename - the name of the file to check
+  Check if a file exists
+  @param[in] filename - the name of the file to check
 
-@return    true if the file exists, else false
+  @return    true if the file exists, else false
 
-*/
+ */
+
+int is_empty(const char *s) {
+  while (*s != '\0') {
+    if (!isspace((unsigned char)*s))
+      return 0;
+    s++;
+  }
+  return 1;
+}
 
 bool fileExists(const std::string& filename)
 {
-    struct stat buf;
-    if (stat(filename.c_str(), &buf) != -1)
-    {
-        return true;
-    }
-    return false;
+  struct stat buf;
+  if (stat(filename.c_str(), &buf) != -1)
+  {
+    return true;
+  }
+  return false;
 }
 
 /*
-bool fileExists(std::string fileName)
-{
-    std::ifstream infile(fileName);
-    //std::cout << fileName << "\n";
-    //std::cout << infile.good() << "\n";
-    return infile.good();
+   bool fileExists(std::string fileName)
+   {
+   std::ifstream infile(fileName);
+//std::cout << fileName << "\n";
+//std::cout << infile.good() << "\n";
+return infile.good();
 }
-*/
+ */
 
 /*
-bool appendFileName(std::string filename, std::string filenameToReplace) {
-      std::string temp;
-      //Find the '_' character, if there is not one, filename invalid.
-      if(filename.find('_') == false) {
-        return false;     
-      }
-      //Get the position of the number to replace.
-      int toReplace = filename.find('_') + 1;
-      //Increment number ascii.
-      char numberIncrement = filename.at(toReplace) + 1;
-      //Replace doesn't like characters so add to temp string.
-      temp.push_back(numberIncrement);
-      //Replace number.
-      filenameToReplace = filename.replace(toReplace, 1, temp);
-      //std::cout << filename << "\n";
-      //numberIncrement++ ;
-      //filename += '_';
-      //filename += numberIncrement;
-      std::cout << filename << "\n";
-      return true;
+   bool appendFileName(std::string filename, std::string filenameToReplace) {
+   std::string temp;
+//Find the '_' character, if there is not one, filename invalid.
+if(filename.find('_') == false) {
+return false;     
 }
-*/
+//Get the position of the number to replace.
+int toReplace = filename.find('_') + 1;
+//Increment number ascii.
+char numberIncrement = filename.at(toReplace) + 1;
+//Replace doesn't like characters so add to temp string.
+temp.push_back(numberIncrement);
+//Replace number.
+filenameToReplace = filename.replace(toReplace, 1, temp);
+//std::cout << filename << "\n";
+//numberIncrement++ ;
+//filename += '_';
+//filename += numberIncrement;
+std::cout << filename << "\n";
+return true;
+}
+ */
 
 bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
   //using StringTuple = std::tuple<std::string,std::string,std::string,std::string>;
@@ -78,24 +87,24 @@ bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
   outFile.exceptions ( std::ofstream::failbit | std::ofstream::badbit );
   try {
 
-/*
-    while(whileEnd == false) {
-      appendFileName(modifiedFileName, appendedFileName);
-      std::cout << appendedFileName << "\n";
-      if(fileExists(appendedFileName) == false) {
-        whileEnd = true; 
-      }
-    }
-    */
-    
     /*
-    if(fileExists(fileName)) {
-      char numberIncrement = fileName.back();
-      numberIncrement++ ;
-      fileName += '_';
-      fileName += numberIncrement;
-    }
-    */
+       while(whileEnd == false) {
+       appendFileName(modifiedFileName, appendedFileName);
+       std::cout << appendedFileName << "\n";
+       if(fileExists(appendedFileName) == false) {
+       whileEnd = true; 
+       }
+       }
+     */
+
+    /*
+       if(fileExists(fileName)) {
+       char numberIncrement = fileName.back();
+       numberIncrement++ ;
+       fileName += '_';
+       fileName += numberIncrement;
+       }
+     */
 
     outFile.open(fileName);
     if(outFile.is_open()) {
@@ -300,20 +309,21 @@ bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
           //std::cout << parsedLine << "\n";
           getline(inFile, parsedLine, Delimiter);
           //std::cout << parsedLine << "\n";
-          ss.str("");
-          ss.clear();
         }
         //If we are at this line.
         if(!parsedLine.compare("TOOLDATA")) {
           do {
             //Set up stringstream.
+            ss.clear();
             getline(inFile, parsedLine, Delimiter);
-            ss.str(parsedLine);
-            //std::cout << parsedLine << "\n";
-            //Save tools.
-            ss >> toolName >> toolType >> toolCost >> toolRating;
-            //Load tools.
-            tools.emplace_back(new Tool(toolName, toolType, toolCost, toolRating));
+            if(!is_empty(parsedLine.c_str())) {
+              ss.str(parsedLine);
+              //std::cout << parsedLine << "\n";
+              //Save tools.
+              ss >> toolName >> toolType >> toolCost >> toolRating;
+              //Load tools.
+              tools.emplace_back(new Tool(toolName, toolType, toolCost, toolRating));
+            }
           }
           //Continue until we hit the end of the line.
           while(inFile.peek() != '\n');
@@ -327,7 +337,6 @@ bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
         //Initialize player with data.
         player = Player(energy, money, x, y, hasBinoculars, onShip, playerDeath, dir, tools);
         //Reset stringstream.
-        ss.str("");
         ss.clear();
         //Save map width and height.
         getline(inFile, parsedLine);
@@ -345,7 +354,6 @@ bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
            std::cout << parsedLine << "\n";
          */
         //Reset stringstream.
-        ss.str("");
         ss.clear();
         //Construct new map.
         map.resetMap(mapWidth, mapHeight);
@@ -358,127 +366,142 @@ bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
               //std::cout << "Beginning :" << parsedLine << "\n";
               if(parsedLine.compare("SQUAREDATA") == 0) {
                 //Get the square data.
-//                std::cout << parsedLine << " ";
+                //                std::cout << parsedLine << " ";
                 getline(inFile, parsedLine, Delimiter); 
                 ss.clear();
-                ss.str(parsedLine);
-//                std::cout << parsedLine << " ";
-                //Load square data into current map tile.
-                ss >> mapY;
-                ss >> mapX;
-                ss >> mapDiscovered;
-                ss >> mapTerrainInt;
-                //Load map variables in.
-                map.sq(i, j).discovered = mapDiscovered;
-                map.sq(i, j).terrain = static_cast<Terrain>(mapTerrainInt);
-                //std::cout << map.sq(i, j).discovered << " ";
-                //Terrain tempTerrain = map.sq(i, j).terrain;
-                //std::cout << static_cast<int>(tempTerrain) << " ";
+                if(!is_empty(parsedLine.c_str())) {
+                  ss.str(parsedLine);
+                  //                std::cout << parsedLine << " ";
+                  //Load square data into current map tile.
+                  ss >> mapY;
+                  ss >> mapX;
+                  ss >> mapDiscovered;
+                  ss >> mapTerrainInt;
+                  //Load map variables in.
+                  map.sq(i, j).discovered = mapDiscovered;
+                  map.sq(i, j).terrain = static_cast<Terrain>(mapTerrainInt);
+                  //std::cout << map.sq(i, j).discovered << " ";
+                  //Terrain tempTerrain = map.sq(i, j).terrain;
+                  //std::cout << static_cast<int>(tempTerrain) << " ";
+                }
               }
               else if(parsedLine.compare("ITEMTYPE") == 0) {
                 //Get the item type.
-//                std::cout << parsedLine << " ";
+                //                std::cout << parsedLine << " ";
                 getline(inFile, parsedLine, Delimiter); 
                 ss.clear();
-                ss.str(parsedLine);
-                ss >> itemClassType;
-                //std::cout << parsedLine << " ";
-//                std::cout << itemClassType << " ";
-                getline(inFile, parsedLine, Delimiter); 
-//                std::cout << parsedLine << " ";
-                if(parsedLine.compare("ITEMNAME") == 0)  {
+                if(!is_empty(parsedLine.c_str())) {
+                  ss.str(parsedLine);
+                  ss >> itemClassType;
+                  //std::cout << parsedLine << " ";
+                  //                std::cout << itemClassType << " ";
                   getline(inFile, parsedLine, Delimiter); 
-                  itemName = parsedLine;
-//                  std::cout << itemName << " ";
-                  getline(inFile, parsedLine, Delimiter); 
-//                  std::cout << parsedLine << " ";
-                  if(itemClassType.compare("TOOL") == 0) {
-                    //getline(inFile, parsedLine, Delimiter); 
+                  //                std::cout << parsedLine << " ";
+                  if(parsedLine.compare("ITEMNAME") == 0)  {
                     getline(inFile, parsedLine, Delimiter); 
-//                    std::cout << parsedLine << " ";
-                    //getline(inFile, parsedLine, Delimiter); 
-                    //Get the item type.
-                    //std::cout << parsedLine << " ";
-                    //getline(inFile, parsedLine, Delimiter); 
-                    ss.clear();
-                    ss.str(parsedLine);
-                    ss >> itemType;
-                    //std::cout << itemType << " ";
-                    ss >> itemCost;
-                    //std::cout << itemCost << " ";
-                    ss >> itemRating;
-                    //std::cout << itemRating << " ";
-                    //Tool* toolToSave = dynamic_cast<Tool*>(mapItem);
-                    map.sq(i, j).item = new Tool(itemName, itemType, itemCost, itemRating);
-                    //map.sq(i, j).item = new Tool(toolToSave->getName(), toolToSave->getType(), toolToSave->getCost(), toolToSave->getRating());
+                    itemName = parsedLine;
+                    //                  std::cout << itemName << " ";
+                    getline(inFile, parsedLine, Delimiter); 
+                    //                  std::cout << parsedLine << " ";
+                    if(itemClassType.compare("TOOL") == 0) {
+                      //getline(inFile, parsedLine, Delimiter); 
+                      getline(inFile, parsedLine, Delimiter); 
+                      //                    std::cout << parsedLine << " ";
+                      //getline(inFile, parsedLine, Delimiter); 
+                      //Get the item type.
+                      //std::cout << parsedLine << " ";
+                      //getline(inFile, parsedLine, Delimiter); 
+                      ss.clear();
+                      ss.str(parsedLine);
+                      ss >> itemType;
+                      //std::cout << itemType << " ";
+                      ss >> itemCost;
+                      //std::cout << itemCost << " ";
+                      ss >> itemRating;
+                      //std::cout << itemRating << " ";
+                      //Tool* toolToSave = dynamic_cast<Tool*>(mapItem);
+                      map.sq(i, j).item = new Tool(itemName, itemType, itemCost, itemRating);
+                      //map.sq(i, j).item = new Tool(toolToSave->getName(), toolToSave->getType(), toolToSave->getCost(), toolToSave->getRating());
+                    }
                   }
                   else if(itemClassType.compare("FOOD") == 0) {
                     getline(inFile, parsedLine, Delimiter); 
-//                    std::cout << parsedLine << " ";
+                    //                    std::cout << parsedLine << " ";
                     ss.clear();
-                    ss.str(parsedLine);
-                    ss >> itemCost;
-                    //std::cout << itemCost << " ";
-                    ss >> itemEnergy;
-                    //Food* foodToSave = dynamic_cast<Food*>(mapItem);
-                    map.sq(i, j).item = new Food(itemName, itemCost, itemEnergy);
-                    //map.sq(i, j).item = new Food(foodToSave->getName(), foodToSave->getCost(), foodToSave->getEnergy());
+                    if(!is_empty(parsedLine.c_str())) {
+                      ss.str(parsedLine);
+                      ss >> itemCost;
+                      //std::cout << itemCost << " ";
+                      ss >> itemEnergy;
+                      //Food* foodToSave = dynamic_cast<Food*>(mapItem);
+                      map.sq(i, j).item = new Food(itemName, itemCost, itemEnergy);
+                      //map.sq(i, j).item = new Food(foodToSave->getName(), foodToSave->getCost(), foodToSave->getEnergy());
+                    }
                   }
                   else if(itemClassType.compare("OBSTACLE") == 0) {
                     getline(inFile, parsedLine, Delimiter); 
-//                    std::cout << parsedLine << " ";
+                    //                    std::cout << parsedLine << " ";
                     ss.clear();
-                    ss.str(parsedLine);
-                    ss >> itemType;
-                    ss >> itemEnergy;
-                    //Obstacle* obstacleToSave = dynamic_cast<Obstacle*>(mapItem);
-                    map.sq(i, j).item = new Obstacle(itemName, itemType, itemEnergy);
-                    //map.sq(i, j).item = new Obstacle(obstacleToSave->getName(), obstacleToSave->getType(), obstacleToSave->getEnergy());
+                    if(!is_empty(parsedLine.c_str())) {
+                      ss.str(parsedLine);
+                      ss >> itemType;
+                      ss >> itemEnergy;
+                      //Obstacle* obstacleToSave = dynamic_cast<Obstacle*>(mapItem);
+                      map.sq(i, j).item = new Obstacle(itemName, itemType, itemEnergy);
+                      //map.sq(i, j).item = new Obstacle(obstacleToSave->getName(), obstacleToSave->getType(), obstacleToSave->getEnergy());
+                    }
                   }
                 }
                 else if(itemClassType.compare("BINOCULARS") == 0) {
                   getline(inFile, parsedLine, Delimiter); 
-//                  std::cout << parsedLine << " ";
+                  //                  std::cout << parsedLine << " ";
                   ss.clear();
-                  ss.str(parsedLine);
-                  ss >> itemCost;
-                  //Binoculars* binocularsToSave = dynamic_cast<Binoculars*>(mapItem);
-                  map.sq(i, j).item = new Binoculars(itemName, itemCost);
-                  //map.sq(i, j).item = new Binoculars(binocularsToSave->getName(), binocularsToSave->getCost());
+                  if(!is_empty(parsedLine.c_str())) {
+                    ss.str(parsedLine);
+                    ss >> itemCost;
+                    //Binoculars* binocularsToSave = dynamic_cast<Binoculars*>(mapItem);
+                    map.sq(i, j).item = new Binoculars(itemName, itemCost);
+                    //map.sq(i, j).item = new Binoculars(binocularsToSave->getName(), binocularsToSave->getCost());
+                  }
+
                 }
                 else if(itemClassType.compare("CHEST") == 0) {
                   getline(inFile, parsedLine, Delimiter); 
-//                  std::cout << parsedLine << " ";
+                  //                  std::cout << parsedLine << " ";
                   ss.clear();
-                  ss.str(parsedLine);
-                  ss >> itemValue;
-                  //Chest* chestToSave = dynamic_cast<Chest*>(mapItem);
-                  //map.sq(i, j).item = new Chest(chestToSave->getName(), chestToSave->getValue());
-                  map.sq(i, j).item = new Chest(itemName, itemValue);
+                  if(!is_empty(parsedLine.c_str())) {
+                    ss.str(parsedLine);
+                    ss >> itemValue;
+                    //Chest* chestToSave = dynamic_cast<Chest*>(mapItem);
+                    //map.sq(i, j).item = new Chest(chestToSave->getName(), chestToSave->getValue());
+                    map.sq(i, j).item = new Chest(itemName, itemValue);
+                  }
                 }
               }
               else if (parsedLine.compare("ITEMNAME") == 0) {
                 //Get the item type.
-//                std::cout << parsedLine << " ";
+                //                std::cout << parsedLine << " ";
                 getline(inFile, parsedLine, Delimiter); 
                 ss.clear();
-                ss.str(parsedLine);
-                ss >> itemName;
-//                std::cout << itemName;
+                if(!is_empty(parsedLine.c_str())) {
+                  ss.str(parsedLine);
+                  ss >> itemName;
+                  //                std::cout << itemName;
 
-                if(itemName.compare("Ship") == 0) {
-                  map.sq(i, j).item = new Ship(itemName);
-                }
-                else if(itemName.compare("Diamond") == 0) {
-                  map.sq(i, j).item = new Diamond(itemName);
-                }
-                else if(itemName.compare("Clue") == 0) {
-                  map.sq(i, j).item = new Clue(itemName);
+                  if(itemName.compare("Ship") == 0) {
+                    map.sq(i, j).item = new Ship(itemName);
+                  }
+                  else if(itemName.compare("Diamond") == 0) {
+                    map.sq(i, j).item = new Diamond(itemName);
+                  }
+                  else if(itemName.compare("Clue") == 0) {
+                    map.sq(i, j).item = new Clue(itemName);
+                  }
                 }
               }
             }
             while(inFile.peek() != '\n');
-//            std::cout << "\n";
+            //            std::cout << "\n";
             getline(inFile, parsedLine, '\n'); 
             ss.str("");
             ss.clear();
