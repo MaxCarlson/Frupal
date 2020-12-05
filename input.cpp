@@ -71,7 +71,6 @@ bool Input::input(Player& player, Map& map, UI& ui, Camera& camera)
         default:
             break;
     }
-
     return true;
 }
 
