@@ -282,11 +282,11 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
               //std::cout << "Beginning :" << parsedLine << "\n";
               if(parsedLine.compare("SQUAREDATA") == 0) {
                 //Get the square data.
-                std::cout << parsedLine << " ";
+//                std::cout << parsedLine << " ";
                 getline(inFile, parsedLine, Delimiter); 
                 ss.clear();
                 ss.str(parsedLine);
-                std::cout << parsedLine << " ";
+//                std::cout << parsedLine << " ";
                 //Load square data into current map tile.
                 ss >> mapY;
                 ss >> mapX;
@@ -301,25 +301,25 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
               }
               else if(parsedLine.compare("ITEMTYPE") == 0) {
                 //Get the item type.
-                std::cout << parsedLine << " ";
+//                std::cout << parsedLine << " ";
                 getline(inFile, parsedLine, Delimiter); 
                 ss.clear();
                 ss.str(parsedLine);
                 ss >> itemClassType;
                 //std::cout << parsedLine << " ";
-                std::cout << itemClassType << " ";
+//                std::cout << itemClassType << " ";
                 getline(inFile, parsedLine, Delimiter); 
-                std::cout << parsedLine << " ";
+//                std::cout << parsedLine << " ";
                 if(parsedLine.compare("ITEMNAME") == 0)  {
                   getline(inFile, parsedLine, Delimiter); 
                   itemName = parsedLine;
-                  std::cout << itemName << " ";
+//                  std::cout << itemName << " ";
                   getline(inFile, parsedLine, Delimiter); 
-                  std::cout << parsedLine << " ";
+//                  std::cout << parsedLine << " ";
                   if(itemClassType.compare("TOOL") == 0) {
                     //getline(inFile, parsedLine, Delimiter); 
                     getline(inFile, parsedLine, Delimiter); 
-                    std::cout << parsedLine << " ";
+//                    std::cout << parsedLine << " ";
                     //getline(inFile, parsedLine, Delimiter); 
                     //Get the item type.
                     //std::cout << parsedLine << " ";
@@ -338,7 +338,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                   }
                   else if(itemClassType.compare("FOOD") == 0) {
                     getline(inFile, parsedLine, Delimiter); 
-                    std::cout << parsedLine << " ";
+//                    std::cout << parsedLine << " ";
                     ss.clear();
                     ss.str(parsedLine);
                     ss >> itemCost;
@@ -350,7 +350,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                   }
                   else if(itemClassType.compare("OBSTACLE") == 0) {
                     getline(inFile, parsedLine, Delimiter); 
-                    std::cout << parsedLine << " ";
+//                    std::cout << parsedLine << " ";
                     ss.clear();
                     ss.str(parsedLine);
                     ss >> itemType;
@@ -362,7 +362,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                 }
                 else if(itemClassType.compare("BINOCULARS") == 0) {
                   getline(inFile, parsedLine, Delimiter); 
-                  std::cout << parsedLine << " ";
+//                  std::cout << parsedLine << " ";
                   ss.clear();
                   ss.str(parsedLine);
                   ss >> itemCost;
@@ -372,7 +372,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
                 }
                 else if(itemClassType.compare("CHEST") == 0) {
                   getline(inFile, parsedLine, Delimiter); 
-                  std::cout << parsedLine << " ";
+//                  std::cout << parsedLine << " ";
                   ss.clear();
                   ss.str(parsedLine);
                   ss >> itemValue;
@@ -383,12 +383,12 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
               }
               else if (parsedLine.compare("ITEMNAME") == 0) {
                 //Get the item type.
-                std::cout << parsedLine << " ";
+//                std::cout << parsedLine << " ";
                 getline(inFile, parsedLine, Delimiter); 
                 ss.clear();
                 ss.str(parsedLine);
                 ss >> itemName;
-                std::cout << itemName;
+//                std::cout << itemName;
 
                 if(itemName.compare("Ship") == 0) {
                   map.sq(i, j).item = new Ship(itemName);
@@ -402,7 +402,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, const std::string fileName)
               }
             }
             while(inFile.peek() != '\n');
-            std::cout << "\n";
+//            std::cout << "\n";
             getline(inFile, parsedLine, '\n'); 
             ss.str("");
             ss.clear();
