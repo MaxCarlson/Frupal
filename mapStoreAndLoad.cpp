@@ -326,7 +326,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
             }
           }
           //Continue until we hit the end of the line.
-          
+
           //Go to next line.
           getline(inFile, parsedLine);
           //inFile >> toolName >> toolType >> toolCost >> toolRating;
@@ -360,7 +360,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
         //Save map tiles.
         for(int i = 0; i < mapHeight; ++i) {
           for(int j = 0; j < mapWidth; ++j) {
-            do {
+            while(inFile.peek() != '\n') {
               getline(inFile, parsedLine, Delimiter); 
               //std::cout << parsedLine << "\n";
               //std::cout << "Beginning :" << parsedLine << "\n";
@@ -500,7 +500,6 @@ bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
                 }
               }
             }
-            while(inFile.peek() != '\n');
             //            std::cout << "\n";
             getline(inFile, parsedLine, '\n'); 
             ss.str("");
