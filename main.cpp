@@ -51,8 +51,9 @@ int main()
             break;
 
         MapGenerator mgen{128, seed, itemLoader};
-        itemLoader.setMapGen((MapGenerator*) &mgen);
-        Map map = mgen.generate(400, 100);
+        Map map;
+        itemLoader.setMapInfo(&mgen,&map);
+        map = std::move(Map{mgen.generate(400, 100)});
 
         Input   input;
         Player  player{mgen.getPlayerCoords()};

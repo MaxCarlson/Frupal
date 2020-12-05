@@ -6,6 +6,8 @@
 #include "food.h"
 #include "obstacle.h"
 #include "tool.h"
+#include "../mapgenerator.h"
+#include "../map.h"
 #include <fstream>
 #include <ctime>
 
@@ -97,8 +99,7 @@ Chest ItemLoader::getChest(std::default_random_engine& re) const
 Clue ItemLoader::getClue(std::default_random_engine& re, std::pair<int,int> clueCoords) const
 {
     std::uniform_int_distribution<int> dist{0,1};   // Generate true or false
-    Clue c(static_cast<bool>(dist(re)),mg,clueCoords);
-    //c.setDescription(mg);
+    Clue c(static_cast<bool>(dist(re)),mg,map,clueCoords);
     return c;
 }
 
@@ -118,7 +119,8 @@ Tool ItemLoader::getTool(std::default_random_engine& re) const
     return Tool{*tools[dist(re)]};
 }
 
-void ItemLoader::setMapGen(MapGenerator* mapgen)
+void ItemLoader::setMapInfo(MapGenerator* mapgen, Map* m)
 {
     mg = mapgen;
+    map = m;
 }

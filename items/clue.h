@@ -27,10 +27,16 @@ class Clue : public Item
         return r;
     }
 
-    std::string setFeatureText() {
+    std::string setFeatureText(MapGenerator* mg, Map* m) {
         std::string r;
-
-        // This isn't working yet and I'm really not sure how to do it
+        /* WORK IN PROGRESS
+        for (auto & [idx,vec]: mg->getVoronoiVec())
+        {
+            auto [x,y] = vec[0];    //Coordinates for a map square
+            m->sq(x,y).terrain
+            
+        }
+        */
 
         if (tf)
         {
@@ -65,14 +71,14 @@ class Clue : public Item
 
 public:
     // Option to specify T/F (1/0)
-    Clue(bool tf, MapGenerator* mg, std::pair<int,int> clueCoords) :
+    Clue(bool tf, MapGenerator* mg, Map* m, std::pair<int,int> clueCoords) :
         Item{'?', "Clue"}, tf{tf}
     {
         loc = clueCoords;
         borderText = "--did not get set";
         featureText = "--did not get set";
         diamondsText = "--did not get set";
-        this->setDescription(mg); // Should overwrite the above
+        setDescription(mg,m); // Should overwrite the above
     }
 
     StringTuple getDescription() const
@@ -81,16 +87,15 @@ public:
     }
 
     //void setDescription(std::pair<int,int> player, std::pair<int,int> diamond, Map& map) const
-    void setDescription(MapGenerator* mg)
+    void setDescription(MapGenerator* mg, Map* m)
     {
         if (!mg) return;
-        //std::pair<int,int> player  = mg->getPlayerCoords();
         std::pair<int,int> diamond = mg->getDiamondCoords();
-        //int mapwidth               = map.getWidth();
-        //int mapheight              = map.getHeight();
+
+
 
         /* Distance to border
-         *     (cheating...just always use western edge, so distance is px)
+         *     (cheating...just always use western edge, so distance is the x-coord of the clue)
          *     (If time, calculate which edge is closest? Or pick a random one?)
          * Distance to feature
          *     (I really have no idea yet)
@@ -100,7 +105,7 @@ public:
          */
 
         borderText = setBorderText(loc.first, loc.second);
-        featureText = setFeatureText();
+        featureText = setFeatureText(mg,m);
         diamondsText = setDiamondsText((loc.first - diamond.first), (loc.second - diamond.second));
     }
 };

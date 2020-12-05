@@ -60,6 +60,7 @@ class Map
     MapSquare** map;
 
 public:
+    Map() = default;
     Map(int width, int height);
     ~Map();
 
@@ -67,6 +68,16 @@ public:
         : width{other.width}, height{other.height}, map{other.map}
     {
         other.map = nullptr;
+    }
+
+    Map& operator=(Map&& m)
+    {
+        width = m.width;
+        height = m.height;
+        map = m.map;
+        m.map = nullptr;
+
+        return *this;
     }
 
     int getWidth() const { return width; }
