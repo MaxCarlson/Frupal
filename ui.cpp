@@ -15,7 +15,7 @@
 #include <ncurses.h>
 #include <iostream>
 
-void UI::mainMenu(Display& display, bool& gameRunning, uint32_t& seed)
+void UI::mainMenu(Display& display, bool& gameRunning, bool& loadMap, uint32_t& seed)
 {
     nodelay(stdscr, false);
     clear();
@@ -36,7 +36,7 @@ void UI::mainMenu(Display& display, bool& gameRunning, uint32_t& seed)
             return;
 
             case 50: // 2
-            
+            loadMap = true;
             break;
 
             case 51: // 3

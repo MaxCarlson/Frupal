@@ -38,6 +38,7 @@ int main()
   // Run any other systems
 
   bool gameRunning = true;
+  bool loadMap = false;
   ItemLoader itemLoader;
   itemLoader.loadItems();
 
@@ -48,15 +49,20 @@ int main()
     Display display;
     uint32_t seed = 1;
 
-    ui.mainMenu(display, gameRunning, seed);
+    ui.mainMenu(display, gameRunning, loadMap, seed);
     if(!gameRunning)
       break;
 
     MapGenerator mgen{128, seed, itemLoader};
     Map map = mgen.generate(400, 100);
-    Input   input;
     Player  player{mgen.getPlayerCoords()};
+    Input   input;
     Camera  camera{COLS, LINES};
+
+    if(loadMap == true) {
+      mapStoreAndLoad saveLoad;
+      saveLoad.load(map, player, "mapSaves/mapSave_1.txt");
+    }
 
     bool first = true;
     for(;;)
