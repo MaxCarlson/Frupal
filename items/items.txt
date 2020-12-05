@@ -1,9 +1,16 @@
 #|This is a comment.
 #|TOOL|Name|TYPE|Cost|Rating
-TOOL|Chainsaw|TREE|20|1
-TOOL|Bargain Basement Chain Saw|TREE|50|3
-TOOL|Hi-Tech Tree-Cuttin' Axe|TREE|30|2
-TOOL|Hammer|ROCK|10|1
+#TOOL|Chainsaw|TREE|20|1
+#TOOL|Bargain Basement Chain Saw|TREE|50|3
+#TOOL|Hi-Tech Tree-Cuttin' Axe|TREE|30|2
+#TOOL|Hammer|ROCK|10|1
+#TOOL|Jackhammer|ROCK|100|4
+#TOOL|Pickaxe|ROCK|30|2
+
+TOOL|Chainsaw|TREE|20|2
+TOOL|Bargain Saw|TREE|50|3
+TOOL|Axe|TREE|30|2
+TOOL|Hammer|ROCK|10|2
 TOOL|Jackhammer|ROCK|100|4
 TOOL|Pickaxe|ROCK|30|2
 

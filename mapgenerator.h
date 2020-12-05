@@ -36,7 +36,6 @@ private:
     std::map<int, std::vector<std::pair<int, int>>> houseWallCoords;
     std::vector<std::vector<std::pair<int, int>>>   houseCoords;
 
-
 public:
     MapGenerator(int size, uint_fast32_t seed, const ItemLoader& itemLoader);
 

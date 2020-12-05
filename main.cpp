@@ -69,10 +69,23 @@ int main()
     {
       std::this_thread::sleep_for(std::chrono::milliseconds{SleepTime});
 
-      if(!first && !input.input(player, map))
+      if(!first && !input.input(player, map, ui, camera))
       {
         gameRunning = false;
         break;
+      }
+
+      if(player.getMoney() >= 1000000)
+      {
+        // Player has chosen to start a new game
+        if(display.winScreen() == 1)
+          break;
+        // Player has chosen to quit the program
+        else
+        {
+          gameRunning = false;
+          break;
+        }
       }
 
       // Toggle playerDeath on and off in player.h
@@ -99,7 +112,6 @@ int main()
       first = false;
     }
   }
-
   clear();
   endwin();
   return 0;

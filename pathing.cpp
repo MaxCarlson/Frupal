@@ -139,7 +139,6 @@ std::vector<Point> Pathing::aStar(const Map& map, Point player, Point diamond,
     openSet.emplace(start);
     openSetVals.emplace(start);
 
-
     // Key is a Node, and value is the previous node that node came from,
     // on the cheapest path from the start
     std::unordered_map<Node, Node> cameFrom;

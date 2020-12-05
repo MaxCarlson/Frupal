@@ -28,5 +28,4 @@ public:
 
         return StringTuple{l1, l2, l3, ""}; 
     }
-
 };
