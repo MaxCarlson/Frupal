@@ -43,7 +43,8 @@ public:
     Map generate(int cells, int numLeaders);
     std::pair<int, int> getPlayerCoords() const { return playerCoords; }
     std::pair<int, int> getDiamondCoords() const { return std::pair{diamondX, diamondY}; }
-    const std::map<int, std::vector<std::pair<int, int>>>& getVoronoiVec() const { return voronoiCellsVec; }
+    //const std::map<int, std::vector<std::pair<int, int>>>& getVoronoiVec() const { return voronoiCellsVec; }
+    std::map<int, std::vector<std::pair<int, int>>>& getVoronoiVec() { return voronoiCellsVec; }
 
 private:
 

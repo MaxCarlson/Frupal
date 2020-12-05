@@ -29,15 +29,26 @@ class Clue : public Item
 
     std::string setFeatureText(MapGenerator* mg, Map* m) {
         std::string r;
+        r = "Test";
         /* WORK IN PROGRESS
-        for (auto & [idx,vec]: mg->getVoronoiVec())
+        auto& [idx,vec] = mg->getVoronoiVec();
+        auto [x,y] = vec[0];    //Coordinates for a map square
+
+        r = "x = " + std::to_string(x) + ", y = " + std::to_string(y) + ", cx = " + std::to_string(loc.first) + ", cy = " + std::to_string(loc.second);
+
+        
+        for (auto& [idx,vec]: mg->getVoronoiVec())
         {
             auto [x,y] = vec[0];    //Coordinates for a map square
-            m->sq(x,y).terrain
-            
+
+            for (int j=0;i<limit;++i)
+            {
+                if ((m->sq(x,y).terrain == WATER) || (m->sq(x,y).terrain == SWAMP)
+            }
         }
         */
 
+        /* OLD
         if (tf)
         {
             //Generate accurate clue
@@ -47,6 +58,7 @@ class Clue : public Item
         {   // Generate inaccurate clue
             r = "There...isn't...a swamp or water? I guess?";
         }
+        */
 
         return r;
     }
@@ -91,8 +103,6 @@ public:
     {
         if (!mg) return;
         std::pair<int,int> diamond = mg->getDiamondCoords();
-
-
 
         /* Distance to border
          *     (cheating...just always use western edge, so distance is the x-coord of the clue)
