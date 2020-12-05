@@ -44,8 +44,6 @@ bool Input::input(Player& player, Map& map, UI& ui, Camera& camera)
             player.toggleTool();
             break;
 
-        // TODO: Apparently these are supposed to be arrow keys, and number keys are used for movement?
-        // TODO: Also, these should move the cursor in that dir, not set the cursor next to the player in that dir
         case 49: // 1 (DOWN)
             if(player.getPY() < map.getHeight() - 1)
                 player.setCursor(map, player.getPX(), player.getPY() - 1);  //move cursor to Direction::SOUTH
@@ -145,6 +143,3 @@ bool Input::canBreakObstacle(Player& player, Obstacle *obstacle, int obstacleCos
     }
     return false;
 }
-    
-
-    

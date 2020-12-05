@@ -48,7 +48,6 @@ void UI::mainMenu(Display& display, bool& gameRunning, uint32_t& seed)
     }
 }
 
-
 /*void UI::printMapSave(Display& display, const Player& player, const Camera& camera, Map& map)
 {
     printOutline(display, camera);
@@ -151,8 +150,6 @@ void UI::printOutline(Display& display, const Camera& camera)
 {
     auto [cx, cy] = camera.getDims();
 
-    // TODO: Eventually make this so if the terminal is larger than the map, 
-    // the UI rests at the edge of the map instead of the edge of the screen?
     int xpos = cx - cols;
 
     move(0, xpos);
@@ -170,7 +167,7 @@ void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera,
 
     if(!sq.item)
         return;
-
+    
     // TODO: Add all other item types in here
     auto [l1, l2, l3, l4] = sq.item->getDescription();
 

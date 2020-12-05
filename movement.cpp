@@ -34,7 +34,6 @@ void Movement::movePlayer(Player& player, Map& map, UI& ui, Camera& camera, int 
             break;
 
         case Terrain::WATER:
-
             // Moving onto a ship costs energy
             if(dynamic_cast<Ship*>(sq.item) && startSq.terrain != Terrain::WATER)
                 player.modifyEnergy(-1);

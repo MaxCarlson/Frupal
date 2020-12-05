@@ -447,7 +447,6 @@ std::tuple<int, int, int> MapGenerator::findHouseLocation(const Map& map, int mi
 
     // TODO: This is ineffecient and could be made more so by 
     // storing a map of all cells by terrain types
-    //
     // Select random Meadow cell not occupied by a house
     RESTART:
     int mcell = -1;
@@ -807,7 +806,6 @@ void MapGenerator::placePlayerAndDiamod(Map& map, std::vector<Point>& reqBoats)
         placeInCorner(map, re, xMin, xMax, yMin, yMax, [&](int x, int y, MapSquare& sq)
         {
             // TODO: Need to check if game is completeable
-
             bool success = pathing.playerToDiamond(map, Point{x, y}, diamondPoint, reqBoats);
             playerCoords = std::pair{x, y};
             if(success)
@@ -834,10 +832,8 @@ void MapGenerator::placeBoats(Map& map,
     }
 
     // Place boats randomly
-    //
     // TODO: Create a map opposite of terrainMappings, 
     // map terrain types to a vector of cells of that terrain type
-    // 
     std::uniform_real_distribution<float> dist;
     for(auto [cellId, terrain] : terrainMappings)
     {
