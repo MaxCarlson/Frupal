@@ -29,11 +29,15 @@ void Map::resetMap(int widthToLoad, int heightToLoad) {
         return;
     for(int i = 0; i < height; ++i)
     {
-        for(int j = 0; j < width; ++j)
+        for(int j = 0; j < width; ++j) {
             delete map[i][j].item;
+            map[i][j].item = nullptr;
+        }
         delete[] map[i];
+        map[i] = nullptr;
     }
     delete[] map;
+    map = nullptr;
 
     height = heightToLoad;
     width = widthToLoad; 
