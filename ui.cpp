@@ -168,12 +168,14 @@ void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera,
     if(!sq.item)
         return;
     
-    // TODO: Add all other item types in here
-    auto [l1, l2, l3, l4] = sq.item->getDescription();
-
-    mvaddstr(1, xOffset, l1.c_str());
-    mvaddstr(2, xOffset, l2.c_str());
-    mvaddstr(3, xOffset, l3.c_str());
-    mvaddstr(4, xOffset, l4.c_str());
-    curs_set(0);
+    if(sq.discovered && sq.item)
+    {
+        // TODO: Add all other item types in here
+        auto [l1, l2, l3, l4] = sq.item->getDescription();
+        mvaddstr(1, xOffset, l1.c_str());
+        mvaddstr(2, xOffset, l2.c_str());
+        mvaddstr(3, xOffset, l3.c_str());
+        mvaddstr(4, xOffset, l4.c_str());
+        curs_set(0);
+    }
 }
