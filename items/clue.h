@@ -3,6 +3,8 @@
 #include "../mapgenerator.h"
 #include "../map.h"
 
+#define TESTING
+
 class Clue : public Item
 {
     std::pair<int,int> loc;     // xy coordinates of this clue
@@ -28,45 +30,88 @@ class Clue : public Item
         return r;
     }
 
-    std::string setFeatureText(MapGenerator* mg, Map* m) {
+    std::string setFeatureText(Map* m) {
         std::string r;
-        r = "Test";
         
-        //auto& [idx,vec] = mg->getVoronoiVec();
-        //auto [x,y] = vec[0];    // Coordinates for a map square
-        /* This segfaults, map is not filled in yet
-        Terrain t = m->sq(loc.first+1,loc.second).terrain; //should be 1 square west
-        
-        r = "Terrain = ";
-        if (t==Terrain::MEADOW) { r += "Meadow"; }
-        if (t==Terrain::SWAMP) { r += "Swamp"; }
-        if (t==Terrain::WATER) { r += "Water"; }
-        if (t==Terrain::WALL) { r += "Wall"; }
-        */
-        /* Work in progress
-        for (auto& [idx,vec]: mg->getVoronoiVec())
-        {
-            auto [x,y] = vec[0];    // Coordinates for a map square
+        //Terrain t = m->sq(loc.first,loc.second).terrain;
+        Terrain t = Terrain::MEADOW;    // Searched terrain
+        Terrain f = Terrain::MEADOW;    // Found terrain
+        int  w     = m->getWidth();     // Right edge for bounds checking
+        int  h     = m->getHeight();    // Bottom edge for bounds checking
+        int  max   = 20;                // Don't search farther than this
+        int  count = 0;                 // Counter (obvs)
+        int  fx    = 0;                 // Found x-coord
+        int  fy    = 0;                 // Found y-coord
+        int  dist  = max;               // Final distance
+        bool valid = true;              // Flip this if we find edge so it doesn't get counted
 
-            for (int j=0;i<limit;++i)
+        for (int i=-1;i<2;i+=2)
+        {
+            // 1. West and 3. East
+            while (t == Terrain::MEADOW && count < dist)
             {
-                if ((m->sq(x,y).terrain == WATER) || (m->sq(x,y).terrain == SWAMP))
+                ++count;
+                if (loc.first+(count*i) < 0 || loc.first+(count*i) > w) // Out of bounds
+                    { valid = false; break; }
+                t = m->sq(loc.first+(count*i),loc.second).terrain;
             }
-        }
-        */
 
-        /* OLD
-        if (tf)
+            if (valid && count < dist) {
+                fx = loc.first + (count * i);
+                fy = loc.second;
+                f = t;
+                dist = count;
+            }
+            count = 0;
+            valid = true;
+            t = Terrain::MEADOW;
+
+            // 2. South and 4. North
+            while (t == Terrain::MEADOW && count < dist)
+            {
+                ++count;
+                if (loc.second+(count*i) < 0 || loc.second+(count*i) > h) // Out of bounds
+                    { valid = false; break; }
+                t = m->sq(loc.first,loc.second+(count*i)).terrain;
+            }
+            if (valid && count < dist) {
+                fx = loc.first;
+                fy = loc.second + (count * i);
+                f = t;
+                dist = count;
+            }
+            count = 0;
+            valid = true;
+            t = Terrain::MEADOW;
+        }
+
+        // Figure out results
+        if (dist == max)
+            return "There is nought but featureless meadow all around you.";
+        
+        r = "There is ";
+        if (f==Terrain::SWAMP) { r += "a swamp "; }
+        if (f==Terrain::WATER) { r += "water ";   }
+        if (f==Terrain::WALL)  { r += "a wall ";  }
+
+        r += std::to_string(dist) + " grovnick";
+        r += (dist > 1) ? "s to the " : " to the ";
+
+        if (fx == loc.first)    // No change in x means found is N/S
         {
-            //Generate accurate clue
-            r = "There is a swamp or water or something...somewhere.";
+            if (!tf)
+                r += (fy>loc.second) ? "north." : "south.";
+            else
+                r += (fy>loc.second) ? "south." : "north.";
         }
-        else
-        {   // Generate inaccurate clue
-            r = "There...isn't...a swamp or water? I guess?";
+        else                    // found is W/E
+        {
+            if (!tf)
+                r += (fx>loc.first)  ? "west." : "east.";
+            else
+                r += (fx>loc.first)  ? "east." : "west.";
         }
-        */
-
+        
         return r;
     }
 
@@ -84,6 +129,10 @@ class Clue : public Item
         r += (x>0) ? "west" : "east";
         r += " and " + std::to_string(abs(y)) + " grovnicks to the ";
         r += (y>0) ? "north." : "south.";
+
+        #ifdef TESTING
+        if (!tf) { r+= " ;)"; }
+        #endif
 
         return r;
     }
@@ -116,14 +165,24 @@ public:
          *     (cheating...just always use western edge, so distance is the x-coord of the clue)
          *     (If time, calculate which edge is closest? Or pick a random one?)
          * Distance to feature
-         *     (I really have no idea yet)
+         *     This must be called separately when the cursor is moved onto it. See ui.cpp,
+         *     function printSelectedInfo.
+         *     If we try to set it at the same time as the others, it will segfault because the
+         *     map is not filled in yet.
          * Distance to diamonds
          *     (dx - px) / Positive east, negative west
          *     (dy - py) / Positive north, negative south
          */
 
         borderText = setBorderText(loc.first, loc.second);
-        featureText = setFeatureText(mg,m);
+        //featureText = setFeatureText(mg,m);
         diamondsText = setDiamondsText((loc.first - diamond.first), (loc.second - diamond.second));
+    }
+
+    void setDescription(Map* m)
+    {
+        if (!m) return;
+
+        featureText = setFeatureText(m);
     }
 };

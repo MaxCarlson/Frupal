@@ -173,11 +173,15 @@ void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera,
     {
         if (dynamic_cast<Clue*>(sq.item))
         {
+            // Need to update the clue's second statement
+            Map* mp = &map;
+            Clue* c = dynamic_cast<Clue*>(sq.item);
+            c->setDescription(mp);
+
             // Clues are displayed differently
             mvaddstr(1, xOffset, "Clue Found!!");
             refresh();
             printWindow(sq.item);
-
         }
         else
         {
@@ -205,8 +209,8 @@ void UI::printWindow(Item* item)
     len = std::max(len, (int)s3.length());
     len = std::max(len, (int)s4.length());
 
-    int h = 9;
-    int o = 3;
+    int h = 10;
+    int o = 2;
     int w = len+o+2;
 
     WINDOW* win = newwin(h,w,(LINES-h)/2,(COLS-w)/2);
