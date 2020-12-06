@@ -1,48 +1,65 @@
-# Frupal
-CS300 HW, Kingdom of Frupal
-# Group 5
+# CS300 Final Project: The Kingdom of Frupal
+## Group 5:
+- Max Carlson, Scrum Master
+- Darian Hutchinson
+- Sam Rind
+- Devon Berry
+- Courtney Ficker
+---
 
-1 To Compile:
-         - The game is compiled by running Make
+### Instructions
+- To run the game, compile by typing **make**, then run by typing **./frupal**
 
-2 To Run: 
-        - The game run just by running ./frupal
+- Example Map:
+> At least one map file for your game. This map should be winnable and demonstrate all the features of the game * (confused) -- **TODO: I think we need a link to a save file (like mapSave_1.txt) that we know is winnable -Courtney**
 
-3 Demonstration: 
-        * At least one map file for your game. This map should be winnable and demonstrate all the features of the game * (confused)
+- Playing the game:
 
-4 Instruction: 
-        - Instructions for how to play the game, to the extent that gameplay is non-obvious.
-        - Must choose one of the option at the start screen main menu: 
-            * 1. Start The Game
-            * 2. Select Map Seed
-            * 3. Quit
-        - Upon the obvious choice of option one: the player is given two set of keys to work with, a player itself ('@') and an independent
-        - cursor (' '). The player can be toggled with the arrows to move into all the obvious directions and cursor can independently 
-        - move throughout the map with its respective keys to all directions i.e: 1, 2, 3, 4 (these are obvious on the screen). 
-        - Upon running into an item: the player must select 'Y' to purchase an item and 'N' to pass on an item. 
-        - Win: Lastly a player wins when runnings buying a diamond.  
-        - Dies: Player can die if runs out of energy as shown on the screen.
-        - Press q for quitting the game at any time.  
+    When the game loads, choose one of the following options at the main menu:
+    
+      1. Start The Game
+      2. Select Map Seed
+      3. Quit
 
-        - Cursor: 
-            - The cursor is independent and can go into the map areas which are not 'discovered' therefore, 
-            - the dialogue box with a description of an grovnik and its contents is displayed in the in-game menu when
-            - it is discovered. 
 
-5 Discussion:
-        - A brief discussion of what features you managed to implement, and any you didn't finish.
-        - We were given mainly three Stretch Goals as part of the instructions for this project. We were able to achieve all of them.
-        - Yet, some were more challenging than the others. Even though we used the mapgenerator to get the random generation of the map, 
-        - It came with its challenges specially when it was integrated with the third stretch goal. 
-        - We finished all the requirments for the viewport screen. We displayed on the screen where each grovnik occupies one character.
-        - Implementing screen was also challenging at first as if the cursor went out of the bound or the UI did not fit into the alloted
-        - right hand corner, the game would break, however we were able to successfully implement these features and make them work as the
-        - fully functioning commands in instructions above. Lastly as described in the instructions and shown in our trailer, our entire 
-        - game is working without any errors which means were able to implement all the features according to the requirments of the game.
+    Option 2 will allow you to enter an integer that will set the seed to randomize the game. This allows you to replay certain maps if desired.
 
-6 GitHub Repo Link:
-        - (Please include Github Repo link here after merge in main)  
+    Option 1 loads the game proper, and gives the player two sets of controls:
+    1. The cursor, controlled with numbers 1-4 (controls are printed on-screen)
+    2. The player itself, controllable with arrow keys
 
-7 A link to your final presenation video.
-        -https://media.pdx.edu/media/1_plxxixxl
+    The player and cursor are totally independent of each other. The cursor will highlight map spaces and information will be printed out on the upper-right of the screen (or in a centered window in the case of Clues), provided the map space has already been "discovered" by the player.
+    
+    The player must move to spaces in order to interact with the items there. Upon running into an occupied space, different things may happen:
+    - For tools and food, the player is prompted to purchase them for a displayed price. Food is immediately consumed and the associated energy boost applied to their energy meter. Tools are held by the player to be used later, against obstacles.
+    - Obstacles will allow players to attempt to break it with their fists, in which case the player is sapped of the listed energy cost, potentially killing them. Players can also choose to use a tool, which will reduce the amount of energy required by a variable degree (2x, 3x, 4x, etc.). Once the obstacle is destroyed, the player may pass freely.
+    - Chests are immediately picked up and their contents added to the players funds. The royal diamonds will immediately win the game for the player.
+    - Ships will allow the player to traverse water spaces for free, getting left behind on the shore when the player disembarks.
+
+
+- Discussion:
+
+    We were given three Stretch Goals as part of the instructions for this project, and were able to achieve all of them.
+
+    1. Random map generation came first, thanks to Max. Having what was likely the hardest stretch goal out of the way right off the bat was a huge help, but it also made map saving and loading (the 3rd stretch goal) more challenging.
+    2. Item loading was accomplished later. It allows a person to edit a text file to add new Tools, Food, and Obstacles at their pleasure, as well as designate which tools word with which obstacles. The text file is read during map generation, and items are scattered randomly throughout.
+    3. Map saving and loading was very tricky as well. Custom map creation is accomplished in a similar way as custom item creation--via a text file that is then read by the program.
+
+
+    Other major components included:
+    - The viewport screen. Implementing this was challenging at first, as if the cursor went out of bounds or the UI did not fit into the alloted right hand corner, the game would break.
+    - Character pathing. 
+    - Item functionality. This included creating a sort of tool belt that could be rotated through so a player could select one that matches the type of a given obstacle.
+    - Clue functionality. This was tricky because it required getting involved in so many different areas. It had to have custom UI components to be able to handle the large amount of text, and it needed to be able to dig into the map itself to look for ways to generate the clues (and then sometimes make them incorrect on purpose).
+    - TODO: Any more detail people want to go into...
+
+    Lastly, as described in the instructions and shown in our trailer, our entire 
+    game is working without any errors which means were able to implement all the features according to the requirements of the game.
+
+- GitHub Repo Link:
+    
+    https://github.com/MaxCarlson/Frupal
+
+- Final presentation video:
+    
+    https://media.pdx.edu/media/1_plxxixxl
