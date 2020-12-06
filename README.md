@@ -8,7 +8,7 @@
 ---
 
 ### Instructions
-- To run the game, compile by typing **make**, then run by typing **./frupal**
+To run the game, compile by typing **make**, then run by typing **./frupal**
 
 - Example Map:
 > At least one map file for your game. This map should be winnable and demonstrate all the features of the game * (confused) -- **TODO: I think we need a link to a save file (like mapSave_1.txt) that we know is winnable -Courtney**
@@ -35,7 +35,6 @@
     - Obstacles will allow players to attempt to break it with their fists, in which case the player is sapped of the listed energy cost, potentially killing them. Players can also choose to use a tool, which will reduce the amount of energy required by a variable degree (2x, 3x, 4x, etc.). Once the obstacle is destroyed, the player may pass freely.
     - Chests are immediately picked up and their contents added to the players funds. The royal diamonds will immediately win the game for the player.
     - Ships will allow the player to traverse water spaces for free, getting left behind on the shore when the player disembarks.
-
 
 ### Discussion:
 
