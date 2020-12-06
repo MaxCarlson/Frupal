@@ -1,26 +1,36 @@
 #|This is a comment.
+#|Try to keep names < 13 characters in length
+
 #|TOOL|Name|TYPE|Cost|Rating
-#TOOL|Chainsaw|TREE|20|1
-#TOOL|Bargain Basement Chain Saw|TREE|50|3
-#TOOL|Hi-Tech Tree-Cuttin' Axe|TREE|30|2
-#TOOL|Hammer|ROCK|10|1
-#TOOL|Jackhammer|ROCK|100|4
-#TOOL|Pickaxe|ROCK|30|2
-
-TOOL|Chainsaw|TREE|20|2
-TOOL|Bargain Saw|TREE|50|3
-TOOL|Axe|TREE|30|2
+TOOL|Chainsaw|TREE|30|4
+TOOL|Axe|TREE|20|3
+TOOL|Bargain Saw|TREE|10|2
+TOOL|Jackhammer|ROCK|50|4
+TOOL|Pickaxe|ROCK|30|3
 TOOL|Hammer|ROCK|10|2
-TOOL|Jackhammer|ROCK|100|4
-TOOL|Pickaxe|ROCK|30|2
+TOOL|Sword|MONSTER|30|4
+TOOL|Spear|MONSTER|15|3
+TOOL|Dagger|MONSTER|10|2
 
-#|FOOD|Name|Cost|Energy_gain
+#|FOOD|Name|Cost|Energy_gain1
 FOOD|Pizza|10|20
-FOOD|Apple Pie|15|40
+FOOD|Apple Pie|15|30
+FOOD|Trail Rations|5|20
+FOOD|Rum Ham|30|50
+FOOD|Heroes' Feast|100|100
+FOOD|Nuts|1|10
+FOOD|Wild Berries|1|10
+FOOD|Dried Fruit|10|10
+FOOD|Cheese Wheel|20|30
+FOOD|Venison|15|30
 
 #|OBSTACLE|Name|TYPE|Energy_req
-OBSTACLE|Oak Tree|TREE|30
-OBSTACLE|Dead Tree|TREE|15
-OBSTACLE|Fallen Branches|TREE|30
-OBSTACLE|Boulder|ROCK|100
-OBSTACLE|Big Boulder|ROCK|200
+OBSTACLE|Oak Tree|TREE|50
+OBSTACLE|Fallen Branches|TREE|25
+OBSTACLE|Dead Tree|TREE|10
+OBSTACLE|Big Boulder|ROCK|100
+OBSTACLE|Boulder|ROCK|60
+OBSTACLE|Rocky Terrain|ROCK|20
+OBSTACLE|Ogre|MONSTER|100
+OBSTACLE|Orc|MONSTER|50
+OBSTACLE|Goblin|MONSTER|20
