@@ -1,6 +1,7 @@
 #pragma once
 #include "../item.h"
 #include "../mapgenerator.h"
+#include "../map.h"
 
 class Clue : public Item
 {
@@ -30,20 +31,26 @@ class Clue : public Item
     std::string setFeatureText(MapGenerator* mg, Map* m) {
         std::string r;
         r = "Test";
-        /* WORK IN PROGRESS
-        auto& [idx,vec] = mg->getVoronoiVec();
-        auto [x,y] = vec[0];    //Coordinates for a map square
-
-        r = "x = " + std::to_string(x) + ", y = " + std::to_string(y) + ", cx = " + std::to_string(loc.first) + ", cy = " + std::to_string(loc.second);
-
         
+        //auto& [idx,vec] = mg->getVoronoiVec();
+        //auto [x,y] = vec[0];    // Coordinates for a map square
+        /* This segfaults, map is not filled in yet
+        Terrain t = m->sq(loc.first+1,loc.second).terrain; //should be 1 square west
+        
+        r = "Terrain = ";
+        if (t==Terrain::MEADOW) { r += "Meadow"; }
+        if (t==Terrain::SWAMP) { r += "Swamp"; }
+        if (t==Terrain::WATER) { r += "Water"; }
+        if (t==Terrain::WALL) { r += "Wall"; }
+        */
+        /* Work in progress
         for (auto& [idx,vec]: mg->getVoronoiVec())
         {
-            auto [x,y] = vec[0];    //Coordinates for a map square
+            auto [x,y] = vec[0];    // Coordinates for a map square
 
             for (int j=0;i<limit;++i)
             {
-                if ((m->sq(x,y).terrain == WATER) || (m->sq(x,y).terrain == SWAMP)
+                if ((m->sq(x,y).terrain == WATER) || (m->sq(x,y).terrain == SWAMP))
             }
         }
         */
@@ -87,9 +94,9 @@ public:
         Item{'?', "Clue"}, tf{tf}
     {
         loc = clueCoords;
-        borderText = "--did not get set";
-        featureText = "--did not get set";
-        diamondsText = "--did not get set";
+        borderText = "Not set";
+        featureText = "Not set";
+        diamondsText = "Not set";
         setDescription(mg,m); // Should overwrite the above
     }
 
@@ -102,6 +109,7 @@ public:
     void setDescription(MapGenerator* mg, Map* m)
     {
         if (!mg) return;
+        if (!m) return;
         std::pair<int,int> diamond = mg->getDiamondCoords();
 
         /* Distance to border

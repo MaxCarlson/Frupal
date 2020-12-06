@@ -171,13 +171,58 @@ void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera,
     
     if(sq.discovered && sq.item)
     {
-        // TODO: Add all other item types in here
-        auto [l1, l2, l3, l4] = sq.item->getDescription();
-        mvaddstr(1, xOffset, l1.c_str());
-        mvaddstr(2, xOffset, l2.c_str());
-        mvaddstr(3, xOffset, l3.c_str());
-        mvaddstr(4, xOffset, l4.c_str());
+        if (dynamic_cast<Clue*>(sq.item))
+        {
+            // Clues are displayed differently
+            mvaddstr(1, xOffset, "Clue Found!!");
+            refresh();
+            printWindow(sq.item);
+
+        }
+        else
+        {
+            // TODO: Add all other item types in here
+            auto [l1, l2, l3, l4] = sq.item->getDescription();
+            mvaddstr(1, xOffset, l1.c_str());
+            mvaddstr(2, xOffset, l2.c_str());
+            mvaddstr(3, xOffset, l3.c_str());
+            mvaddstr(4, xOffset, l4.c_str());
+        }
         curs_set(0);
     }
     return; 
+}
+
+void UI::printWindow(Item* item)
+{
+    auto [l1, l2, l3, l4] = item->getDescription();
+    std::string s2 = l2.c_str();
+    std::string s3 = l3.c_str();
+    std::string s4 = l4.c_str();
+
+
+    int len = s2.length();
+    len = std::max(len, (int)s3.length());
+    len = std::max(len, (int)s4.length());
+
+    int h = 9;
+    int o = 3;
+    int w = len+o+2;
+
+    WINDOW* win = newwin(h,w,(LINES-h)/2,(COLS-w)/2);
+
+    // Draw a border
+    mvwvline(win,0,  0,  '*',h);
+    mvwvline(win,0,  w-1,'*',h);
+    mvwhline(win,0,  0,  '*',w);
+    mvwhline(win,h-1,0,  '*',w);
+
+    // Print info
+    mvwprintw(win, 1, o, "The clue reads...");
+    mvwaddstr(win, 3, o, l2.c_str());
+    mvwaddstr(win, 5, o, l3.c_str());
+    mvwaddstr(win, 7, o, l4.c_str());
+
+    wrefresh(win);
+    delwin(win);
 }
