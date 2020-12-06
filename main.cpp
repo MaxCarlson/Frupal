@@ -26,7 +26,6 @@ int main()
     // TODO: Start screen
 
     // Main Loop
-    //
     // Check for input
     // Apply user input
     // Check for player death

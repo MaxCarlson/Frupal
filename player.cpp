@@ -22,7 +22,6 @@ void Player::discoverTerrrain(Map& map)
         };
 
         discoverSq(ox+x, oy+y);
-
         if(hasBinoculars) 
         {
             discoverSq(x+ox*2, y+oy*2);
@@ -96,6 +95,5 @@ void Player::setCursor(const Map& map, int tpx, int tpy)
     px = px <  0 ? 0 : tpx; 
     py = py >= map.getHeight() ? map.getHeight() - 1 : tpy; 
     py = py < 0 ? 0 : tpy; 
-   
 }
 
