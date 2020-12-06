@@ -204,14 +204,14 @@ void UI::printWindow(Item* item)
     std::string s3 = l3.c_str();
     std::string s4 = l4.c_str();
 
-
+    // Pretty sure line 4 should always be longest, but just to make sure...
     int len = s2.length();
     len = std::max(len, (int)s3.length());
     len = std::max(len, (int)s4.length());
 
-    int h = 10;
-    int o = 2;
-    int w = len+o+2;
+    int h = 10;         // Height of window
+    int o = 2;          // Offset
+    int w = len+2*o;    // Pad both sides by offset
 
     WINDOW* win = newwin(h,w,(LINES-h)/2,(COLS-w)/2);
 
