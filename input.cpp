@@ -121,7 +121,6 @@ bool Input::canBreakObstacle(Player& player, Obstacle *obstacle, int obstacleCos
             move(LINES - 4,  COLS - 21);
             clrtoeol(); 
             mvaddstr(LINES - 4, COLS - 21, player.playerToolName().c_str());
-
         }
         else
         {

@@ -19,11 +19,12 @@ To run the game, compile by typing **make**, then run by typing **./frupal**
     When the game loads, choose one of the following options at the main menu:
     
       1. Start The Game
-      2. Select Map Seed
-      3. Quit
+      2. Load Map
+      3. Select Map Seed
+      4. Quit
 
 
-    Option 2 will allow you to enter an integer that will set the seed to randomize the game. This allows you to replay certain maps if desired.
+    Option 3 will allow you to enter an integer that will set the seed to randomize the game. This allows you to replay certain maps if desired.
 
     Option 1 loads the game proper, and gives the player two sets of controls:
     1. The cursor, controlled with numbers 1-4 (controls are printed on-screen)
@@ -41,25 +42,26 @@ To run the game, compile by typing **make**, then run by typing **./frupal**
 
 We were given three Stretch Goals as part of the instructions for this project, and were able to achieve all of them.
 
-1. Random map generation came first, thanks to Max. Having what was likely the hardest stretch goal out of the way right off the bat was a huge help, but it also made map saving and loading (the 3rd stretch goal) more challenging.
-2. Item loading was accomplished later. It allows a person to edit a text file to add new Tools, Food, and Obstacles at their pleasure, as well as designate which tools word with which obstacles. The text file is read during map generation, and items are scattered randomly throughout.
-3. Map saving and loading was very tricky as well. Custom map creation is accomplished in a similar way as custom item creation--via a text file that is then read by the program.
+    1. Random map generation came first, thanks to Max. Having what was likely the hardest stretch goal out of the way right off the bat was a huge help, but it also made map saving and loading (the 3rd stretch goal) more challenging.
+    2. Item loading was accomplished later. It allows a person to edit a text file to add new Tools, Food, and Obstacles at their pleasure, as well as designate which tools word with which obstacles. The text file is read during map generation, and items are scattered randomly throughout.
+    3. Map saving and loading was very tricky as well. Custom map creation is accomplished in a similar way as custom item creation--via a text file that is then read by the program.
+    4. To Discuss a bit further into "2 Option" from the Main Menu. Load Map is suppose to save an old map the player played on and allow the user to resume the game, the loading 
+       works fine most of the time however during the final testing process we found out that the game could crash at this point. So anyone playing this feature please remember this 
+       caution. NOTE: Lastly, and most importantly: Load Map is not needed in order to start the game. Option 1 works perfectly fine to start the game. 
 
 
 Other major components included:
 - The viewport screen. Implementing this was challenging at first, as if the cursor went out of bounds or the UI did not fit into the alloted right hand corner, the game would break.
-- Character pathing. **TODO:** Add detail here?
+- Character pathing. 
 - Item functionality. This included creating a sort of tool belt that could be rotated through so a player could select one that matches the type of a given obstacle.
 - Clue functionality. This was tricky because it required getting involved in so many different areas. It had to have custom UI components to be able to handle the large amount of text, and it needed to be able to dig into the map itself to look for ways to generate the clues (and then sometimes make them incorrect on purpose).
-- **TODO**: Any more detail people want to go into...
 
-Lastly, as described in the instructions and shown in our trailer, our entire 
-game is working without any errors which means were able to implement all the features according to the requirements of the game.
+Lastly, as described in the instructions and shown in our trailer, our entire game is working fine overall. 
+which means were able to implement all the features according to the requirements of the game.
+
 
 - GitHub Repo Link:
-    
     https://github.com/MaxCarlson/Frupal
 
 - Final presentation video:
-    
     https://media.pdx.edu/media/1_plxxixxl
