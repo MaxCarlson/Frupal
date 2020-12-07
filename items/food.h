@@ -8,6 +8,7 @@ class Food : public Item
     int energy;
 
 public:
+    Food() = default;
     Food(std::string name, int cost, int energy) :
         Item{'F', name}, cost{cost}, energy{energy}
     {}
@@ -25,7 +26,6 @@ public:
         l2 = cost   + std::to_string(getCost());
         l3 = energy + std::to_string(getEnergy());
 
-        return std::tuple{l1, l2, l3}; 
+        return StringTuple{l1, l2, l3, ""}; 
     }
-
 };

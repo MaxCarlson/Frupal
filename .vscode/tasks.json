@@ -19,6 +19,8 @@
           "${workspaceRoot}/display.cpp",
           "${workspaceRoot}/mapgenerator.cpp",
           "${workspaceRoot}/pathing.cpp",
+          "${workspaceRoot}/items/itemloader.cpp",
+          "${workspaceRoot}/mapStoreAndLoad.cpp",
           "-lncurses",
           "-Wall",
           //"-Werror",

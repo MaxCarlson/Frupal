@@ -7,4 +7,6 @@ public:
     Diamond(std::string name) 
         : Item{'$', name}
     {}
+
+    Item::StringTuple getDescription() const { return {"Diamond!!!", "", "", ""}; }
 };

@@ -127,7 +127,6 @@ int Display::deathScreen()
     int x = (LINES / 2);
     int y = (COLS - strlen(s1)) / 2;
 
-
     erase();
     // Prints messages in center of screen
     mvprintw(x, y, "%s", s1);
@@ -145,3 +144,37 @@ int Display::deathScreen()
 
     return 1;
 }
+
+int Display::winScreen()
+{
+    int ch = 0;
+    char s1[] = "You have found the Royal Diamond!";
+    char s2[] = "You Win!";
+    char s3[] = "Press 'S' to start a new game or 'Q' to quit.";
+    int x = (LINES / 2);
+    int y = (COLS - strlen(s1)) / 2;
+
+    erase();
+    // Prints messages in center of screen
+    mvprintw(x, y, "%s", s1);
+    y = (COLS - strlen(s2)) / 2;
+    ++y;
+    ++x;
+    mvprintw(x, y, "%s", s2);
+    y = (COLS - strlen(s3)) / 2;
+    ++y;
+    ++x;
+    mvprintw(x, y, "%s", s3);
+
+    timeout(250); // Wait 250ms for keypress
+    while(ch != 's' && ch != 'q')
+        ch = getch();
+
+    if(ch == 'q')
+        return 0;
+
+    return 1;
+}
+
+
+

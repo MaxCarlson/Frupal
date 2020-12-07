@@ -19,8 +19,18 @@ public:
     {
         return !type.compare(obsType);
     }
+
+    std::string getType() const { return type; }
     int getCost()   const { return cost; }
     int getRating() const { return rating; }
+    
+    Item::StringTuple getDescription() const
+    {
+        return Item::StringTuple{"Name: "+ name, "Type: " + type, "Cost: " + std::to_string(cost), "Rating: " + std::to_string(rating)};
+
+    }
+
+
 
 };
 

@@ -2,14 +2,16 @@
 #include "player.h"
 #include "map.h"
 #include "movement.h"
+#include "ui.h"
+#include "camera.h"
 #include <ncurses.h>
 #include <iostream>
+#include "mapStoreAndLoad.h"
 
 // Returns false if exit key is pressed. Handles all input
-bool Input::input(Player& player, Map& map)
+bool Input::input(Player& player, Map& map, UI& ui, Camera& camera)
 {
     int ch = getch();
-    //std::cout << ch;
 
     // Remove excess input, make character easier to control
     flushinp();
@@ -19,46 +21,53 @@ bool Input::input(Player& player, Map& map)
         case 'q':
             return false;
 
+        case 's':
+            mapStoreAndLoad saveLoad;
+            saveLoad.save(map, player, "mapSaves/mapSave_1.txt");
+            break;
+            
         case KEY_LEFT:
             if(player.getX() > 0)
-                Movement::movePlayer(player, map, -1, 0);
+                Movement::movePlayer(player, map, ui, camera, -1, 0);
             break;
 
         case KEY_RIGHT:
             if(player.getX() < map.getWidth() - 1)
-                Movement::movePlayer(player, map, 1, 0);
+                Movement::movePlayer(player, map, ui, camera, 1, 0);
             break;
 
         case KEY_UP:
             if(player.getY() > 0)
-                Movement::movePlayer(player, map, 0, -1);
+                Movement::movePlayer(player, map, ui, camera, 0, -1);
             break;
 
         case KEY_DOWN:
             if(player.getY() < map.getHeight() - 1)
-                Movement::movePlayer(player, map, 0, 1);
+                Movement::movePlayer(player, map, ui, camera, 0, 1);
             break;
 
         case 't':
-            // Change active tool
+            player.toggleTool();
             break;
 
-        // TODO: Apparently these are supposed to be arrow keys, and number keys are used for movement?
-        // TODO: Also, these should move the cursor in that dir, not set the cursor next to the player in that dir
-        case 49: // 1
-            player.setDir(Direction::NORTH);
+        case 49: // 1 (DOWN)
+            if(player.getPY() < map.getHeight() - 1)
+                player.setCursor(map, player.getPX(), player.getPY() - 1);  //move cursor to Direction::SOUTH
             break;
 
-        case 50: // 2
-            player.setDir(Direction::EAST);
+        case 50: // 2 (RIGHT)
+            if(player.getPX() < map.getWidth() - 1)
+                player.setCursor(map, player.getPX() + 1, player.getPY()); //Direction::EAST);
             break;
 
-        case 51: // 3
-            player.setDir(Direction::SOUTH);
+        case 51: // 3 (UP)
+            if(player.getPY() > 0)
+                player.setCursor(map, player.getPX(), player.getPY() + 1); //Direction::NORTH; 
             break;
 
-        case 52: // 4
-            player.setDir(Direction::WEST);
+        case 52: // 4 (LEFT)
+            if(player.getPX() > 0)
+                player.setCursor(map, player.getPX() - 1, player.getPY()); //Direction::WEST);
             break;
 
         case -1: // Default ERR input, just here for debugging so we can catch unknown key cods in defualt
@@ -66,36 +75,103 @@ bool Input::input(Player& player, Map& map)
         default:
             break;
     }
-
     return true;
 }
 
-bool Input::buyItem()
+bool Input::buyItem(const Camera & camera, const UI& ui)
 {
     int ch = 0;
+    auto [cx, cy] = camera.getDims();
 
+    int xOffset = cx - ui.getSize() + 2;  
+    std::string prompt = "Buy: Press Y"; 
+    std::string prompt1 = "Pass: Press N"; 
+    mvaddstr(12, xOffset, prompt.c_str()); 
+    mvaddstr(13, xOffset, prompt1.c_str()); 
+    
     while(ch != 'y' && ch != 'n')
         ch = getch();
-
-    if(ch == 'y')
-        return true;
-    return false;
+    if(ch != 'y')
+        return false; 
+    return true;  
 }
 
-bool Input::canBreakObstacle(Player& player, int obstacleCost)
+bool Input::canBreakObstacle(Player& player, Obstacle *obstacle, int obstacleCost)
 {
+    int ch = 0;
+    int rating;
+    int menuOffset = COLS - 21; // a bit hacky but a quick way to be able to update UI
+    bool toolUsed = false;
+    std::string match = "Use Tool? (U)";
+    std::string notMatch = "Not Compatible!";
+    std::string fist = "Break with fist? (F)";
+
+    while(!toolUsed)
+    {
+        // ui stuff is a bit hacky but worked for all
+        // screen sized that I tried
+        move(LINES - 6,  menuOffset);
+        clrtoeol(); 
+        mvaddstr(LINES - 6, menuOffset, fist.c_str());
+        if(player.toolTypeMatch(obstacle))
+        {
+            move(LINES - 5,  menuOffset);
+            clrtoeol(); 
+            mvaddstr(LINES - 5, menuOffset, match.c_str());
+
+            move(LINES - 4,  menuOffset);
+            clrtoeol();  
+            mvaddstr(LINES - 4, menuOffset, player.playerToolName().c_str());
+        }
+        else
+        {
+            move(LINES - 4,  menuOffset);
+            clrtoeol();
+            mvaddstr(LINES - 4, menuOffset, player.playerToolName().c_str());
+
+            if(player.hasTools())
+            {
+                move(LINES - 5,  menuOffset);
+                clrtoeol();
+                mvaddstr(LINES - 5, menuOffset, notMatch.c_str());
+            }
+        }
+
+        ch = getch();
+
+        switch(ch)
+        {
+            case 't':
+                {
+                    player.toggleTool();
+                    break;
+                }
+
+            case 'u':
+                rating = player.useTool(obstacle);
+
+                if(rating < 0)
+                {
+                    rating = 0;
+                    break;
+                }
+                // update obstacle cost after using tool
+                obstacleCost = obstacleCost / rating;
+                toolUsed = true;
+                break;
+
+            case 'f':
+                toolUsed = true; // a tool actually isn't being used here but player
+                break;           // chose not to use a tool and this will exit the loop
+        }
+    }
+
     if(player.getEnergy() >= obstacleCost)
     {
         player.modifyEnergy(-obstacleCost);
         return true;
     }
+                
+    player.modifyEnergy(-obstacleCost);
     return false;
-    // Check if player has a tool compatible with obstacle
-    // If no - If player cannot afford to remove obstacle, return false
-    // otherwise, return true.
-    //
-    // If yes, ask if player would like to use the tool
-    // If no, If player can destroy obstacle using current energy, return true. Else, return false
-    // If yes, check if player can destroy obstacle using tool
-    // benefits combined with current energy. If yes, return true. Else, return false.
 }

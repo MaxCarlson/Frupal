@@ -1,9 +1,8 @@
-
 # Executable
 frupal
-
 # Object Files
 *.o
 
 # VS Code workspace
 *.code-workspace
+*.vscode/*

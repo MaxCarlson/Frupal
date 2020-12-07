@@ -1,3 +1,4 @@
+#include <ncurses.h>
 #include "movement.h"
 #include "player.h"
 #include "map.h"
@@ -13,13 +14,15 @@
 #include "items/itemloader.h"
 
 
-void Movement::movePlayer(Player& player, Map& map, int x, int y)
+void Movement::movePlayer(Player& player, Map& map, UI& ui, Camera& camera, int x, int y)
 {
     int xf = player.getX() + x;
     int yf = player.getY() + y; 
+    int menuOffset = COLS - 21; // a bit hacky but a quick way to be able to update UI
     Input input;
 
-    MapSquare& sq = map.sq(xf, yf);
+    MapSquare& sq       = map.sq(xf, yf);
+    MapSquare& startSq  = map.sq(player.getX(), player.getY());
 
     switch(sq.terrain)
     {
@@ -32,7 +35,26 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
             player.modifyEnergy(-2);
             break;
 
-        case Terrain::WATER: // TODO: Handle ship and remove drop-through
+        case Terrain::WATER:
+            // Moving onto a ship costs energy
+            if(dynamic_cast<Ship*>(sq.item) && startSq.terrain != Terrain::WATER)
+                player.modifyEnergy(-1);
+            else if(dynamic_cast<Ship*>(startSq.item))
+            {}
+            else
+            {
+                player.modifyEnergy(-1);
+                return;
+            }
+
+            // If the player is already on a ship, move the ship with the player if we''re still on water
+            if(dynamic_cast<Ship*>(startSq.item) && !sq.item)
+            {
+                sq.item = startSq.item;
+                startSq.item = nullptr;
+            }
+ 
+            break;
         case Terrain::WALL:
             player.modifyEnergy(-1);
             return;
@@ -40,83 +62,96 @@ void Movement::movePlayer(Player& player, Map& map, int x, int y)
 
     if(sq.item)
     {
+    
+        curs_set(1);
+
+        auto [l1, l2, l3, l4] = sq.item->getDescription();
+
+
+        mvaddstr(1, menuOffset, l1.c_str());
+        mvaddstr(2, menuOffset, l2.c_str());
+        mvaddstr(3, menuOffset, l3.c_str());
+        mvaddstr(4, menuOffset, l4.c_str());
+    
+        curs_set(0);
+
         // item is food
         if(dynamic_cast<Food*>(sq.item))
         {
             Food *food = dynamic_cast<Food*>(sq.item);
-
             // player chooses to buy food and can afford to do so
-            if(input.buyItem() && player.getMoney() >= food->getCost())
+            if(input.buyItem(camera, ui) && player.getMoney() >= food->getCost())
             {
                 player.modifyMoney(-food->getCost());
                 player.modifyEnergy(food->getEnergy());
 
-                food = nullptr;
                 delete sq.item;
                 sq.item = nullptr;
             }
-            return;
-
-            // if player doesn't have enough money, maybe inform the player?
+            else
+              return; // if player doesn't have enough money, maybe inform the player?
         }
 
         if(dynamic_cast<Obstacle*>(sq.item))
         {
             Obstacle *obstacle = dynamic_cast<Obstacle*>(sq.item);
-            if(input.canBreakObstacle(player, obstacle->getEnergy()))
+            if(input.canBreakObstacle(player, obstacle, obstacle->getEnergy()))
             {
-                obstacle = nullptr;
                 delete sq.item;
                 sq.item = nullptr;
             }
-
             else
-            {
-                player.modifyEnergy(-obstacle->getEnergy());
                 return;
-            }
-                
-            // Check if player can afford to remove obstacle
-            // either with current energy or energy combined with tool
-            //
-            // If the player can't afford it...kill player
-            // If the player can affor it, remove obstacle
-
         }
 
         if(dynamic_cast<Tool*>(sq.item))
         {
             Tool *tool = dynamic_cast<Tool*>(sq.item);
-            if(input.buyItem() && player.getMoney() >= tool->getCost())
+            if(input.buyItem(camera, ui) && player.getMoney() >= tool->getCost())
             {
                 // put tool in player's tool belt
                 player.modifyMoney(-tool->getCost());
                 player.addTool(tool);
                 
-                tool = nullptr;
                 delete sq.item;
                 sq.item = nullptr;
             }
-            return;
+            else
+              return;
         }
 
         if(dynamic_cast<Binoculars*>(sq.item))
         {
             Binoculars *binoculars = dynamic_cast<Binoculars*>(sq.item);
-            if(input.buyItem() && player.getMoney() >= binoculars->getCost())
+            if(input.buyItem(camera, ui) && player.getMoney() >= binoculars->getCost())
             {
                 player.modifyMoney(-binoculars->getCost());
                 player.boughtBinoculars();
                 binoculars = nullptr;
                 delete sq.item;
                 sq.item = nullptr;
-
             }
-            return;
+            else
+              return;
+        }
+
+        if(dynamic_cast<Chest*>(sq.item))
+        {
+            Chest *chest = dynamic_cast<Chest*>(sq.item);
+            player.modifyMoney(chest->getValue());
+            delete sq.item;
+            sq.item = nullptr;
+        }
+        
+        if(dynamic_cast<Diamond*>(sq.item))
+        {
+            player.modifyMoney(1000000);
+            delete sq.item;
+            sq.item = nullptr;
         }
     }
-    
     player.setX(xf);
     player.setY(yf);
-            
 }
+
+

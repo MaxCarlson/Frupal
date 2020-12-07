@@ -1,12 +1,25 @@
 #include "itemloader.h"
 #include "../item.h"
+#include "binoculars.h"
 #include "chest.h"
 #include "clue.h"
 #include "food.h"
 #include "obstacle.h"
 #include "tool.h"
+#include "../mapgenerator.h"
+#include "../map.h"
 #include <fstream>
 #include <ctime>
+
+ItemLoader::~ItemLoader()
+{
+    for(auto& f : foods)
+        delete f;
+    for(auto& t : tools)
+        delete t;
+    for(auto& o : obstacles)
+        delete o;
+}
 
 void ItemLoader::loadItems()
 {
@@ -18,9 +31,6 @@ void ItemLoader::loadItems()
      * FOOD|Food Name|cost|energy
      * OBSTACLE|Obstacle Name|TYPE|energy
      * 
-     * std::vector<Food>       foods;
-     * std::vector<Tool>       tools;
-     * std::vector<Obstacle>   obstacles;
      */
 
     char del = '|';         // Delimiter
@@ -29,13 +39,12 @@ void ItemLoader::loadItems()
     int cost = 0;
     int rating = 0;
     int energy = 0;
-    Item * item_ptr = NULL; // All-purpose pointer
     int size = 51;
 
-    std::ifstream file("items.txt");
+    std::ifstream file("items/items.txt");
     if (!file) return;
 
-    getline(file, sname, '|');
+    getline(file, sname, del);
 
     while(file && !file.eof())
     {
@@ -43,76 +52,76 @@ void ItemLoader::loadItems()
         {
             if (!sname.compare("TOOL"))
             {
-                getline(file, sname, '|');
-                getline(file, stype, '|');
+                getline(file, sname, del);
+                getline(file, stype, del);
                 file >> cost;
                 file.ignore(size, del);
                 file >> rating;
-                item_ptr = new Tool(sname,stype,cost,rating);
-                tools.push_back(*(dynamic_cast<Tool*>(item_ptr)));
+                tools.emplace_back(new Tool(sname,stype,cost,rating));
             }
             else if (!sname.compare("FOOD"))
             {
-                getline(file, sname, '|');
+                getline(file, sname, del);
                 file >> cost;
                 file.ignore(size, del);
                 file >> energy;
-                item_ptr = new Food(sname,cost,energy);
-                foods.push_back(*(dynamic_cast<Food*>(item_ptr)));
+                foods.emplace_back(new Food(sname,cost,energy));
             }
             else if (!sname.compare("OBSTACLE"))
             {
-                getline(file, sname, '|');
-                getline(file, stype, '|');
+                getline(file, sname, del);
+                getline(file, stype, del);
                 file >> energy;
-                item_ptr = new Obstacle(sname,stype,energy);
-                obstacles.push_back(*(dynamic_cast<Obstacle*>(item_ptr)));
+                // This comment is to fix a weird compiler problem
+                obstacles.emplace_back(new Obstacle(sname,stype,energy));
             }
-            
-            // Reset the pointer for the next item
-            item_ptr = NULL;
         }
 
         file.ignore(size, '\n');
-        getline(file, sname, '|');
+        getline(file, sname, del);
     }
 
     file.close();
 }
 
-Chest* ItemLoader::getChest() const
+Binoculars ItemLoader::getBinoculars(std::default_random_engine& re) const
 {
-    return nullptr;
+    return Binoculars{"Binoculars", 100};
 }
 
-Clue* ItemLoader::getClue() const
+Chest ItemLoader::getChest(std::default_random_engine& re) const
 {
-    return nullptr;
+    static std::poisson_distribution<int> dist{4};
+    int val = (dist(re) + 1) * 27;
+    Chest c{"Chest", val};
+    return c;
 }
 
-Food* ItemLoader::getFood() const
+Clue ItemLoader::getClue(std::default_random_engine& re, std::pair<int,int> clueCoords) const
 {
-    std::srand(std::time(nullptr));
-    int rand = std::rand() % foods.size();
-    Food * const foodptr = const_cast<Food*>(&foods[rand]);
-
-    return foodptr;
-}
-Obstacle* ItemLoader::getObstacle() const
-{
-    std::srand(std::time(nullptr));
-    int rand = std::rand() % obstacles.size();
-    Obstacle * const obstacleptr = const_cast<Obstacle*>(&obstacles[rand]);
-
-    return obstacleptr;
-}
-Tool* ItemLoader::getTool() const
-{
-
-    std::srand(std::time(nullptr));
-    int rand = std::rand() % tools.size();
-    Tool * const toolptr = const_cast<Tool*>(&tools[rand]);
-
-    return toolptr;
+    std::uniform_int_distribution<int> dist{0,1};   // Generate true or false
+    Clue c(static_cast<bool>(dist(re)),mg,map,clueCoords);
+    return c;
 }
 
+Food ItemLoader::getFood(std::default_random_engine& re) const
+{
+    std::uniform_int_distribution<int> dist{0, static_cast<int>(foods.size()) - 1};
+    return Food{*foods[dist(re)]};
+}
+Obstacle ItemLoader::getObstacle(std::default_random_engine& re) const
+{
+    std::uniform_int_distribution<int> dist{0, static_cast<int>(obstacles.size()) - 1};
+    return Obstacle{*obstacles[dist(re)]};
+}
+Tool ItemLoader::getTool(std::default_random_engine& re) const
+{
+    std::uniform_int_distribution<int> dist{0, static_cast<int>(tools.size()) - 1};
+    return Tool{*tools[dist(re)]};
+}
+
+void ItemLoader::setMapInfo(MapGenerator* mapgen, Map* m)
+{
+    mg = mapgen;
+    map = m;
+}

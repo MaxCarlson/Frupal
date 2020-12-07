@@ -13,10 +13,23 @@ public:
     {}
 
     int getEnergy() const { return energy; }
-    
+    std::string getType() const { return type; }
+
     int match(std::string toolType)
     {
         return !type.compare(toolType);
+    }
+
+    StringTuple getDescription() const
+    {
+        std::string l1, l2, l3;
+        static const std::string type   = "> Type: ";
+        static const std::string energy = "> Energy Cost: ";
+        l1 = "> " + name;
+        l2 = type   + getType();
+        l3 = energy + std::to_string(getEnergy());
+
+        return StringTuple{l1, l2, l3, ""}; 
     }
 };
 
