@@ -11,7 +11,8 @@
 To run the game, compile by typing **make**, then run by typing **./frupal**
 
 - Example Map:
-> At least one map file for your game. This map should be winnable and demonstrate all the features of the game * (confused) -- **TODO: I think we need a link to a save file (like mapSave_1.txt) that we know is winnable -Courtney**
+    - The current seed included demonstrates all the features of the game as this is a winnable example for the game. the features are explained in detail as the following text. The game's features are also demonstrated in the video trailer provided. Briefly, an example of a winnable game in the current seed
+    - also fetching the diamond, once its captured, its a win! The diamond is represented by $. 
 
 - Playing the game:
 

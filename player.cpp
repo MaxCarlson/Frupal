@@ -97,3 +97,4 @@ void Player::setCursor(const Map& map, int tpx, int tpy)
     py = py < 0 ? 0 : tpy; 
 }
 
+

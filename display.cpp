@@ -154,7 +154,6 @@ int Display::winScreen()
     int x = (LINES / 2);
     int y = (COLS - strlen(s1)) / 2;
 
-
     erase();
     // Prints messages in center of screen
     mvprintw(x, y, "%s", s1);
