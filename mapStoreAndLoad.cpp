@@ -118,11 +118,13 @@ bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
       outFile << player.getHasBinoculars() << " ";
       outFile << player.getOnShip() << " ";
       outFile << player.showPlayerDeath() << " ";
-      outFile << static_cast<int>(player.getDir());
+      //outFile << static_cast<int>(player.getDir());
+      outFile << player.getPX() << " ";
+      outFile << player.getPY();
       outFile << Delimiter;
       //Not sure if this works properly, should save all tools.
       outFile << "TOOLDATA" << Delimiter;
-      for(const auto &e : player.getTools()) outFile << e->getName() << " " << e->getType() << " " << e->getCost() << " " << e->getRating() << Delimiter;
+      for(const auto &e : player.getTools()) outFile << e->getName() << Delimiter << e->getType() << " " << e->getCost() << " " << e->getRating() << Delimiter;
       outFile  << "\n";
 
       //Map info.
@@ -246,8 +248,10 @@ bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
     bool hasBinoculars = false;
     bool onShip = false;
     bool playerDeath = false;
-    Direction dir = NORTH;
-    int dirInt = 0;
+    //Direction dir = NORTH;
+    //int dirInt = 0;
+    int px = 0;
+    int py = 0;
 
     //Tool variables.
     std::vector<Tool*> tools;
@@ -278,12 +282,14 @@ bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
       inFile.open(fileName);
       if(inFile.is_open()) {
         getline(inFile, parsedLine, Delimiter);
+        std::cout << parsedLine << " ";
         ss.str(parsedLine);
         //std::cout << parsedLine << "\n";
         //If we are at this line.
         if(!parsedLine.compare("PLAYERDATA")) {
           //Set up stringstream.
           getline(inFile, parsedLine, Delimiter);
+          std::cout << parsedLine << " ";
           ss.str(parsedLine);
           //Save Player info.
           ss >> energy;
@@ -293,8 +299,10 @@ bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
           ss >> hasBinoculars;
           ss >> onShip;
           ss >> playerDeath;
-          ss >> dirInt;
-          dir = static_cast<Direction>(dirInt);
+          ss >> px;
+          ss >> py;
+          //ss >> dirInt;
+          //dir = static_cast<Direction>(dirInt);
           //std::cout << parsedLine << "\n";
           //inFile >> energy;
           //inFile >> money;
@@ -308,6 +316,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
           //Set up next line.
           //std::cout << parsedLine << "\n";
           getline(inFile, parsedLine, Delimiter);
+          std::cout << parsedLine << " ";
           //std::cout << parsedLine << "\n";
         }
         //If we are at this line.
@@ -316,11 +325,13 @@ bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
             //Set up stringstream.
             ss.clear();
             getline(inFile, parsedLine, Delimiter);
+            std::cout << parsedLine << " ";
             if(!is_empty(parsedLine.c_str())) {
               ss.str(parsedLine);
               //std::cout << parsedLine << "\n";
               //Save tools.
               ss >> toolName >> toolType >> toolCost >> toolRating;
+              std::cout << toolName << " " << toolType << " " << toolCost << " " << toolRating;
               //Load tools.
               tools.emplace_back(new Tool(toolName, toolType, toolCost, toolRating));
             }
@@ -328,6 +339,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
           //Continue until we hit the end of the line.
 
           //Go to next line.
+          std::cout << "\n";
           getline(inFile, parsedLine);
           //inFile >> toolName >> toolType >> toolCost >> toolRating;
           //Save tools.
@@ -335,7 +347,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
           //std::cout << tools[0]->getName() << "\n";
         }
         //Initialize player with data.
-        player = Player(energy, money, x, y, hasBinoculars, onShip, playerDeath, dir, tools);
+        player = Player(energy, money, x, y, hasBinoculars, onShip, playerDeath, px, py, tools);
         //Reset stringstream.
         ss.clear();
         //Save map width and height.
@@ -506,7 +518,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
             getline(inFile, parsedLine, '\n'); 
             ss.str("");
             ss.clear();
-            //break;
+            break;
           }
           //Move to next line.
           //std::cout << "End: " << parsedLine << "\n";

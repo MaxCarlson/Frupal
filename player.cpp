@@ -4,7 +4,7 @@
 #include "items/tool.h"
 #include "items/obstacle.h"
 
-Player::Player(int energy, int money, int x, int y, bool hasBinoculars, bool onShip, bool playerDeath, Direction dir, std::vector<Tool*> tools) {
+Player::Player(int energy, int money, int x, int y, bool hasBinoculars, bool onShip, bool playerDeath, int px, int py, std::vector<Tool*> tools) {
   this->energy = energy;
   this->money = money;
   this->x = x;
@@ -12,6 +12,8 @@ Player::Player(int energy, int money, int x, int y, bool hasBinoculars, bool onS
   this->hasBinoculars = hasBinoculars;
   this->onShip = onShip;
   this->playerDeath = playerDeath;
+  this->px = px;
+  this->py = py;
   //this->dir = dir;
   //May not be what I need to do.
   this->tools = tools;

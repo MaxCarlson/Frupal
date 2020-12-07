@@ -34,7 +34,7 @@ public:
     {} 
 
 //Constructor for map loading.
-    Player(int energy, int money, int x, int y, bool hasBinoculars, bool onShip, bool playerDeath, Direction dir, std::vector<Tool*> tools);
+    Player(int energy, int money, int x, int y, bool hasBinoculars, bool onShip, bool playerDeath, int px, int py, std::vector<Tool*> tools);
 
     int getX() const { return x; }
     int getY() const { return y; }
