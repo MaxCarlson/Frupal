@@ -47,7 +47,7 @@ struct MapSquare
     Terrain terrain;
     Item* item;
 
-    MapSquare() : discovered{true}, terrain{}, item{nullptr} {}
+    MapSquare() : discovered{false}, terrain{}, item{nullptr} {}
     MapSquare(bool discovered, Terrain terrain, Item* item) 
         : discovered{discovered}, terrain{terrain}, item{item}
     {}
