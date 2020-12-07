@@ -127,7 +127,6 @@ int Display::deathScreen()
     int x = (LINES / 2);
     int y = (COLS - strlen(s1)) / 2;
 
-
     erase();
     // Prints messages in center of screen
     mvprintw(x, y, "%s", s1);
@@ -154,7 +153,6 @@ int Display::winScreen()
     char s3[] = "Press 'S' to start a new game or 'Q' to quit.";
     int x = (LINES / 2);
     int y = (COLS - strlen(s1)) / 2;
-
 
     erase();
     // Prints messages in center of screen

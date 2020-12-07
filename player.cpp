@@ -1,8 +1,31 @@
 #include "player.h"
 #include "map.h"
 #include <ncurses.h>
+#include <iostream>
 #include "items/tool.h"
 #include "items/obstacle.h"
+
+Player::Player(int energy, int money, int x, int y, bool hasBinoculars, bool onShip, bool playerDeath, int px, int py, std::vector<Tool*> tools) {
+  this->energy = energy;
+  this->money = money;
+  this->x = x;
+  this->y = y;
+  this->hasBinoculars = hasBinoculars;
+  this->onShip = onShip;
+  this->playerDeath = playerDeath;
+  this->px = px;
+  this->py = py;
+  //this->dir = dir;
+  //May not be what I need to do.
+  //this->tools = tools;
+  for(const auto &e : tools) {
+    //std::cout << e->getName() << " ";
+    //std::cout << "\n";
+    addTool(e);
+    toggleTool();
+  }
+  return;
+}
 
 void Player::discoverTerrrain(Map& map)
 {
@@ -17,13 +40,11 @@ void Player::discoverTerrrain(Map& map)
         {
             if(xf < 0 || yf < 0 || xf > xMax - 1 || yf > yMax - 1)
                 return;
-
             MapSquare& sq = map.sq(xf, yf);
             sq.discovered = true;
         };
 
         discoverSq(ox+x, oy+y);
-
         if(hasBinoculars) 
         {
             discoverSq(x+ox*2, y+oy*2);
@@ -79,7 +100,6 @@ int Player::useTool(Obstacle *obstacle)
         toolIDX = 0;
         return toolRating;
     }
-
     return -1;
 }
     
@@ -98,6 +118,6 @@ void Player::setCursor(const Map& map, int tpx, int tpy)
     px = px <  0 ? 0 : tpx; 
     py = py >= map.getHeight() ? map.getHeight() - 1 : tpy; 
     py = py < 0 ? 0 : tpy; 
-   
 }
+
 

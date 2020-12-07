@@ -36,7 +36,6 @@ void Movement::movePlayer(Player& player, Map& map, UI& ui, Camera& camera, int 
             break;
 
         case Terrain::WATER:
-
             // Moving onto a ship costs energy
             if(dynamic_cast<Ship*>(sq.item) && startSq.terrain != Terrain::WATER)
                 player.modifyEnergy(-1);
@@ -131,7 +130,6 @@ void Movement::movePlayer(Player& player, Map& map, UI& ui, Camera& camera, int 
                 binoculars = nullptr;
                 delete sq.item;
                 sq.item = nullptr;
-
             }
             else
               return;
@@ -152,8 +150,8 @@ void Movement::movePlayer(Player& player, Map& map, UI& ui, Camera& camera, int 
             sq.item = nullptr;
         }
     }
-    
     player.setX(xf);
     player.setY(yf);
-            
 }
+
+

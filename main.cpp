@@ -2,6 +2,7 @@
 #include <iostream>
 #include <thread>
 #include <cstdint>
+#include <cstdlib>
 #include "map.h"
 #include "input.h"
 #include "display.h"
@@ -10,6 +11,7 @@
 #include "ui.h"
 #include "items/itemloader.h"
 #include "mapgenerator.h"
+#include "mapStoreAndLoad.h"
 
 constexpr int FPS = 25;
 constexpr int SleepTime = 1000 / FPS;
@@ -17,16 +19,14 @@ constexpr int SleepTime = 1000 / FPS;
 int main()
 {
 
-    initscr();
-    keypad(stdscr, true);
-    cbreak();
-    noecho();
-    curs_set(0);
+  initscr();
+  keypad(stdscr, true);
+  cbreak();
+  noecho();
+  curs_set(0);
 
-    // TODO: Start screen
-
+  // TODO: Start screen
     // Main Loop
-    //
     // Check for input
     // Apply user input
     // Check for player death
@@ -35,28 +35,34 @@ int main()
     // Refresh
     // Run any other systems
 
-    bool gameRunning = true;
-    ItemLoader itemLoader;
-    itemLoader.loadItems();
-    
-    while(gameRunning)
-    {
-        timeout(0);
-        UI ui{COLS};
-        Display display;
-        uint32_t seed = 1;
+  bool gameRunning = true;
+  bool loadMap = false;
+  ItemLoader itemLoader;
+  itemLoader.loadItems();
 
-        ui.mainMenu(display, gameRunning, seed);
-        if(!gameRunning)
-            break;
+  while(gameRunning)
+  {
+    timeout(0);
+    UI ui{COLS};
+    Display display;
+    uint32_t seed = 1;
 
-        MapGenerator mgen{128, seed, itemLoader};
-        Map map = mgen.generate(400, 100);
-        Input   input;
-        Player  player{mgen.getPlayerCoords()};
-        Camera  camera{COLS, LINES};
+    ui.mainMenu(display, gameRunning, loadMap, seed);
+    if(!gameRunning)
+      break;
 
-        bool first = true;
+    MapGenerator mgen{128, seed, itemLoader};
+    Map map = mgen.generate(400, 100);
+    Player  player{mgen.getPlayerCoords()};
+    Input   input;
+    Camera  camera{COLS, LINES};
+
+    if(loadMap == true) {
+      mapStoreAndLoad saveLoad;
+      saveLoad.load(map, player, "mapSaves/mapSave_1.txt");
+    }
+
+bool first = true;
         for(;;)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds{SleepTime});
@@ -104,7 +110,6 @@ int main()
             first = false;
         }
     }
-
     clear();
     endwin();
     return 0;

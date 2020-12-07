@@ -23,3 +23,33 @@ Map::~Map()
     }
     delete[] map;
 }
+
+void Map::resetMap(int widthToLoad, int heightToLoad) {
+    if(!map)
+        return;
+    for(int i = 0; i < height; ++i)
+    {
+        for(int j = 0; j < width; ++j) {
+            delete map[i][j].item;
+        }
+        delete[] map[i];
+    }
+    delete[] map;
+
+    height = heightToLoad;
+    width = widthToLoad; 
+
+    map = new MapSquare*[height];
+
+    // Default map squares to undiscovered
+    for(int i = 0; i < height; ++i) {
+        map[i] = new MapSquare[width]();
+        for(int j = 0; j < width; ++j) {
+          map[i][j].item = nullptr;
+        }
+    }
+
+
+
+  return;
+}

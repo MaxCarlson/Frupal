@@ -8,12 +8,17 @@ class Clue;
 class Food;
 class Obstacle;
 class Tool;
+class MapGenerator;
+class Map;
 
 class ItemLoader
 {
     std::vector<Food*>       foods;
     std::vector<Tool*>       tools;
     std::vector<Obstacle*>   obstacles;
+    MapGenerator* mg;
+    Map* map;
+
 public:
 
     ~ItemLoader();
@@ -21,23 +26,26 @@ public:
     // Load all items from text file
     void loadItems();
 
+    // Get a pointer to mapgenerator
+    void setMapInfo(MapGenerator*,Map*);
+
     // Generate a random item of each type
     Chest getChest(std::default_random_engine& re) const;
-    Clue getClue(std::default_random_engine& re) const;
+    Clue getClue(std::default_random_engine& re, std::pair<int,int> clueCoords) const;
     Food getFood(std::default_random_engine& re) const;
     Obstacle getObstacle(std::default_random_engine& re) const;
     Tool getTool(std::default_random_engine& re) const;
     Binoculars getBinoculars(std::default_random_engine& re) const;
 
     template<class ItemType>
-    ItemType getItem(std::default_random_engine& re) const
+    ItemType getItem(std::default_random_engine& re, std::pair<int,int> clueCoords) const
     {
         if constexpr(std::is_same_v<ItemType, Binoculars>)
             return getBinoculars(re);
         if constexpr(std::is_same_v<ItemType, Chest>)
             return getChest(re);
         if constexpr(std::is_same_v<ItemType, Clue>)
-            return getClue(re);
+            return getClue(re, clueCoords);
         if constexpr(std::is_same_v<ItemType, Food>)
             return getFood(re);
         if constexpr(std::is_same_v<ItemType, Obstacle>)

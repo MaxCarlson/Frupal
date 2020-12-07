@@ -14,7 +14,7 @@
 #include <algorithm>
 #include <unordered_set>
 
-MapGenerator::MapGenerator(int size, uint_fast32_t seed, const ItemLoader& itemLoader) 
+MapGenerator::MapGenerator(int size, uint_fast32_t seed, ItemLoader& itemLoader) 
         : size{size}, seed{seed}, itemLoader{itemLoader}, re{seed}, px{}, py{}, 
         leaders{}, notFilled{}, mapCells{}, voronoiCells{}, 
         voronoiCellsVec{}, lMembers{}
@@ -447,7 +447,6 @@ std::tuple<int, int, int> MapGenerator::findHouseLocation(const Map& map, int mi
 
     // TODO: This is ineffecient and could be made more so by 
     // storing a map of all cells by terrain types
-    //
     // Select random Meadow cell not occupied by a house
     RESTART:
     int mcell = -1;
@@ -622,7 +621,9 @@ void scatterItems(Map& map, std::map<int, std::set<std::pair<int, int>>>& vorono
                 continue;
 
             // TODO: We're going to have to grab the Items arguments randomly from a loaded text file
-            sq.item = new ItemType{itemLoader.getItem<ItemType>(re)};
+            //sq.item = new ItemType{itemLoader.getItem<ItemType>(re)};
+            sq.item = new ItemType{itemLoader.getItem<ItemType>(re,std::pair<int,int> {x, y})};
+
             return true;
         }
         return false;
@@ -674,7 +675,7 @@ void scatterItemsInHouses(float chancePerCell, Map& map, const ItemLoader& itemL
             if(sq.terrain == Terrain::WATER || sq.item)
                 continue;
 
-            sq.item = new ItemType{itemLoader.getItem<ItemType>(re)};
+            sq.item = new ItemType{itemLoader.getItem<ItemType>(re,std::pair<int,int> {x, y})};
         }
 }
 
@@ -686,7 +687,6 @@ void MapGenerator::placeItems(Map& map)
     std::map<Terrain, float> treasureChanceInTerrain    = {{Terrain::MEADOW, 0.1f},  {Terrain::SWAMP, 0.2f}}; 
     std::map<Terrain, float> binocularChanceInTerrain   = {{Terrain::MEADOW, 0.01f}, {Terrain::SWAMP, 0.02f}}; 
     std::map<Terrain, float> clueChanceInTerrain        = {{Terrain::MEADOW, 0.005f}, {Terrain::SWAMP, 0.008f}}; 
-
 
     scatterItems<Food>(map, voronoiCells, voronoiCellsVec, 
         terrainMappings, foodChanceInTerrain, mostItemTerrainTypes, itemLoader, re);
@@ -700,14 +700,15 @@ void MapGenerator::placeItems(Map& map)
     scatterItems<Binoculars>(map, voronoiCells, voronoiCellsVec, 
         terrainMappings, binocularChanceInTerrain, mostItemTerrainTypes, itemLoader, re);
 
-    scatterItems<Clue>(map, voronoiCells, voronoiCellsVec, 
-        terrainMappings, clueChanceInTerrain, mostItemTerrainTypes, itemLoader, re);
-
+    
     placeItemsInHouses(map);
 
     std::vector<Point> reqBoats;
     placePlayerAndDiamod(map, reqBoats);
     placeBoats(map, reqBoats, 0.4f);
+
+    scatterItems<Clue>(map, voronoiCells, voronoiCellsVec, 
+        terrainMappings, clueChanceInTerrain, mostItemTerrainTypes, itemLoader, re);
 }
 
 void MapGenerator::placeItemsInHouses(Map& map)
@@ -808,7 +809,6 @@ void MapGenerator::placePlayerAndDiamod(Map& map, std::vector<Point>& reqBoats)
         placeInCorner(map, re, xMin, xMax, yMin, yMax, [&](int x, int y, MapSquare& sq)
         {
             // TODO: Need to check if game is completeable
-
             bool success = pathing.playerToDiamond(map, Point{x, y}, diamondPoint, reqBoats);
             playerCoords = std::pair{x, y};
             if(success)
@@ -835,10 +835,8 @@ void MapGenerator::placeBoats(Map& map,
     }
 
     // Place boats randomly
-    //
     // TODO: Create a map opposite of terrainMappings, 
     // map terrain types to a vector of cells of that terrain type
-    // 
     std::uniform_real_distribution<float> dist;
     for(auto [cellId, terrain] : terrainMappings)
     {

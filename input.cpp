@@ -6,12 +6,12 @@
 #include "camera.h"
 #include <ncurses.h>
 #include <iostream>
+#include "mapStoreAndLoad.h"
 
 // Returns false if exit key is pressed. Handles all input
 bool Input::input(Player& player, Map& map, UI& ui, Camera& camera)
 {
     int ch = getch();
-    //std::cout << ch;
 
     // Remove excess input, make character easier to control
     flushinp();
@@ -21,6 +21,11 @@ bool Input::input(Player& player, Map& map, UI& ui, Camera& camera)
         case 'q':
             return false;
 
+        case 's':
+            mapStoreAndLoad saveLoad;
+            saveLoad.save(map, player, "mapSaves/mapSave_1.txt");
+            break;
+            
         case KEY_LEFT:
             if(player.getX() > 0)
                 Movement::movePlayer(player, map, ui, camera, -1, 0);
@@ -45,22 +50,24 @@ bool Input::input(Player& player, Map& map, UI& ui, Camera& camera)
             player.toggleTool();
             break;
 
-        // TODO: Apparently these are supposed to be arrow keys, and number keys are used for movement?
-        // TODO: Also, these should move the cursor in that dir, not set the cursor next to the player in that dir
-        case 49: // 1
-            player.setCursor(map, player.getPX(), player.getPY() - 1);  //move cursor to Direction::SOUTH
+        case 49: // 1 (DOWN)
+            if(player.getPY() < map.getHeight() - 1)
+                player.setCursor(map, player.getPX(), player.getPY() - 1);  //move cursor to Direction::SOUTH
             break;
 
-        case 50: // 2
-            player.setCursor(map, player.getPX() + 1, player.getPY()); //Direction::EAST);
+        case 50: // 2 (RIGHT)
+            if(player.getPX() < map.getWidth() - 1)
+                player.setCursor(map, player.getPX() + 1, player.getPY()); //Direction::EAST);
             break;
 
-        case 51: // 3
-            player.setCursor(map, player.getPX(), player.getPY() + 1); //Direction::NORTH; 
+        case 51: // 3 (UP)
+            if(player.getPY() > 0)
+                player.setCursor(map, player.getPX(), player.getPY() + 1); //Direction::NORTH; 
             break;
 
-        case 52: // 4
-            player.setCursor(map, player.getPX() - 1, player.getPY()); //Direction::WEST);
+        case 52: // 4 (LEFT)
+            if(player.getPX() > 0)
+                player.setCursor(map, player.getPX() - 1, player.getPY()); //Direction::WEST);
             break;
 
         case -1: // Default ERR input, just here for debugging so we can catch unknown key cods in defualt
@@ -68,7 +75,6 @@ bool Input::input(Player& player, Map& map, UI& ui, Camera& camera)
         default:
             break;
     }
-
     return true;
 }
 
@@ -78,10 +84,10 @@ bool Input::buyItem(const Camera & camera, const UI& ui)
     auto [cx, cy] = camera.getDims();
 
     int xOffset = cx - ui.getSize() + 2;  
-    std::string prompt = "Press Y or N"; 
-    std::string prompt1 = "To buy item."; 
-    mvaddstr(10, xOffset, prompt.c_str()); 
-    mvaddstr(11, xOffset, prompt1.c_str()); 
+    std::string prompt = "Buy: Press Y"; 
+    std::string prompt1 = "Pass: Press N"; 
+    mvaddstr(12, xOffset, prompt.c_str()); 
+    mvaddstr(13, xOffset, prompt1.c_str()); 
     
     while(ch != 'y' && ch != 'n')
         ch = getch();
@@ -92,7 +98,6 @@ bool Input::buyItem(const Camera & camera, const UI& ui)
 
 bool Input::canBreakObstacle(Player& player, Obstacle *obstacle, int obstacleCost)
 {
-     
     int ch = 0;
     int rating;
     int menuOffset = COLS - 21; // a bit hacky but a quick way to be able to update UI
@@ -115,9 +120,8 @@ bool Input::canBreakObstacle(Player& player, Obstacle *obstacle, int obstacleCos
             mvaddstr(LINES - 5, menuOffset, match.c_str());
 
             move(LINES - 4,  menuOffset);
-            clrtoeol(); 
+            clrtoeol();  
             mvaddstr(LINES - 4, menuOffset, player.playerToolName().c_str());
-
         }
         else
         {
@@ -171,6 +175,3 @@ bool Input::canBreakObstacle(Player& player, Obstacle *obstacle, int obstacleCos
     player.modifyEnergy(-obstacleCost);
     return false;
 }
-    
-
-    

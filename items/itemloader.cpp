@@ -6,6 +6,8 @@
 #include "food.h"
 #include "obstacle.h"
 #include "tool.h"
+#include "../mapgenerator.h"
+#include "../map.h"
 #include <fstream>
 #include <ctime>
 
@@ -29,9 +31,6 @@ void ItemLoader::loadItems()
      * FOOD|Food Name|cost|energy
      * OBSTACLE|Obstacle Name|TYPE|energy
      * 
-     * std::vector<Food>       foods;
-     * std::vector<Tool>       tools;
-     * std::vector<Obstacle>   obstacles;
      */
 
     char del = '|';         // Delimiter
@@ -45,7 +44,7 @@ void ItemLoader::loadItems()
     std::ifstream file("items/items.txt");
     if (!file) return;
 
-    getline(file, sname, '|');
+    getline(file, sname, del);
 
     while(file && !file.eof())
     {
@@ -53,8 +52,8 @@ void ItemLoader::loadItems()
         {
             if (!sname.compare("TOOL"))
             {
-                getline(file, sname, '|');
-                getline(file, stype, '|');
+                getline(file, sname, del);
+                getline(file, stype, del);
                 file >> cost;
                 file.ignore(size, del);
                 file >> rating;
@@ -62,7 +61,7 @@ void ItemLoader::loadItems()
             }
             else if (!sname.compare("FOOD"))
             {
-                getline(file, sname, '|');
+                getline(file, sname, del);
                 file >> cost;
                 file.ignore(size, del);
                 file >> energy;
@@ -70,8 +69,8 @@ void ItemLoader::loadItems()
             }
             else if (!sname.compare("OBSTACLE"))
             {
-                getline(file, sname, '|');
-                getline(file, stype, '|');
+                getline(file, sname, del);
+                getline(file, stype, del);
                 file >> energy;
                 // This comment is to fix a weird compiler problem
                 obstacles.emplace_back(new Obstacle(sname,stype,energy));
@@ -79,7 +78,7 @@ void ItemLoader::loadItems()
         }
 
         file.ignore(size, '\n');
-        getline(file, sname, '|');
+        getline(file, sname, del);
     }
 
     file.close();
@@ -98,9 +97,11 @@ Chest ItemLoader::getChest(std::default_random_engine& re) const
     return c;
 }
 
-Clue ItemLoader::getClue(std::default_random_engine& re) const
+Clue ItemLoader::getClue(std::default_random_engine& re, std::pair<int,int> clueCoords) const
 {
-    return Clue{};
+    std::uniform_int_distribution<int> dist{0,1};   // Generate true or false
+    Clue c(static_cast<bool>(dist(re)),mg,map,clueCoords);
+    return c;
 }
 
 Food ItemLoader::getFood(std::default_random_engine& re) const
@@ -119,3 +120,8 @@ Tool ItemLoader::getTool(std::default_random_engine& re) const
     return Tool{*tools[dist(re)]};
 }
 
+void ItemLoader::setMapInfo(MapGenerator* mapgen, Map* m)
+{
+    mg = mapgen;
+    map = m;
+}

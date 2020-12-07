@@ -1,13 +1,12 @@
 #pragma once
 #include "camera.h"
+#include "item.h"
 #include <random>
 #include <functional>
 static std::random_device rd;           // For random maps that change
 static std::default_random_engine re;   // For random maps that don't change
 //static std::uniform_int_distribution<int> distr(1, 4);
 static std::geometric_distribution<int> distr;
-
-class Item;
 
 // Must use like: Terrain::Meadow, this is to keep them getting mixed up with the color enums in display
 enum class Terrain
@@ -60,6 +59,7 @@ class Map
     MapSquare** map;
 
 public:
+    Map() = default;
     Map(int width, int height);
     ~Map();
 
@@ -67,6 +67,16 @@ public:
         : width{other.width}, height{other.height}, map{other.map}
     {
         other.map = nullptr;
+    }
+
+    Map& operator=(Map&& m)
+    {
+        width = m.width;
+        height = m.height;
+        map = m.map;
+        m.map = nullptr;
+
+        return *this;
     }
 
     int getWidth() const { return width; }
@@ -77,6 +87,15 @@ public:
 
     MapSquare& sq(int x, int y) { return map[x][y]; }
     MapSquare& sq(const Point& p) { return map[p.x][p.y]; }
+
+  /**
+    * Resets the map by deleting all map tiles setting a new width and height, and allocating new tiles. 
+    * This function is mostly used to load a new map.
+    * @param widthToLoad The new width to set for the map.
+    * @param heightToLoad The new height to set for the map.
+    */
+    void resetMap(int widthToLoad, int heightToLoad);
+
 
     // Func is a lambda/function which takes (int, int, const MapSquare&)
     template<class Func>
