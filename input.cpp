@@ -95,6 +95,7 @@ bool Input::canBreakObstacle(Player& player, Obstacle *obstacle, int obstacleCos
      
     int ch = 0;
     int rating;
+    int menuOffset = COLS - 21; // a bit hacky but a quick way to be able to update UI
     bool toolUsed = false;
     std::string match = "Use Tool? (U)";
     std::string notMatch = "Not Compatible!";
@@ -104,31 +105,31 @@ bool Input::canBreakObstacle(Player& player, Obstacle *obstacle, int obstacleCos
     {
         // ui stuff is a bit hacky but worked for all
         // screen sized that I tried
-        move(LINES - 6,  COLS - 21);
+        move(LINES - 6,  menuOffset);
         clrtoeol(); 
-        mvaddstr(LINES - 6, COLS - 21, fist.c_str());
+        mvaddstr(LINES - 6, menuOffset, fist.c_str());
         if(player.toolTypeMatch(obstacle))
         {
-            move(LINES - 5,  COLS - 21);
+            move(LINES - 5,  menuOffset);
             clrtoeol(); 
-            mvaddstr(LINES - 5, COLS - 21, match.c_str());
+            mvaddstr(LINES - 5, menuOffset, match.c_str());
 
-            move(LINES - 4,  COLS - 21);
+            move(LINES - 4,  menuOffset);
             clrtoeol(); 
-            mvaddstr(LINES - 4, COLS - 21, player.playerToolName().c_str());
+            mvaddstr(LINES - 4, menuOffset, player.playerToolName().c_str());
 
         }
         else
         {
-            move(LINES - 4,  COLS - 21);
+            move(LINES - 4,  menuOffset);
             clrtoeol();
-            mvaddstr(LINES - 4, COLS - 21, player.playerToolName().c_str());
+            mvaddstr(LINES - 4, menuOffset, player.playerToolName().c_str());
 
             if(player.hasTools())
             {
-                move(LINES - 5,  COLS - 21);
+                move(LINES - 5,  menuOffset);
                 clrtoeol();
-                mvaddstr(LINES - 5, COLS - 21, notMatch.c_str());
+                mvaddstr(LINES - 5, menuOffset, notMatch.c_str());
             }
         }
 

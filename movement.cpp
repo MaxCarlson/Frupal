@@ -1,3 +1,4 @@
+#include <ncurses.h>
 #include "movement.h"
 #include "player.h"
 #include "map.h"
@@ -17,6 +18,7 @@ void Movement::movePlayer(Player& player, Map& map, UI& ui, Camera& camera, int 
 {
     int xf = player.getX() + x;
     int yf = player.getY() + y; 
+    int menuOffset = COLS - 21; // a bit hacky but a quick way to be able to update UI
     Input input;
 
     MapSquare& sq       = map.sq(xf, yf);
@@ -61,6 +63,19 @@ void Movement::movePlayer(Player& player, Map& map, UI& ui, Camera& camera, int 
 
     if(sq.item)
     {
+    
+        curs_set(1);
+
+        auto [l1, l2, l3, l4] = sq.item->getDescription();
+
+
+        mvaddstr(1, menuOffset, l1.c_str());
+        mvaddstr(2, menuOffset, l2.c_str());
+        mvaddstr(3, menuOffset, l3.c_str());
+        mvaddstr(4, menuOffset, l4.c_str());
+    
+        curs_set(0);
+
         // item is food
         if(dynamic_cast<Food*>(sq.item))
         {
