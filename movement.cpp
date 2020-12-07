@@ -115,7 +115,6 @@ void Movement::movePlayer(Player& player, Map& map, UI& ui, Camera& camera, int 
                 binoculars = nullptr;
                 delete sq.item;
                 sq.item = nullptr;
-
             }
             else
               return;
@@ -139,3 +138,5 @@ void Movement::movePlayer(Player& player, Map& map, UI& ui, Camera& camera, int 
     player.setX(xf);
     player.setY(yf);
 }
+
+

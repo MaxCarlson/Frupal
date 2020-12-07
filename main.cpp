@@ -26,16 +26,14 @@ int main()
   curs_set(0);
 
   // TODO: Start screen
-
-  // Main Loop
-  //
-  // Check for input
-  // Apply user input
-  // Check for player death
-  // Print map/character
-  // Print UI
-  // Refresh
-  // Run any other systems
+    // Main Loop
+    // Check for input
+    // Apply user input
+    // Check for player death
+    // Print map/character
+    // Print UI
+    // Refresh
+    // Run any other systems
 
   bool gameRunning = true;
   bool loadMap = false;

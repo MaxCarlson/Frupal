@@ -84,10 +84,10 @@ bool Input::buyItem(const Camera & camera, const UI& ui)
     auto [cx, cy] = camera.getDims();
 
     int xOffset = cx - ui.getSize() + 2;  
-    std::string prompt = "Press Y or N"; 
-    std::string prompt1 = "To buy item."; 
-    mvaddstr(10, xOffset, prompt.c_str()); 
-    mvaddstr(11, xOffset, prompt1.c_str()); 
+    std::string prompt = "Buy: Press Y"; 
+    std::string prompt1 = "Pass: Press N"; 
+    mvaddstr(12, xOffset, prompt.c_str()); 
+    mvaddstr(13, xOffset, prompt1.c_str()); 
     
     while(ch != 'y' && ch != 'n')
         ch = getch();

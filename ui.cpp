@@ -154,7 +154,6 @@ void UI::print(Display& display, const Player& player, const Camera& camera, Map
 void UI::printOutline(Display& display, const Camera& camera)
 {
     auto [cx, cy] = camera.getDims();
-
     int xpos = cx - cols;
 
     move(0, xpos);
@@ -163,7 +162,6 @@ void UI::printOutline(Display& display, const Camera& camera)
 
 void UI::printSelectedInfo(const Player& player, Map& map, const Camera& camera, int xOffset)
 {
-
     auto [cx, cy]   = player.getCursor();
     auto [cxo, cyo] = camera.getOffsets();
     curs_set(1);
