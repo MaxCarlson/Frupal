@@ -1,6 +1,7 @@
 #include "player.h"
 #include "map.h"
 #include <ncurses.h>
+#include <iostream>
 #include "items/tool.h"
 #include "items/obstacle.h"
 
@@ -16,12 +17,13 @@ Player::Player(int energy, int money, int x, int y, bool hasBinoculars, bool onS
   this->py = py;
   //this->dir = dir;
   //May not be what I need to do.
-  this->tools = tools;
-  /*
+  //this->tools = tools;
   for(const auto &e : tools) {
-    this->tools.push_back(e);
+    //std::cout << e->getName() << " ";
+    //std::cout << "\n";
+    addTool(e);
+    toggleTool();
   }
-  */
   return;
 }
 
