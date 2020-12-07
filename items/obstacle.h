@@ -22,13 +22,14 @@ public:
 
     StringTuple getDescription() const
     {
-        std::string l1, l2;
+        std::string l1, l2, l3;
         static const std::string type   = "> Type: ";
         static const std::string energy = "> Energy Cost: ";
-        l1 = type   + getType();
-        l2 = energy + std::to_string(getEnergy());
+        l1 = "> " + name;
+        l2 = type   + getType();
+        l3 = energy + std::to_string(getEnergy());
 
-        return StringTuple{l1, l2, "", ""}; 
+        return StringTuple{l1, l2, l3, ""}; 
     }
 };
 

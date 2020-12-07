@@ -14,4 +14,5 @@ $(TARGET): $(OBJECTS)
 
 clean:
 	rm -f *.o
+	rm -f items/*.o
 	rm -f $(TARGET)

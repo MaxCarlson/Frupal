@@ -515,7 +515,7 @@ bool mapStoreAndLoad::save(Map& map, Player& player, std::string fileName) {
                     map.sq(i, j).item = new Diamond(itemName);
                   }
                   else if(itemName.compare("Clue") == 0) {
-                    map.sq(i, j).item = new Clue(itemName);
+                    //map.sq(i, j).item = new Clue(itemName);
                   }
                 }
               }

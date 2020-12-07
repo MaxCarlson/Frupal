@@ -17,7 +17,7 @@ private:
 
     int size;
     uint_fast32_t seed;
-    const ItemLoader& itemLoader;
+    ItemLoader& itemLoader;
     int diamondX, diamondY;
     std::default_random_engine re;
 
@@ -37,11 +37,13 @@ private:
     std::vector<std::vector<std::pair<int, int>>>   houseCoords;
 
 public:
-    MapGenerator(int size, uint_fast32_t seed, const ItemLoader& itemLoader);
+    MapGenerator(int size, uint_fast32_t seed, ItemLoader& itemLoader);
 
     Map generate(int cells, int numLeaders);
     std::pair<int, int> getPlayerCoords() const { return playerCoords; }
     std::pair<int, int> getDiamondCoords() const { return std::pair{diamondX, diamondY}; }
+    //const std::map<int, std::vector<std::pair<int, int>>>& getVoronoiVec() const { return voronoiCellsVec; }
+    std::map<int, std::vector<std::pair<int, int>>>& getVoronoiVec() { return voronoiCellsVec; }
 
 private:
 

@@ -5,3 +5,4 @@ frupal
 
 # VS Code workspace
 *.code-workspace
+*.vscode/*

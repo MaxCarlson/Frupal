@@ -64,55 +64,55 @@ int main()
       saveLoad.load(map, player, "mapSaves/mapSave_1.txt");
     }
 
-    bool first = true;
-    for(;;)
-    {
-      std::this_thread::sleep_for(std::chrono::milliseconds{SleepTime});
-
-      if(!first && !input.input(player, map, ui, camera))
-      {
-        gameRunning = false;
-        break;
-      }
-
-      if(player.getMoney() >= 1000000)
-      {
-        // Player has chosen to start a new game
-        if(display.winScreen() == 1)
-          break;
-        // Player has chosen to quit the program
-        else
+bool first = true;
+        for(;;)
         {
-          gameRunning = false;
-          break;
+            std::this_thread::sleep_for(std::chrono::milliseconds{SleepTime});
+            
+            if(!first && !input.input(player, map, ui, camera))
+            {
+                gameRunning = false;
+                break;
+            }
+
+            if(player.getMoney() >= 1000000)
+            {
+                // Player has chosen to start a new game
+                if(display.winScreen() == 1)
+                    break;
+                // Player has chosen to quit the program
+                else
+                {
+                    gameRunning = false;
+                    break;
+                }
+            }
+
+            // Toggle playerDeath on and off in player.h
+            if(player.showPlayerDeath() && player.getEnergy() <= 0)
+            {
+                // Player has chosen to start a new game
+                if(display.deathScreen() == 1)
+                    break; 
+                // Player has chosen to quit the program
+                else
+                {
+                    gameRunning = false;
+                    break;
+                }
+            }
+
+            // This must come first so everything is printed properly
+            camera.setOffsets(player, map, ui);
+
+            player.discoverTerrrain(map);
+            display.printMap(camera, map, ui);
+            display.printCharacter(camera, player);
+            display.printUI(camera, ui, player, map);
+            first = false;
         }
-      }
-
-      // Toggle playerDeath on and off in player.h
-      if(player.showPlayerDeath() && player.getEnergy() <= 0)
-      {
-        // Player has chosen to start a new game
-        if(display.deathScreen() == 1)
-          break; 
-        // Player has chosen to quit the program
-        else
-        {
-          gameRunning = false;
-          break;
-        }
-      }
-
-      // This must come first so everything is printed properly
-      camera.setOffsets(player, map, ui);
-
-      player.discoverTerrrain(map);
-      display.printMap(camera, map, ui);
-      display.printCharacter(camera, player);
-      display.printUI(camera, ui, player, map);
-      first = false;
     }
-  }
-  clear();
-  endwin();
-  return 0;
+    clear();
+    endwin();
+    return 0;
 }
